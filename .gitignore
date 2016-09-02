@@ -12,6 +12,8 @@ Homestead.yaml
 Homestead.json
 .env
 _ide_helper.php
+composer.lock
+composer.phar
 
 # Compiled source #
 ###################

@@ -8,24 +8,28 @@ class RakePlus
     protected $language = 'en_US';
 
     /** @var string */
-    protected $language_file = null;
+    protected $language_file = "";
 
     /** @var array */
-    protected $stopwords = null;
+    protected $stopwords = [];
 
     /** @var string */
-    private $stopword_pattern = null;
+    private $stopword_pattern = [];
 
     /** @var array */
-    private $phrase_scores = null;
+    private $phrase_scores = [];
 
     /**
      * RakePlus constructor. Instantiates RakePlus and extracts
      * the key phrases from the text if supplied. If the language
      * file is not found a RuntimeException will be thrown.
      *
-     * @param string|null $text
-     * @param string      $language (Default is en_US)
+     * If $language is a string the library will attempt to load
+     * the stopwords from the lang/xxxx.php file. Alternatively
+     * you can pass a flat array containing the string directly.
+     *
+     * @param string|null  $text
+     * @param string|array $language (Default is en_US)
      */
     public function __construct($text = null, $language = 'en_US')
     {
@@ -39,35 +43,58 @@ class RakePlus
      * the key phrases from the text. If the language file is not
      * found a RuntimeException will be thrown.
      *
-     * @param string $text
-     * @param string $language (Default is en_US)
+     * If $language is a string the library will attempt to load
+     * the stopwords from the lang/xxxx.php file. Alternatively
+     * you can pass a flat array containing the string directly.
+     *
+     * @param string       $text
+     * @param string|array $language (Default is en_US)
      *
      * @return RakePlus
      */
     public static function create($text, $language = 'en_US')
     {
-        return (new self($text, $language))->extract($text, $language);
+        return (new self($text, $language));
     }
 
     /**
      * Extracts the key phrases from the text. If the language file is not
      * found a RuntimeException will be thrown.
      *
-     * @param string $text
-     * @param string $language (Default is en_US)
+     *
+     * If $language is a string the library will attempt to load
+     * the stopwords from the lang/xxxx.php file. Alternatively
+     * you can pass a flat array containing the string directly.
+     *
+     * @param string       $text
+     * @param string|array $language (Default is en_US)
      *
      * @return RakePlus
      */
     public function extract($text, $language = 'en_US')
     {
         if (!empty(trim($text))) {
-            if (is_null($this->language_file) || ($this->language != $language)) {
-                $language_file = '../lang/' . $language . '.php';
-                $this->stopwords = $this->loadLanguageFile($language_file);
+            if (is_array($language)) {
+                if (count($language) > 0) {
+                    $this->stopwords = $language;
+                    $this->stopword_pattern = $this->buildStopwordRegex($this->stopwords);
+                } else {
+                    throw new \RuntimeException('The language array can not be empty.');
+                }
+            } else {
+                if (empty($this->language_file) || ($this->language != $language)) {
+                    if (strpos($language, DIRECTORY_SEPARATOR) !== false) {
+                        $language_file = $language;
+                    } else {
+                        $language_file = __DIR__ . '/../lang/' . $language . '.php';
+                    }
 
-                $this->language = $language;
-                $this->language_file = $language_file;
-                $this->stopword_pattern = $this->buildStopwordRegex($this->stopwords);
+                    $this->stopwords = $this->loadLanguageFile($language_file);
+
+                    $this->language = $language;
+                    $this->language_file = $language_file;
+                    $this->stopword_pattern = $this->buildStopwordRegex($this->stopwords);
+                }
             }
 
             $sentences = $this->splitSentences($text);
@@ -238,7 +265,7 @@ class RakePlus
      */
     private function getPhrases(array $sentences, $pattern)
     {
-        $phrases = [];
+        $results = [];
 
         foreach ($sentences as $sentence) {
             $phrases_temp = preg_replace($pattern, '|', $sentence);
@@ -247,12 +274,12 @@ class RakePlus
             foreach ($phrases as $phrase) {
                 $phrase = strtolower(trim($phrase));
                 if ($phrase != '') {
-                    $phrases[] = $phrase;
+                    $results[] = $phrase;
                 }
             }
         }
 
-        return $phrases;
+        return $results;
     }
 
     /**
@@ -286,8 +313,8 @@ class RakePlus
 
         $scores = [];
         foreach ($frequencies as $word => $freq) {
-            $scores[$word] = (isset($scores[$word]))? $scores[$word] : 0;
-            $scores[$word] = $degrees[$word] / (float) $freq;
+            $scores[$word] = (isset($scores[$word])) ? $scores[$word] : 0;
+            $scores[$word] = $degrees[$word] / (float)$freq;
         }
 
         return $scores;

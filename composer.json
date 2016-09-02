@@ -30,7 +30,7 @@
   },
   "autoload": {
     "psr-4": {
-      "DonatelloZa\\rake-php-plus\\": "src/"
+      "DonatelloZa\\RakePlus\\": "src/"
     }
   },
   "autoload-dev": {
