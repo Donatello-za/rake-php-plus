@@ -1,5 +1,6 @@
 {
   "name": "Donatello-za/rake-php-plus",
+  "type": "library",
   "description": "Yet another PHP implementation of the Rapid Automatic Keyword Extraction algorithm (RAKE).",
   "keywords": [
     "rake",
@@ -9,6 +10,11 @@
     "extraction",
     "algorithm"
   ],
+  "homepage": "https://github.com/Donatello-za/rake-php-plus",
+  "support": {
+    "issues": "https://github.com/Donatello-za/rake-php-plus/issues",
+    "source": "https://github.com/Donatello-za/rake-php-plus"
+  },
   "license": "MIT",
   "authors": [
     {
@@ -19,14 +25,26 @@
   "require": {
     "php": ">=5.4.0"
   },
+  "require-dev": {
+    "phpunit/phpunit": "~4.0|~5.0"
+  },
   "autoload": {
     "psr-4": {
-      "Donatello-za\\rake-php-plus\\": "src/"
+      "DonatelloZa\\rake-php-plus\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests/"
     }
   },
   "extra": {
     "branch-alias": {
       "dev-master": "0.1-dev"
     }
+  },
+  "scripts": {
+    "test": "./vendor/bin/phpunit;",
+    "phpunit": "./vendor/bin/phpunit;"
   }
 }
