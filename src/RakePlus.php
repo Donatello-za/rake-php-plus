@@ -84,7 +84,7 @@ class RakePlus
      *
      * @return array
      */
-    public function phrases()
+    public function get()
     {
         return array_keys($this->phrase_scores);
     }
@@ -127,7 +127,7 @@ class RakePlus
      *
      * @return $this
      */
-    public function sortByPhrase($order = 'asc')
+    public function sort($order = 'asc')
     {
         if (strtolower(trim($order)) == 'desc') {
             krsort($this->phrase_scores);
