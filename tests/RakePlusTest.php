@@ -317,4 +317,13 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($scores['minimal generating sets'], 8.5);
         $this->assertEquals($scores['linear diophantine equations'], 9);
     }
+
+    public function testNewPhrasesSortedValuesAsc()
+    {
+        $text = "A fast Fourier transform (FFT) algorithm computes...";
+
+        $phrases = RakePlus::create($text)->sort()->get();
+
+        print_r($phrases);
+    }
 }

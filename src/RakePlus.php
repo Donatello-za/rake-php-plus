@@ -25,8 +25,10 @@ class RakePlus
      * file is not found a RuntimeException will be thrown.
      *
      * If $language is a string the library will attempt to load
-     * the stopwords from the lang/xxxx.php file. Alternatively
-     * you can pass a flat array containing the string directly.
+     * the stopwords from the lang/xxxx.php file. If $language is
+     * a string and contains directory separators, it is used
+     * directly as a filename. Finally,  you can also pass a flat
+     * array containing the stopwords directly.
      *
      * @param string|null  $text
      * @param string|array $language (Default is en_US)
@@ -44,8 +46,10 @@ class RakePlus
      * found a RuntimeException will be thrown.
      *
      * If $language is a string the library will attempt to load
-     * the stopwords from the lang/xxxx.php file. Alternatively
-     * you can pass a flat array containing the string directly.
+     * the stopwords from the lang/xxxx.php file. If $language is
+     * a string and contains directory separators, it is used
+     * directly as a filename. Finally,  you can also pass a flat
+     * array containing the stopwords directly.
      *
      * @param string       $text
      * @param string|array $language (Default is en_US)
@@ -61,10 +65,11 @@ class RakePlus
      * Extracts the key phrases from the text. If the language file is not
      * found a RuntimeException will be thrown.
      *
-     *
      * If $language is a string the library will attempt to load
-     * the stopwords from the lang/xxxx.php file. Alternatively
-     * you can pass a flat array containing the string directly.
+     * the stopwords from the lang/xxxx.php file. If $language is
+     * a string and contains directory separators, it is used
+     * directly as a filename. Finally,  you can also pass a flat
+     * array containing the stopwords directly.
      *
      * @param string       $text
      * @param string|array $language (Default is en_US)
