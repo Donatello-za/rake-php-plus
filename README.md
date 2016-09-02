@@ -29,7 +29,7 @@ text is English (US).
 
 ```php
 
-use DonatelloZa\RakePlus;
+use DonatelloZa\RakePlus\RakePlus;
 
 $text = "Criteria of compatibility of a system of linear Diophantine equations, " . 
     "strict inequations, and nonstrict inequations are considered. Upper bounds " .
