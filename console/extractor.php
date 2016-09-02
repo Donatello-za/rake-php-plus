@@ -10,7 +10,7 @@
  *
  * Usage:
  *
- * php -q extractor.php stopwords.txt
+ * php -q extractor.php stopwords_en_US.txt
  *
  */
 
@@ -18,7 +18,7 @@ if ($argc < 2) {
     echo "\n";
     echo "Error: Please specify the filename of the stopwords file to extract.\n";
     echo "Example:\n";
-    echo "  php -q extractor.php stopwords.txt\n";
+    echo "  php -q extractor.php stopwords_en_US.txt\n";
     echo "\n";
     exit(1);
 }
@@ -61,7 +61,7 @@ if (count($stopwords) > 0) {
     echo " * Extracted using extractor.php @ {$timestamp} \n";
     echo " */\n";
     echo "\n";
-    echo '$rake_stopwords = [' . "\n";
+    echo 'return [' . "\n";
 
     for ($i = 0; $i < $stopword_count; $i++) {
         if ($i == ($stopword_count - 1)) {

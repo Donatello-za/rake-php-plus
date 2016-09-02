@@ -4,10 +4,10 @@
  * Stopwords list built by Gerard Salton and Chris Buckley.
  * Source: http://www.lextek.com/manuals/onix/stopwords2.html
  *
- * Extracted using extractor.php @ 2016-09-02T12:50:58+00:00
+ * Extracted using extractor.php @ 2016-09-02T14:47:37+00:00
  */
 
-$rake_stopwords = [
+return [
     'a',
     'a\'s',
     'able',
