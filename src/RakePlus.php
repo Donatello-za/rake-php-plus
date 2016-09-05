@@ -10,100 +10,133 @@ class RakePlus
     /** @var string */
     protected $language_file = "";
 
-    /** @var array */
-    protected $stopwords = [];
-
-    /** @var string */
-    private $stopword_pattern = [];
+    /** @var string|null */
+    private $pattern = null;
 
     /** @var array */
     private $phrase_scores = [];
 
     /**
      * RakePlus constructor. Instantiates RakePlus and extracts
-     * the key phrases from the text if supplied. If the language
-     * file is not found a RuntimeException will be thrown.
+     * the key phrases from the text if supplied.
      *
-     * If $language is a string the library will attempt to load
-     * the stopwords from the lang/xxxx.php file. If $language is
-     * a string and contains directory separators, it is used
-     * directly as a filename. Finally,  you can also pass a flat
-     * array containing the stopwords directly.
+     * If $stopwords is a string the method will:
      *
-     * @param string|null  $text
-     * @param string|array $language (Default is en_US)
+     * 1) Determine if it is has a .pattern or .php extension and if
+     *    so will attempt to load the stopwords from the specified path
+     *    and filename.
+     * 2) If it does not have a .pattern or .php extension, it will assume
+     *    that a language string was specified and will then attempt to
+     *    read the stopwords from lang/xxxx.pattern or lang/xxxx.php, where
+     *    xxxx is the language string (default: en_US)
+     *
+     * If $stopwords os an array it will simply use the array of stopwords
+     * as provided.
+     *
+     * If $stopwords is a derived instance of StopwordAbstract it will simply
+     * retrieve the stopwords from the instance.
+     *
+     * @param string|null                           $text
+     * @param AbstractStopwordProvider|string|array $stopwords
      */
-    public function __construct($text = null, $language = 'en_US')
+    public function __construct($text = null, $stopwords = 'en_US')
     {
         if (!is_null($text)) {
-            $this->extract($text, $language);
+            $this->extract($text, $stopwords);
         }
     }
 
     /**
      * Instantiates a RakePlus instance and extracts
-     * the key phrases from the text. If the language file is not
-     * found a RuntimeException will be thrown.
+     * the key phrases from the text.
      *
-     * If $language is a string the library will attempt to load
-     * the stopwords from the lang/xxxx.php file. If $language is
-     * a string and contains directory separators, it is used
-     * directly as a filename. Finally,  you can also pass a flat
-     * array containing the stopwords directly.
+     * If $stopwords is a string the method will:
      *
-     * @param string       $text
-     * @param string|array $language (Default is en_US)
+     * 1) Determine if it is has a .pattern or .php extension and if
+     *    so will attempt to load the stopwords from the specified path
+     *    and filename.
+     * 2) If it does not have a .pattern or .php extension, it will assume
+     *    that a language string was specified and will then attempt to
+     *    read the stopwords from lang/xxxx.pattern or lang/xxxx.php, where
+     *    xxxx is the language string (default: en_US)
+     *
+     * If $stopwords os an array it will simply use the array of stopwords
+     * as provided.
+     *
+     * If $stopwords is a derived instance of StopwordAbstract it will simply
+     * retrieve the stopwords from the instance.
+     *
+     * @param string|null                           $text
+     * @param AbstractStopwordProvider|string|array $stopwords
      *
      * @return RakePlus
      */
-    public static function create($text, $language = 'en_US')
+    public static function create($text, $stopwords = 'en_US')
     {
-        return (new self($text, $language));
+        return (new self($text, $stopwords));
     }
 
     /**
-     * Extracts the key phrases from the text. If the language file is not
-     * found a RuntimeException will be thrown.
+     * Extracts the key phrases from the text.
      *
-     * If $language is a string the library will attempt to load
-     * the stopwords from the lang/xxxx.php file. If $language is
-     * a string and contains directory separators, it is used
-     * directly as a filename. Finally,  you can also pass a flat
-     * array containing the stopwords directly.
+     * If $stopwords is a string the method will:
      *
-     * @param string       $text
-     * @param string|array $language (Default is en_US)
+     * 1) Determine if it is has a .pattern or .php extension and if
+     *    so will attempt to load the stopwords from the specified path
+     *    and filename.
+     * 2) If it does not have a .pattern or .php extension, it will assume
+     *    that a language string was specified and will then attempt to
+     *    read the stopwords from lang/xxxx.pattern or lang/xxxx.php, where
+     *    xxxx is the language string (default: en_US)
+     *
+     * If $stopwords os an array it will simply use the array of stopwords
+     * as provided.
+     *
+     * If $stopwords is a derived instance of StopwordAbstract it will simply
+     * retrieve the stopwords from the instance.
+     *
+     * @param string                                $text
+     * @param AbstractStopwordProvider|string|array $stopwords
      *
      * @return RakePlus
      */
-    public function extract($text, $language = 'en_US')
+    public function extract($text, $stopwords = 'en_US')
     {
         if (!empty(trim($text))) {
-            if (is_array($language)) {
-                if (count($language) > 0) {
-                    $this->stopwords = $language;
-                    $this->stopword_pattern = $this->buildStopwordRegex($this->stopwords);
-                } else {
-                    throw new \RuntimeException('The language array can not be empty.');
-                }
-            } else {
-                if (empty($this->language_file) || ($this->language != $language)) {
-                    if (strpos($language, DIRECTORY_SEPARATOR) !== false) {
-                        $language_file = $language;
-                    } else {
-                        $language_file = __DIR__ . '/../lang/' . $language . '.php';
+            if (is_array($stopwords)) {
+                $this->pattern = StopwordArray::create($stopwords)->pattern();
+            } else if (is_string($stopwords)) {
+                if (is_null($this->pattern) || ($this->language != $stopwords)) {
+                    $extension = strtolower(pathinfo($stopwords, PATHINFO_EXTENSION));
+                    if (empty($extension)) {
+                        // First try the .pattern file
+                        $this->language_file = StopwordsPatternFile::languageFile($stopwords);
+                        if (file_exists($this->language_file)) {
+                            $this->pattern = StopwordsPatternFile::create($this->language_file)->pattern();
+                        } else {
+                            $this->language_file = StopwordsPHP::languageFile($stopwords);
+                            $this->pattern = StopwordsPHP::create($this->language_file)->pattern();
+                        }
+                        $this->language = $stopwords;
+                    } else if ($extension == 'pattern') {
+                        $this->language = $stopwords;
+                        $this->language_file = $stopwords;
+                        $this->pattern = StopwordsPatternFile::create($this->language_file)->pattern();
+                    } else if ($extension == 'php') {
+                        $language_file = $stopwords;
+                        $this->language = $stopwords;
+                        $this->language_file = $language_file;
+                        $this->pattern = StopwordsPHP::create($this->language_file)->pattern();
                     }
-
-                    $this->stopwords = $this->loadLanguageFile($language_file);
-
-                    $this->language = $language;
-                    $this->language_file = $language_file;
-                    $this->stopword_pattern = $this->buildStopwordRegex($this->stopwords);
                 }
+            } else if ($stopwords instanceof AbstractStopwordProvider) {
+                $this->pattern = $stopwords->pattern();
+            } else {
+                throw new \InvalidArgumentException('Invalid stopwords list provided for RakePlus.');
             }
 
             $sentences = $this->splitSentences($text);
-            $phrases = $this->getPhrases($sentences, $this->stopword_pattern);
+            $phrases = $this->getPhrases($sentences, $this->pattern);
             $word_scores = $this->calcWordScores($phrases);
             $this->phrase_scores = $this->calcPhraseScores($phrases, $word_scores);
         }
@@ -189,63 +222,6 @@ class RakePlus
     public function languageFile()
     {
         return $this->language_file;
-    }
-
-    /**
-     * Returns an array containing all the RAKE stopwords
-     * that is currently loaded.
-     *
-     * @return array
-     */
-    public function stopwords()
-    {
-        return $this->stopwords;
-    }
-
-    /**
-     * Loads the specified language file and returns with the results.
-     *
-     * @param string $language_file
-     *
-     * @return array
-     */
-    protected function loadLanguageFile($language_file)
-    {
-        if (!file_exists($language_file)) {
-            throw new \RuntimeException('Could not find the RAKE stopwords file: ' . $language_file);
-        } else {
-            /** @noinspection PhpIncludeInspection */
-            $stopwords = include($language_file);
-
-            if (is_array($stopwords)) {
-                if (count($stopwords) < 1) {
-                    throw new \RuntimeException('No words found in RAKE stopwords file: ' . $language_file);
-                } else {
-                    return $stopwords;
-                }
-            } else {
-                throw new \RuntimeException('Invalid results retrieved from RAKE stopwords file: ' . $language_file);
-            }
-        }
-    }
-
-    /**
-     * Builds a string containing a big regular expression with all the
-     * stopwords in it.
-     *
-     * @param array $stopwords
-     *
-     * @return string
-     */
-    private function buildStopwordRegex(array $stopwords)
-    {
-        $regex_array = [];
-
-        foreach ($stopwords as $word) {
-            $regex_array[] = '\b' . $word . '\b';
-        }
-
-        return '/' . implode('|', $regex_array) . '/i';
     }
 
     /**

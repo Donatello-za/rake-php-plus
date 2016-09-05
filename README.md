@@ -1,12 +1,24 @@
 # rake-php-plus
 Yet another PHP implementation of the Rapid Automatic Keyword Extraction algorithm (RAKE).
 
-This project is based on another project: [RAKE-PHP](https://github.com/Richdark/RAKE-PHP) by Richard Filipčík, which
-in turn was based from a Python implementation: [RAKE](https://github.com/aneesha/RAKE)
+**IMPORTANT: This package have not yet been released and is still in early development stages.**
 
-As described in: ROSE, Stuart, et al. Automatic keyword extraction from individual documents. Text Mining, 2010, 1-20.
 
-This particular package intends to include the following benefits over the original RAKE-PHP package:
+## What is this package useful for?
+
+Keywords describe the main topics expressed in a document/text. Keyword *extraction* in turn allows for the extraction 
+of important words and phrases from text. This in turn can be used for building a list of tags or to build a keyword 
+search index or grouping similar content by its topics and much more. This library provides an easy method for PHP 
+developers to get a list of keywords and phrases from a string of text.
+
+This project is based on another project called [RAKE-PHP](https://github.com/Richdark/RAKE-PHP) by Richard Filipčík, 
+which is a translation from a Python implementation simply called [RAKE](https://github.com/aneesha/RAKE).
+
+*As described in: Rose, S., Engel, D., Cramer, N., & Cowley, W. (2010). Automatic Keyword Extraction from Individual 
+Documents. In M. W. Berry & J. Kogan (Eds.), Text Mining: Theory and Applications: John Wiley & Sons.*
+
+This particular package intends to include the following benefits over the original 
+[RAKE-PHP](https://github.com/Richdark/RAKE-PHP) package:
 
 1. Add [PSR-2](http://www.php-fig.org/psr/psr-2/) coding standards.
 2. Implement [PSR-4](http://www.php-fig.org/psr/psr-4/) in order to be [Composer](https://getcomposer.org) installable.
@@ -15,11 +27,10 @@ This particular package intends to include the following benefits over the origi
 5. Full unit test coverage.
 6. Performance improvements.
 7. Improved documentation.
-8. Easy Laravel installation/integration.
 
 ## Version
 
-0.1 Alpha **Note, the package is not yet ready for usage but will be within the next few days.**
+0.1 Alpha
 
 ## Example 1
 
@@ -200,16 +211,64 @@ You can provide custom stopwords in three different ways:
 use DonatelloZa\RakePlus;
 
 // 1: The standard way (provide a language code)
+//    RakePlus will first look for ./lang/en_US.pattern, if
+//    not found, it will look for ./lang/en_US.php.
 $rake = RakePlus::create($text, 'en_US');
 
 // 2: Pass an array containing stopwords
 $rake = RakePlus::create($text, ['a', 'able', 'about', 'above', ...]);
 
-// 3: Pass the name of the PHP file that returns an array of stopwords, 
-//    see lang/en_US.php
-$rake = RakePlus::create($text, '/path/to/my/stopwords.php');
+// 3: Pass the name of a PHP or pattern file, 
+//    see lang/en_US.php and lang/en_US.pattern for examples.
+$rake = RakePlus::create($text, '/path/to/my/stopwords.pattern');
 
 ```
+
+## The keyword extractor tool
+
+The library requires a list of "stopwords". Stopwords are common words
+used in a language such as "and", "are", "or", etc. A list of such stopwords
+can be found [here](http://www.lextek.com/manuals/onix/stopwords2.html). You
+can copy and paste the text into a text file and use the extractor tool to
+convert it into a format that this library can read efficiently. *An example
+of such a stopwords file that have been copied from the hyperlink above have 
+been included for your convenience (console/stopwords_en_US.txt)*
+
+To extract and convert such a file, run the following from the command line:
+
+`$ php -q extractor.php stopwords_en_US.txt`
+
+It will output the results to the terminal. You will notice that the results looks
+like PHP and in fact it is. You can write the results directly to a PHP file by
+piping it:
+
+`$ php -q extractor.php stopwords_en_US.txt > en_US.php` 
+
+Finally, copy the `en_US.php` file to the `lang/` directory (you may have to
+set its permissions for the web server to execute it) and then instantiate php-rake-plus
+like so:
+
+```php
+$rake = RakePlus::create($text, 'en_US');
+```
+To improve the initial loading speed of the language file within RakePlus, you
+can also set the exporter to produce the results as a regular expression pattern
+using the `-p` switch:
+
+`$ php -q extractor.php stopwords_en_US.txt -p > en_US.pattern` 
+
+RakePHP will always first look for a .pattern file and if not found will look
+for a .php file in the ./lang/ directory.
+
+Finally, you can create your own stopword provider classes by extending the
+`AbstractStopwordProvider` class and passing an instance of your class to RakePlus,
+here is an example:
+
+```php
+$stopwords = StopwordArray::create(['a', 'able', 'about', 'above', ...]);
+$rake = RakePlus::create($text, $stopwords);
+```
+
 
 ## License
 
