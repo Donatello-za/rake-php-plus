@@ -1,9 +1,6 @@
 # rake-php-plus
 Yet another PHP implementation of the Rapid Automatic Keyword Extraction algorithm (RAKE).
 
-**IMPORTANT: This package have not yet been released and is still in early development stages.**
-
-
 ## What is this package useful for?
 
 Keywords describe the main topics expressed in a document/text. Keyword *extraction* in turn allows for the extraction 
@@ -30,7 +27,7 @@ This particular package intends to include the following benefits over the origi
 
 ## Version
 
-0.1 Alpha
+1.0 Beta
 
 ## Example 1
 
