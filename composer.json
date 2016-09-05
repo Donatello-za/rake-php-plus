@@ -1,5 +1,5 @@
 {
-  "name": "Donatello-za/rake-php-plus",
+  "name": "donatello-za/rake-php-plus",
   "type": "library",
   "description": "Yet another PHP implementation of the Rapid Automatic Keyword Extraction algorithm (RAKE).",
   "keywords": [
