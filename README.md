@@ -204,7 +204,7 @@ $phrases = (new RakePlus($text))->get();
 
 ## Example 4
 
-You can provide custom stopwords in three different ways:
+You can provide custom stopwords in four different ways:
 
 ```php
 
@@ -222,7 +222,13 @@ $rake = RakePlus::create($text, ['a', 'able', 'about', 'above', ...]);
 //    see lang/en_US.php and lang/en_US.pattern for examples.
 $rake = RakePlus::create($text, '/path/to/my/stopwords.pattern');
 
+// 4: Create an instance of one of the stopword provider classes (or
+      create your own) and pass that to RakePlus:
+$stopwords = StopwordArray::create(['a', 'able', 'about', 'above', ...]);
+$rake = RakePlus::create($text, $stopwords);
+
 ```
+
 
 ## The keyword extractor tool
 
@@ -259,15 +265,6 @@ using the `-p` switch:
 
 RakePHP will always first look for a .pattern file and if not found will look
 for a .php file in the ./lang/ directory.
-
-Finally, you can create your own stopword provider classes by extending the
-`AbstractStopwordProvider` class and passing an instance of your class to RakePlus,
-here is an example:
-
-```php
-$stopwords = StopwordArray::create(['a', 'able', 'about', 'above', ...]);
-$rake = RakePlus::create($text, $stopwords);
-```
 
 
 ## License
