@@ -223,7 +223,7 @@ $rake = RakePlus::create($text, ['a', 'able', 'about', 'above', ...]);
 $rake = RakePlus::create($text, '/path/to/my/stopwords.pattern');
 
 // 4: Create an instance of one of the stopword provider classes (or
-      create your own) and pass that to RakePlus:
+//    create your own) and pass that to RakePlus:
 $stopwords = StopwordArray::create(['a', 'able', 'about', 'above', ...]);
 $rake = RakePlus::create($text, $stopwords);
 
