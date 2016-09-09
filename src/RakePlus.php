@@ -15,6 +15,13 @@ class RakePlus
 
     /** @var array */
     private $phrase_scores = [];
+    
+    /** @var int */
+    private $minLength = 3;
+    
+    const ORDER_ASC = 'asc';
+    
+    const ORDER_DESC = 'desc';
 
     /**
      * RakePlus constructor. Instantiates RakePlus and extracts
@@ -38,9 +45,11 @@ class RakePlus
      *
      * @param string|null                           $text
      * @param AbstractStopwordProvider|string|array $stopwords
+     * @param int                                   $phraseMinLegth
      */
-    public function __construct($text = null, $stopwords = 'en_US')
+    public function __construct($text = null, $stopwords = 'en_US', $phraseMinLegth = 0)
     {
+        $this->setMinLength($phraseMinLegth);
         if (!is_null($text)) {
             $this->extract($text, $stopwords);
         }
@@ -68,12 +77,13 @@ class RakePlus
      *
      * @param string|null                           $text
      * @param AbstractStopwordProvider|string|array $stopwords
-     *
+     * @param int                                   $phraseMinLegth
+     * 
      * @return RakePlus
      */
-    public static function create($text, $stopwords = 'en_US')
+    public static function create($text, $stopwords = 'en_US', $phraseMinLegth = 0)
     {
-        return (new self($text, $stopwords));
+        return (new self($text, $stopwords, $phraseMinLegth));
     }
 
     /**
@@ -129,7 +139,7 @@ class RakePlus
                         $this->pattern = StopwordsPHP::create($this->language_file)->pattern();
                     }
                 }
-            } else if ($stopwords instanceof AbstractStopwordProvider) {
+            } elseif ($stopwords instanceof AbstractStopwordProvider) {
                 $this->pattern = $stopwords->pattern();
             } else {
                 throw new \InvalidArgumentException('Invalid stopwords list provided for RakePlus.');
@@ -173,9 +183,9 @@ class RakePlus
      *
      * @return $this
      */
-    public function sortByScore($order = 'asc')
+    public function sortByScore($order = self::ORDER_ASC)
     {
-        if (strtolower(trim($order)) == 'desc') {
+        if ($order == self::ORDER_DESC) {
             arsort($this->phrase_scores);
         } else {
             asort($this->phrase_scores);
@@ -192,9 +202,9 @@ class RakePlus
      *
      * @return $this
      */
-    public function sort($order = 'asc')
+    public function sort($order = self::ORDER_ASC)
     {
-        if (strtolower(trim($order)) == 'desc') {
+        if ($order == self::ORDER_DESC) {
             krsort($this->phrase_scores);
         } else {
             ksort($this->phrase_scores);
@@ -233,7 +243,8 @@ class RakePlus
      */
     private function splitSentences($text)
     {
-        return preg_split('/[.?!,;\-"\'\(\)\\\x{2018}\x{2019}\x{2013}\t]+/u', $text);
+        $text = preg_replace('/\n/', ' ', $text);
+        return preg_split('/[\/:.\?!,;\-"\'\(\)\\\x{2018}\x{2019}\x{2013}\n\t]+/u', $text);
     }
 
     /**
@@ -253,8 +264,15 @@ class RakePlus
             $phrases = explode('|', $phrases_temp);
 
             foreach ($phrases as $phrase) {
-                $phrase = strtolower(trim($phrase));
-                if ($phrase != '') {
+                $phrase = trim($phrase);
+                if (function_exists('mb_strtolower')) {
+                    $phrase = mb_strtolower($phrase);
+                } else {
+                    $phrase = strtolower($phrase);
+                }
+                if ($phrase != '' && !is_numeric($phrase) 
+                        && ($this->minLength === 0
+                        || strlen($phrase) >= $this->minLength)) {
                     $results[] = $phrase;
                 }
             }
@@ -348,5 +366,28 @@ class RakePlus
         }
 
         return $words;
+    }
+    
+    /**
+     * Returns minimum number of letters each phrase must have.
+     * 
+     * @return int
+     */
+    public function getMinLength() {
+        return $this->minLength;
+    }
+
+    /**
+     * Set the minimum length of a phrase that will be taken for further analysis.
+     * @param int $minLength
+     * @return \DonatelloZa\RakePlus\RakePlus
+     */
+    public function setMinLength($minLength) {
+        $minLengthValue = (int)$minLength;
+        if ($minLengthValue < 0) {
+            throw new \InvalidArgumentException('Minimum phrase length must be grater or equal then 0.');
+        }
+        $this->minLength = $minLengthValue;
+        return $this;
     }
 }

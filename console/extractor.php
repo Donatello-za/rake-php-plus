@@ -123,7 +123,7 @@ function render_pattern_output(array $stopwords)
         $regex[] = '\b' . $word . '\b';
     }
 
-    echo '/' . implode('|', $regex) . '/i' . "\n";
+    echo '/' . implode('|', $regex) . '/iu' . "\n";
 }
 
 /**
