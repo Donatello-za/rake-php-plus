@@ -27,7 +27,7 @@ This particular package intends to include the following benefits over the origi
 
 ## Version
 
-1.0 Beta
+1.0.1 Beta
 
 ## Example 1
 
