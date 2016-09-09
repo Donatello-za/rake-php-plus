@@ -1,6 +1,10 @@
 # rake-php-plus
 Yet another PHP implementation of the Rapid Automatic Keyword Extraction algorithm (RAKE).
 
+[![Latest Stable Version](https://poser.pugx.org/donatello-za/rake-php-plus/v/stable)](https://packagist.org/packages/donatello-za/rake-php-plus)
+[![Total Downloads](https://poser.pugx.org/donatello-za/rake-php-plus/downloads)](https://packagist.org/packages/donatello-za/rake-php-plus)
+[![License](https://poser.pugx.org/donatello-za/rake-php-plus/license)](https://packagist.org/packages/donatello-za/rake-php-plus)
+
 ## What is this package useful for?
 
 Keywords describe the main topics expressed in a document/text. Keyword *extraction* in turn allows for the extraction 
