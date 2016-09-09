@@ -1,15 +1,26 @@
 <?php
 
-namespace Tests;
+namespace DonatelloZa\RakePlus;
 
-use DonatelloZa\RakePlus\RakePlus;
-use DonatelloZa\RakePlus\StopwordArray;
-use DonatelloZa\RakePlus\StopwordsPatternFile;
-use DonatelloZa\RakePlus\StopwordsPHP;
 use PHPUnit_Framework_TestCase;
+
+function function_exists($function)
+{
+    if ($function === 'mb_strtolower') {
+        return RakePlusTest::$mb_strtolower_exists;
+    }
+    return \function_exists($function);
+}
 
 class RakePlusTest extends PHPUnit_Framework_TestCase
 {
+    public static $mb_strtolower_exists = true;
+
+    protected function setUp()
+    {
+        self::$mb_strtolower_exists = true;
+    }
+
     public function testInstanceOf()
     {
         $rake = RakePlus::create("Hello World");
@@ -123,6 +134,43 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
     {
         $language_file = RakePlus::create("Hello World")->languageFile();
         $this->assertContains("/lang/en_US.pattern", $language_file);
+    }
+
+    public function testArrayProvider()
+    {
+        $text = "Criteria of compatibility of a system of linear Diophantine equations, " .
+            "strict inequations, and nonstrict inequations are considered. Upper bounds " .
+            "for components of a minimal set of solutions and algorithms of construction " .
+            "of minimal generating sets of solutions for all types of systems are given.";
+
+        $stopwords = StopwordArray::create(['of', 'a', 'and', 'set', 'are', 'for']);
+        RakePlus::create($text, $stopwords);
+    }
+
+    public function testNonMbPhrases()
+    {
+        self::$mb_strtolower_exists = false;
+
+        $text = "Criteria of compatibility of a system of linear Diophantine equations, " .
+            "strict inequations, and nonstrict inequations are considered. Upper bounds " .
+            "for components of a minimal set of solutions and algorithms of construction " .
+            "of minimal generating sets of solutions for all types of systems are given.";
+
+        RakePlus::create($text)->get();
+    }
+
+    public function testGetMinLength()
+    {
+        $rake = RakePlus::create("Hello World")->setMinLength(20);
+        $this->assertEquals(20, $rake->getMinLength());
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testSetInvalidMinLength()
+    {
+        RakePlus::create("Hello World")->setMinLength(-1);
     }
 
     public function testPhrasesExtract()

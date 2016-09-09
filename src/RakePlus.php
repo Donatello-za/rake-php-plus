@@ -139,7 +139,7 @@ class RakePlus
                         $this->pattern = StopwordsPHP::create($this->language_file)->pattern();
                     }
                 }
-            } elseif ($stopwords instanceof AbstractStopwordProvider) {
+            } elseif (is_subclass_of($stopwords, AbstractStopwordProvider::class)) {
                 $this->pattern = $stopwords->pattern();
             } else {
                 throw new \InvalidArgumentException('Invalid stopwords list provided for RakePlus.');
@@ -379,13 +379,15 @@ class RakePlus
 
     /**
      * Set the minimum length of a phrase that will be taken for further analysis.
+     *
      * @param int $minLength
+     *
      * @return \DonatelloZa\RakePlus\RakePlus
      */
     public function setMinLength($minLength) {
         $minLengthValue = (int)$minLength;
         if ($minLengthValue < 0) {
-            throw new \InvalidArgumentException('Minimum phrase length must be grater or equal then 0.');
+            throw new \InvalidArgumentException('Minimum phrase length must be greater than or equal to 0.');
         }
         $this->minLength = $minLengthValue;
         return $this;
