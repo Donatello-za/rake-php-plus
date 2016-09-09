@@ -29,6 +29,47 @@ This particular package intends to include the following benefits over the origi
 
 1.0.1 Beta
 
+## Special Thanks
+
+Special thanks goes out to [Jarosław Wasilewski](https://github.com/Orajo) for his contribution in adding the Polish
+language and improving multi-byte support.
+
+## Installation
+
+### With Composer
+
+`$ composer require donatello-za/rake-php-plus`
+
+```json
+{
+    "require": {
+        "donatello-za/rake-php-plus": "~1.0"
+    }
+}
+```
+
+```php
+<?php
+require 'vendor/autoload.php';
+
+use DonatelloZa\RakePlus\RakePlus;
+```
+
+### Without Composer
+
+```php
+<?php
+
+require 'path/to/AbstractStopwordProvider.php'
+require 'path/to/StopwordArray.php'
+require 'path/to/StopwordsPatternFile.php'
+require 'path/to/StopwordsPHP.php'
+require 'path/to/RakePlus.php'
+
+use DonatelloZa\RakePlus\RakePlus;
+
+```
+
 ## Example 1
 
 Creates a new instance of RakePlus, extract the phrases and return the results. Assumes that the specified
