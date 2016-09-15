@@ -195,11 +195,18 @@ class RakePlus
         foreach ($phrases as $phrase) {
             $words = explode(' ', $phrase);
             foreach ($words as $word) {
-                $keywords[$word] = true;
+                // This may look weird to the casual observer
+                // but we do this since PHP will convert string
+                // array keys that look like integers to actual
+                // integers. This may cause problems further
+                // down the line when a developer attempts to
+                // append arrays to one another and one of them
+                // have a mix of integer and string keys.
+                $keywords[$word] = $word;
             }
         }
 
-        return array_keys($keywords);
+        return array_values($keywords);
     }
 
     /**

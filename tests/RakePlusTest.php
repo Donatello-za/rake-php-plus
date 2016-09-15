@@ -589,4 +589,24 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
         $this->assertContains('types', $keywords);
         $this->assertContains('systems', $keywords);
     }
+
+    public function testKeywordsWithNumbers()
+    {
+        $text = "6462 Little Crest Suite 413, Lake Carlietown, WA 12643";
+        $keywords = RakePlus::create($text, 'en_US', 0, false)->keywords();
+
+        $this->assertCount(8, $keywords);
+
+        $this->assertContains('6462', $keywords);
+        $this->assertContains('crest', $keywords);
+        $this->assertContains('suite', $keywords);
+        $this->assertContains('lake', $keywords);
+        $this->assertContains('carlietown', $keywords);
+        $this->assertContains('wa', $keywords);
+        $this->assertContains('12643', $keywords);
+
+        foreach ($keywords as $keyword) {
+            $this->assertInternalType('string', $keyword);
+        }
+    }
 }
