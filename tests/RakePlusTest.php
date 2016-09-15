@@ -554,4 +554,39 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($scores['minimal generating sets'], 8.5);
         $this->assertEquals($scores['linear diophantine equations'], 9);
     }
+
+    public function testKeywords()
+    {
+        $text = "Criteria of compatibility of a system of linear Diophantine equations, " .
+            "strict inequations, and nonstrict inequations are considered. Upper bounds " .
+            "for components of a minimal set of solutions and algorithms of construction " .
+            "of minimal generating sets of solutions for all types of systems are given.";
+
+        $keywords = RakePlus::create($text)->keywords();
+
+        $this->assertCount(22, $keywords);
+
+        $this->assertContains('criteria', $keywords);
+        $this->assertContains('compatibility', $keywords);
+        $this->assertContains('system', $keywords);
+        $this->assertContains('linear', $keywords);
+        $this->assertContains('diophantine', $keywords);
+        $this->assertContains('equations', $keywords);
+        $this->assertContains('strict', $keywords);
+        $this->assertContains('inequations', $keywords);
+        $this->assertContains('nonstrict', $keywords);
+        $this->assertContains('considered', $keywords);
+        $this->assertContains('upper', $keywords);
+        $this->assertContains('bounds', $keywords);
+        $this->assertContains('components', $keywords);
+        $this->assertContains('minimal', $keywords);
+        $this->assertContains('set', $keywords);
+        $this->assertContains('solutions', $keywords);
+        $this->assertContains('algorithms', $keywords);
+        $this->assertContains('construction', $keywords);
+        $this->assertContains('generating', $keywords);
+        $this->assertContains('sets', $keywords);
+        $this->assertContains('types', $keywords);
+        $this->assertContains('systems', $keywords);
+    }
 }

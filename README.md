@@ -31,7 +31,7 @@ This particular package intends to include the following benefits over the origi
 
 ## Version
 
-1.0.2 Beta
+1.0.3 Beta
 
 ## Special Thanks
 
@@ -225,6 +225,49 @@ Array
 
 ## Example 3
 
+Creates a new instance of RakePlus and extract the unique keywords from the phrases.
+
+```php
+
+use DonatelloZa\RakePlus\RakePlus;
+
+$text = "Criteria of compatibility of a system of linear Diophantine equations, " . 
+    "strict inequations, and nonstrict inequations are considered. Upper bounds " .
+    "for components of a minimal set of solutions and algorithms of construction " .
+    "of minimal generating sets of solutions for all types of systems are given.";
+
+$keywords = RakePlus::create($text)->keywords();
+print_r($keywords);
+
+Array
+(
+    [0] => criteria
+    [1] => compatibility
+    [2] => system
+    [3] => linear
+    [4] => diophantine
+    [5] => equations
+    [6] => strict
+    [7] => inequations
+    [8] => nonstrict
+    [9] => considered
+    [10] => upper
+    [11] => bounds
+    [12] => components
+    [13] => minimal
+    [14] => set
+    [15] => solutions
+    [16] => algorithms
+    [17] => construction
+    [18] => generating
+    [19] => sets
+    [20] => types
+    [21] => systems
+)
+```
+
+## Example 4
+
 Creates a new instance of RakePlus without using the static RakePlus::create method.
 
 ```php
@@ -244,7 +287,7 @@ $phrases = (new RakePlus($text))->get();
 
 ```
 
-## Example 4
+## Example 5
 
 You can provide custom stopwords in four different ways:
 
@@ -271,7 +314,7 @@ $rake = RakePlus::create($text, $stopwords);
 
 ```
 
-## Example 5
+## Example 6
 
 You can specify the minimum number of characters that a phrase\keyword
 must be and if less than the minimum it will be filtered out. The
@@ -306,7 +349,7 @@ Array
 
 ```
 
-## Example 6
+## Example 7
 
 You can specify whether phrases\keywords that consists of a numeric
 number only should be filtered out or not. The default is to filter out

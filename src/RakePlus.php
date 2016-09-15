@@ -182,6 +182,27 @@ class RakePlus
     }
 
     /**
+     * Returns only the unique keywords within the
+     * phrases instead of the full phrases itself.
+     *
+     * @return array
+     */
+    public function keywords()
+    {
+        $keywords = [];
+        $phrases = $this->get();
+
+        foreach ($phrases as $phrase) {
+            $words = explode(' ', $phrase);
+            foreach ($words as $word) {
+                $keywords[$word] = true;
+            }
+        }
+
+        return array_keys($keywords);
+    }
+
+    /**
      * Sorts the phrases by score, use 'asc' or 'desc' to specify a
      * sort order.
      *
