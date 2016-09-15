@@ -387,7 +387,7 @@ Array
 
 ```
 
-## The keyword extractor tool
+## The stopword extractor tool
 
 The library requires a list of "stopwords". Stopwords are common words
 used in a language such as "and", "are", "or", etc. A list of such stopwords
