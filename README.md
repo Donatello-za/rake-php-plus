@@ -31,7 +31,7 @@ This particular package intends to include the following benefits over the origi
 
 ## Version
 
-1.0.1 Beta
+1.0.2 Beta
 
 ## Special Thanks
 
@@ -123,7 +123,7 @@ and also shows how to get the phrase scores.
 
 ```php
 
-use DonatelloZa\RakePlus;
+use DonatelloZa\RakePlus\RakePlus;
 
 $text = "Criteria of compatibility of a system of linear Diophantine equations, " . 
     "strict inequations, and nonstrict inequations are considered. Upper bounds " .
@@ -250,7 +250,7 @@ You can provide custom stopwords in four different ways:
 
 ```php
 
-use DonatelloZa\RakePlus;
+use DonatelloZa\RakePlus\RakePlus;
 
 // 1: The standard way (provide a language code)
 //    RakePlus will first look for ./lang/en_US.pattern, if
@@ -271,6 +271,78 @@ $rake = RakePlus::create($text, $stopwords);
 
 ```
 
+## Example 5
+
+You can specify the minimum number of characters that a phrase\keyword
+must be and if less than the minimum it will be filtered out. The
+default is 0 (no minimum).
+
+```php
+
+use DonatelloZa\RakePlus\RakePlus;
+
+$text = '6462 Little Crest Suite, 413 Lake Carlietown, WA 12643';
+
+// Without a minimum
+$phrases = RakePlus::create($text, 'en_US', 0)->get();
+print_r($phrases);
+
+Array
+(
+    [0] => crest suite
+    [1] => 413 lake carlietown
+    [2] => wa 12643
+)
+
+// With a minimum
+$phrases = RakePlus::create($text, 'en_US', 10)->get();
+print_r($phrases);
+
+Array
+(
+    [0] => crest suite
+    [1] => 413 lake carlietown
+)
+
+```
+
+## Example 6
+
+You can specify whether phrases\keywords that consists of a numeric
+number only should be filtered out or not. The default is to filter out
+numerics.
+
+
+```php
+
+use DonatelloZa\RakePlus\RakePlus;
+
+$text = '6462 Little Crest Suite, 413 Lake Carlietown, WA 12643';
+
+// Filter out numerics
+$phrases = RakePlus::create($text, 'en_US', 0, true)->get();
+print_r($phrases);
+
+Array
+(
+    [0] => crest suite
+    [1] => 413 lake carlietown
+    [2] => wa 12643
+)
+
+// Do not filter out numerics
+$phrases = RakePlus::create($text, 'en_US', 0, false)->get();
+print_r($phrases);
+
+Array
+(
+    [0] => 6462
+    [1] => crest suite
+    [2] => 413 lake carlietown
+    [3] => wa 12643
+)
+
+```
 
 ## The keyword extractor tool
 

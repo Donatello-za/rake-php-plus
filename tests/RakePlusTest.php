@@ -504,4 +504,54 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($scores['minimal generating sets'], 8.5);
         $this->assertEquals($scores['linear diophantine equations'], 9);
     }
+
+    public function testFilterNumerics()
+    {
+        $text = "6462 Little Crest Suite 413 Lake Carlietown, WA 12643";
+
+        $rake = RakePlus::create($text, 'en_US', 0, false);
+        $scores = $rake->scores();
+
+        $this->assertEquals(false, $rake->getFilterNumerics());
+        $this->assertCount(3, $scores);
+
+        $this->assertEquals($scores['6462'], 0);
+        $this->assertEquals($scores['wa 12643'], 1);
+        $this->assertEquals($scores['crest suite 413 lake carlietown'], 16);
+    }
+
+    public function testDonNotFilterNumerics()
+    {
+        $text = "6462 Little Crest Suite 413 Lake Carlietown, WA 12643";
+        $scores = RakePlus::create($text, 'en_US', 0, true)->scores();
+
+        $this->assertCount(2, $scores);
+
+        $this->assertEquals($scores['wa 12643'], 1);
+        $this->assertEquals($scores['crest suite 413 lake carlietown'], 16);
+    }
+
+    public function testMinLengthScores()
+    {
+        $text = "Criteria of compatibility of a system of linear Diophantine equations, " .
+            "strict inequations, and nonstrict inequations are considered. Upper bounds " .
+            "for components of a minimal set of solutions and algorithms of construction " .
+            "of minimal generating sets of solutions for all types of systems are given.";
+
+        $scores = RakePlus::create($text, 'en_US', 10)->sortByScore()->scores();
+
+        $this->assertCount(11, $scores);
+
+        $this->assertEquals($scores['compatibility'], 1);
+        $this->assertEquals($scores['considered'], 1);
+        $this->assertEquals($scores['components'], 1);
+        $this->assertEquals($scores['algorithms'], 1);
+        $this->assertEquals($scores['construction'], 1);
+        $this->assertEquals($scores['strict inequations'], 4);
+        $this->assertEquals($scores['nonstrict inequations'], 4);
+        $this->assertEquals($scores['upper bounds'], 4);
+        $this->assertEquals($scores['minimal set'], 4.5);
+        $this->assertEquals($scores['minimal generating sets'], 8.5);
+        $this->assertEquals($scores['linear diophantine equations'], 9);
+    }
 }

@@ -15,12 +15,15 @@ class RakePlus
 
     /** @var array */
     private $phrase_scores = [];
-    
+
     /** @var int */
-    private $minLength = 3;
-    
+    private $min_length = 0;
+
+    /** @var bool */
+    private $filter_numerics = true;
+
     const ORDER_ASC = 'asc';
-    
+
     const ORDER_DESC = 'desc';
 
     /**
@@ -43,13 +46,15 @@ class RakePlus
      * If $stopwords is a derived instance of StopwordAbstract it will simply
      * retrieve the stopwords from the instance.
      *
-     * @param string|null                           $text
-     * @param AbstractStopwordProvider|string|array $stopwords
-     * @param int                                   $phraseMinLegth
+     * @param string|null                           $text              Text to turn into keywords/phrases.
+     * @param AbstractStopwordProvider|string|array $stopwords         Stopwords to use.
+     * @param int                                   $phrase_min_length Minimum keyword/phrase length.
+     * @param bool                                  $filter_numerics   Filter out numeric numbers.
      */
-    public function __construct($text = null, $stopwords = 'en_US', $phraseMinLegth = 0)
+    public function __construct($text = null, $stopwords = 'en_US', $phrase_min_length = 0, $filter_numerics = true)
     {
-        $this->setMinLength($phraseMinLegth);
+        $this->setMinLength($phrase_min_length);
+        $this->setFilterNumerics($filter_numerics);
         if (!is_null($text)) {
             $this->extract($text, $stopwords);
         }
@@ -75,15 +80,16 @@ class RakePlus
      * If $stopwords is a derived instance of StopwordAbstract it will simply
      * retrieve the stopwords from the instance.
      *
-     * @param string|null                           $text
-     * @param AbstractStopwordProvider|string|array $stopwords
-     * @param int                                   $phraseMinLegth
-     * 
+     * @param string|null                           $text              Text to turn into keywords/phrases.
+     * @param AbstractStopwordProvider|string|array $stopwords         Stopwords to use.
+     * @param int                                   $phrase_min_length Minimum keyword/phrase length.
+     * @param bool                                  $filter_numerics   Filter out numeric numbers.
+     *
      * @return RakePlus
      */
-    public static function create($text, $stopwords = 'en_US', $phraseMinLegth = 0)
+    public static function create($text, $stopwords = 'en_US', $phrase_min_length = 0, $filter_numerics = true)
     {
-        return (new self($text, $stopwords, $phraseMinLegth));
+        return (new self($text, $stopwords, $phrase_min_length, $filter_numerics));
     }
 
     /**
@@ -243,8 +249,12 @@ class RakePlus
      */
     private function splitSentences($text)
     {
-        $text = preg_replace('/\n/', ' ', $text);
-        return preg_split('/[\/:.\?!,;\-"\'\(\)\\\x{2018}\x{2019}\x{2013}\n\t]+/u', $text);
+        // This is an alternative pattern but it doesn't
+        // seem to like numbers:
+        // '/[\/:.\?!,;\-"\'\(\)\\\x{2018}\x{2019}\x{2013}\n\t]+/u'
+
+        return preg_split('/[.!?,;:\t\-\"\(\)\']/',
+            preg_replace('/\n/', ' ', $text));
     }
 
     /**
@@ -262,18 +272,14 @@ class RakePlus
         foreach ($sentences as $sentence) {
             $phrases_temp = preg_replace($pattern, '|', $sentence);
             $phrases = explode('|', $phrases_temp);
-
             foreach ($phrases as $phrase) {
-                $phrase = trim($phrase);
-                if (function_exists('mb_strtolower')) {
-                    $phrase = mb_strtolower($phrase);
-                } else {
-                    $phrase = strtolower($phrase);
-                }
-                if ($phrase != '' && !is_numeric($phrase) 
-                        && ($this->minLength === 0
-                        || strlen($phrase) >= $this->minLength)) {
-                    $results[] = $phrase;
+                $phrase = mb_strtolower(trim($phrase));
+                if (!empty($phrase)) {
+                    if (!$this->filter_numerics || ($this->filter_numerics && !is_numeric($phrase))) {
+                        if ($this->min_length === 0 || mb_strlen($phrase) >= $this->min_length) {
+                            $results[] = $phrase;
+                        }
+                    }
                 }
             }
         }
@@ -294,7 +300,7 @@ class RakePlus
         $degrees = [];
 
         foreach ($phrases as $phrase) {
-            $words = $this->splitPhrase($phrase);
+            $words = $this->splitPhraseIntoWords($phrase);
             $words_count = count($words);
             $words_degree = $words_count - 1;
 
@@ -333,7 +339,7 @@ class RakePlus
 
         foreach ($phrases as $phrase) {
             $keywords[$phrase] = (isset($keywords[$phrase])) ? $keywords[$phrase] : 0;
-            $words = $this->splitPhrase($phrase);
+            $words = $this->splitPhraseIntoWords($phrase);
             $score = 0;
 
             foreach ($words as $word) {
@@ -350,11 +356,11 @@ class RakePlus
      * Split a phrase into multiple words and returns them
      * as an array.
      *
-     * @param string
+     * @param string $phrase
      *
      * @return array
      */
-    private function splitPhrase($phrase)
+    private function splitPhraseIntoWords($phrase)
     {
         $words_temp = str_word_count($phrase, 1, '0123456789');
         $words = [];
@@ -367,29 +373,55 @@ class RakePlus
 
         return $words;
     }
-    
+
     /**
-     * Returns minimum number of letters each phrase must have.
-     * 
+     * Returns the minimum number of letters each phrase/keyword must have.
+     *
      * @return int
      */
-    public function getMinLength() {
-        return $this->minLength;
+    public function getMinLength()
+    {
+        return $this->min_length;
     }
 
     /**
-     * Set the minimum length of a phrase that will be taken for further analysis.
+     * Sets the minimum number of letters each phrase/keyword must have.
      *
-     * @param int $minLength
+     * @param int $min_length
      *
-     * @return \DonatelloZa\RakePlus\RakePlus
+     * @return RakePlus
      */
-    public function setMinLength($minLength) {
-        $minLengthValue = (int)$minLength;
-        if ($minLengthValue < 0) {
+    public function setMinLength($min_length)
+    {
+        if ((int)$min_length < 0) {
             throw new \InvalidArgumentException('Minimum phrase length must be greater than or equal to 0.');
         }
-        $this->minLength = $minLengthValue;
+
+        $this->min_length = (int)$min_length;
         return $this;
+    }
+
+    /**
+     * Sets whether numeric-only phrases/keywords should be filtered
+     * out or not.
+     *
+     * @param $filter_numerics
+     *
+     * @return RakePlus
+     */
+    public function setFilterNumerics($filter_numerics = true)
+    {
+        $this->filter_numerics = $filter_numerics;
+        return $this;
+    }
+
+    /**
+     * Returns whether numeric-only phrases/keywords will be filtered
+     * out or not.
+     *
+     */
+    public function getFilterNumerics()
+    {
+        return $this->filter_numerics;
     }
 }
