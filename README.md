@@ -31,7 +31,7 @@ This particular package intends to include the following benefits over the origi
 
 ## Version
 
-1.0.4 Beta
+1.0.5 Beta
 
 ## Special Thanks
 
@@ -47,7 +47,7 @@ language and improving multi-byte support.
 ```json
 {
     "require": {
-        "donatello-za/rake-php-plus": "~1.0"
+        "donatello-za/rake-php-plus": "^1.0"
     }
 }
 ```
