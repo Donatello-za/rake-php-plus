@@ -22,6 +22,9 @@ class RakePlus
     /** @var bool */
     private $filter_numerics = true;
 
+    /** @var bool */
+    public $mb_support = false;
+
     const ORDER_ASC = 'asc';
 
     const ORDER_DESC = 'desc';
@@ -53,6 +56,8 @@ class RakePlus
      */
     public function __construct($text = null, $stopwords = 'en_US', $phrase_min_length = 0, $filter_numerics = true)
     {
+        $this->mb_support = extension_loaded('mbstring');
+
         $this->setMinLength($phrase_min_length);
         $this->setFilterNumerics($filter_numerics);
         if (!is_null($text)) {
@@ -151,8 +156,13 @@ class RakePlus
                 throw new \InvalidArgumentException('Invalid stopwords list provided for RakePlus.');
             }
 
-            $sentences = $this->splitSentences($text);
-            $phrases = $this->getPhrases($sentences, $this->pattern);
+            if ($this->mb_support) {
+                $sentences = $this->splitSentencesMb($text);
+                $phrases = $this->getPhrasesMb($sentences, $this->pattern);
+            } else {
+                $sentences = $this->splitSentences($text);
+                $phrases = $this->getPhrases($sentences, $this->pattern);
+            }
             $word_scores = $this->calcWordScores($phrases);
             $this->phrase_scores = $this->calcPhraseScores($phrases, $word_scores);
         }
@@ -286,6 +296,23 @@ class RakePlus
     }
 
     /**
+     * Splits the text into an array of sentences. Uses mb_* functions.
+     *
+     * @param string $text
+     *
+     * @return array
+     */
+    private function splitSentencesMb($text)
+    {
+        // This is an alternative pattern but it doesn't
+        // seem to like numbers:
+        // '/[\/:.\?!,;\-"\'\(\)\\\x{2018}\x{2019}\x{2013}\n\t]+/u'
+
+        return mb_split('[.!?,;:\t\-\"\(\)\']',
+            mb_ereg_replace('\n', ' ', $text));
+    }
+
+    /**
      * Split sentences into phrases by using the stopwords.
      *
      * @param array  $sentences
@@ -297,26 +324,22 @@ class RakePlus
     {
         $results = [];
 
-        if (function_exists('mb_strtolower')) {
-            return $this->getPhrasesMb($sentences, $pattern);
-        } else {
-            foreach ($sentences as $sentence) {
-                $phrases_temp = preg_replace($pattern, '|', $sentence);
-                $phrases = explode('|', $phrases_temp);
-                foreach ($phrases as $phrase) {
-                    $phrase = strtolower(trim($phrase));
-                    if (!empty($phrase)) {
-                        if (!$this->filter_numerics || ($this->filter_numerics && !is_numeric($phrase))) {
-                            if ($this->min_length === 0 || strlen($phrase) >= $this->min_length) {
-                                $results[] = $phrase;
-                            }
+        foreach ($sentences as $sentence) {
+            $phrases_temp = preg_replace($pattern, '|', $sentence);
+            $phrases = explode('|', $phrases_temp);
+            foreach ($phrases as $phrase) {
+                $phrase = strtolower(trim($phrase));
+                if (!empty($phrase)) {
+                    if (!$this->filter_numerics || ($this->filter_numerics && !is_numeric($phrase))) {
+                        if ($this->min_length === 0 || strlen($phrase) >= $this->min_length) {
+                            $results[] = $phrase;
                         }
                     }
                 }
             }
-
-            return $results;
         }
+
+        return $results;
     }
 
     /**
@@ -333,13 +356,13 @@ class RakePlus
         $results = [];
 
         foreach ($sentences as $sentence) {
-            $phrases_temp = preg_replace($pattern, '|', $sentence);
+            $phrases_temp = mb_eregi_replace($pattern, '|', $sentence);
             $phrases = explode('|', $phrases_temp);
             foreach ($phrases as $phrase) {
-                $phrase = \mb_strtolower(trim($phrase));
+                $phrase = mb_strtolower(preg_replace('/^[\pZ\pC]+|[\pZ\pC]+$/u', '', $phrase));
                 if (!empty($phrase)) {
                     if (!$this->filter_numerics || ($this->filter_numerics && !is_numeric($phrase))) {
-                        if ($this->min_length === 0 || \mb_strlen($phrase) >= $this->min_length) {
+                        if ($this->min_length === 0 || mb_strlen($phrase) >= $this->min_length) {
                             $results[] = $phrase;
                         }
                     }

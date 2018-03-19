@@ -4,21 +4,22 @@ namespace DonatelloZa\RakePlus;
 
 use PHPUnit_Framework_TestCase;
 
-function function_exists($function)
+function extension_loaded($name)
 {
-    if ($function === 'mb_strtolower') {
-        return RakePlusTest::$mb_strtolower_exists;
+    if ($name === 'mbstring') {
+        return RakePlusTest::$mb_support;
     }
-    return \function_exists($function);
+    return \extension_loaded($name);
 }
+
 
 class RakePlusTest extends PHPUnit_Framework_TestCase
 {
-    public static $mb_strtolower_exists = true;
+    public static $mb_support = true;
 
     protected function setUp()
     {
-        self::$mb_strtolower_exists = true;
+        self::$mb_support = true;
     }
 
     public function testInstanceOf()
@@ -149,7 +150,7 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
 
     public function testNonMbPhrases()
     {
-        self::$mb_strtolower_exists = false;
+        self::$mb_support = false;
 
         $text = "Criteria of compatibility of a system of linear Diophantine equations, " .
             "strict inequations, and nonstrict inequations are considered. Upper bounds " .
@@ -181,6 +182,34 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
             "of minimal generating sets of solutions for all types of systems are given.";
 
         $phrases = RakePlus::create($text)->get();
+
+        $this->assertContains('algorithms', $phrases);
+        $this->assertContains('compatibility', $phrases);
+        $this->assertContains('components', $phrases);
+        $this->assertContains('considered', $phrases);
+        $this->assertContains('construction', $phrases);
+        $this->assertContains('criteria', $phrases);
+        $this->assertContains('linear diophantine equations', $phrases);
+        $this->assertContains('minimal generating sets', $phrases);
+        $this->assertContains('minimal set', $phrases);
+        $this->assertContains('nonstrict inequations', $phrases);
+        $this->assertContains('solutions', $phrases);
+        $this->assertContains('strict inequations', $phrases);
+        $this->assertContains('system', $phrases);
+        $this->assertContains('systems', $phrases);
+        $this->assertContains('types', $phrases);
+        $this->assertContains('upper bounds', $phrases);
+    }
+
+    public function testPhrasesExtractAltPatternFile()
+    {
+        $text = "Criteria of compatibility of a system of linear Diophantine equations, " .
+            "strict inequations, and nonstrict inequations are considered. Upper bounds " .
+            "for components of a minimal set of solutions and algorithms of construction " .
+            "of minimal generating sets of solutions for all types of systems are given.";
+
+        $stopwords = StopwordsPatternFile::create('./tests/lang/en_US.ereg.pattern');
+        $phrases = RakePlus::create($text, $stopwords)->get();
 
         $this->assertContains('algorithms', $phrases);
         $this->assertContains('compatibility', $phrases);
@@ -387,6 +416,39 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($scores['all types'], 4);
         $this->assertEquals($scores['minimal generating sets'], 8);
         $this->assertEquals($scores['linear diophantine equations'], 9);
+    }
+
+    public function testArrayStopwordsNonMb()
+    {
+        self::$mb_support = false;
+
+        $text = "Criteria of compatibility of a system of linear Diophantine equations, " .
+            "strict inequations, and nonstrict inequations are considered. Upper bounds " .
+            "for components of a minimal set of solutions and algorithms of construction " .
+            "of minimal generating sets of solutions for all types of systems are given.";
+
+        $stopwords = StopwordArray::create(['of', 'a', 'and', 'set', 'are', 'for']);
+        $scores = RakePlus::create($text, $stopwords)->sortByScore()->scores();
+
+        $this->assertEquals($scores['criteria'], 1);
+        $this->assertEquals($scores['compatibility'], 1);
+        $this->assertEquals($scores['system'], 1);
+        $this->assertEquals($scores['considered'], 1);
+        $this->assertEquals($scores['components'], 1);
+        $this->assertEquals($scores['solutions'], 1);
+        $this->assertEquals($scores['algorithms'], 1);
+        $this->assertEquals($scores['construction'], 1);
+        $this->assertEquals($scores['systems'], 1);
+        $this->assertEquals($scores['given'], 1);
+        $this->assertEquals($scores['minimal'], 2);
+        $this->assertEquals($scores['strict inequations'], 4);
+        $this->assertEquals($scores['nonstrict inequations'], 4);
+        $this->assertEquals($scores['upper bounds'], 4);
+        $this->assertEquals($scores['all types'], 4);
+        $this->assertEquals($scores['minimal generating sets'], 8);
+        $this->assertEquals($scores['linear diophantine equations'], 9);
+
+        $this->assertEquals(['of', 'a', 'and', 'set', 'are', 'for'], $stopwords->stopwords());
     }
 
     public function testPHPStopwords()

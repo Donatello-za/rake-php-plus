@@ -60,7 +60,7 @@ function load_stopwords($stopwords_file)
 
     if ($h = @fopen($stopwords_file, 'r')) {
         while (($line = fgets($h)) !== false) {
-            $line = trim($line);
+            $line = preg_replace('/^[\pZ\pC]+|[\pZ\pC]+$/u', '', $line);
             if (!empty($line) && $line[0] != '#') {
                 $stopwords[$line] = true;
             }
