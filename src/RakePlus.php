@@ -297,14 +297,49 @@ class RakePlus
     {
         $results = [];
 
+        if (function_exists('mb_strtolower')) {
+            return $this->getPhrasesMb($sentences, $pattern);
+        } else {
+            foreach ($sentences as $sentence) {
+                $phrases_temp = preg_replace($pattern, '|', $sentence);
+                $phrases = explode('|', $phrases_temp);
+                foreach ($phrases as $phrase) {
+                    $phrase = strtolower(trim($phrase));
+                    if (!empty($phrase)) {
+                        if (!$this->filter_numerics || ($this->filter_numerics && !is_numeric($phrase))) {
+                            if ($this->min_length === 0 || strlen($phrase) >= $this->min_length) {
+                                $results[] = $phrase;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return $results;
+        }
+    }
+
+    /**
+     * Split sentences into phrases by using the stopwords. Makes use of
+     * PHP's mb_* functions.
+     *
+     * @param array  $sentences
+     * @param string $pattern
+     *
+     * @return array
+     */
+    private function getPhrasesMb(array $sentences, $pattern)
+    {
+        $results = [];
+
         foreach ($sentences as $sentence) {
             $phrases_temp = preg_replace($pattern, '|', $sentence);
             $phrases = explode('|', $phrases_temp);
             foreach ($phrases as $phrase) {
-                $phrase = mb_strtolower(trim($phrase));
+                $phrase = \mb_strtolower(trim($phrase));
                 if (!empty($phrase)) {
                     if (!$this->filter_numerics || ($this->filter_numerics && !is_numeric($phrase))) {
-                        if ($this->min_length === 0 || mb_strlen($phrase) >= $this->min_length) {
+                        if ($this->min_length === 0 || \mb_strlen($phrase) >= $this->min_length) {
                             $results[] = $phrase;
                         }
                     }

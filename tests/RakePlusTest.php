@@ -443,6 +443,8 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($scores['all types'], 4);
         $this->assertEquals($scores['minimal generating sets'], 8);
         $this->assertEquals($scores['linear diophantine equations'], 9);
+
+        $this->assertEquals(['of', 'a', 'and', 'set', 'are', 'for'], $stopwords->stopwords());
     }
 
     public function testStopWordPHPInstance()
@@ -473,6 +475,9 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($scores['minimal set'], 4.5);
         $this->assertEquals($scores['minimal generating sets'], 8.5);
         $this->assertEquals($scores['linear diophantine equations'], 9);
+
+        $this->assertInternalType('array', $stopwords->stopwords());
+        $this->assertGreaterThan(0, count($stopwords->stopwords()));
     }
 
     public function testStopWordPatternFileInstance()
