@@ -118,7 +118,7 @@ class RakePlus
      */
     public function extract($text, $stopwords = 'en_US')
     {
-        if (!empty(trim($text))) {
+        if ($text != '') {
             if (is_array($stopwords)) {
                 $this->pattern = StopwordArray::create($stopwords)->pattern();
             } else if (is_string($stopwords)) {
@@ -145,7 +145,7 @@ class RakePlus
                         $this->pattern = StopwordsPHP::create($this->language_file)->pattern();
                     }
                 }
-            } elseif (is_subclass_of($stopwords, AbstractStopwordProvider::class)) {
+            } elseif (is_subclass_of($stopwords, 'DonatelloZa\RakePlus\AbstractStopwordProvider')) {
                 $this->pattern = $stopwords->pattern();
             } else {
                 throw new \InvalidArgumentException('Invalid stopwords list provided for RakePlus.');
