@@ -16,7 +16,7 @@ class StopwordsPHP extends AbstractStopwordProvider
     /**
      * StopwordsPHP constructor.
      *
-     * @param array $filename
+     * @param string $filename
      */
     public function __construct($filename)
     {

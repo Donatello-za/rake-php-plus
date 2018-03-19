@@ -13,7 +13,7 @@ class StopwordsPatternFile extends AbstractStopwordProvider
     /**
      * StopwordsPatternFile constructor.
      *
-     * @param array $filename
+     * @param string $filename
      */
     public function __construct($filename)
     {
