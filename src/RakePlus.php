@@ -448,16 +448,9 @@ class RakePlus
      */
     private function splitPhraseIntoWords($phrase)
     {
-        $words_temp = str_word_count($phrase, 1, '0123456789');
-        $words = [];
-
-        foreach ($words_temp as $word) {
-            if ($word != '' and !(is_numeric($word))) {
-                array_push($words, $word);
-            }
-        }
-
-        return $words;
+        return array_filter(preg_split('/\W+/u', $phrase, -1, PREG_SPLIT_NO_EMPTY), function($word) {
+            return !is_numeric($word);
+        });
     }
 
     /**
