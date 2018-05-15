@@ -31,7 +31,7 @@ This particular package intends to include the following benefits over the origi
 
 ## Version
 
-1.0.5 Beta
+1.0.6
 
 ## Special Thanks
 
