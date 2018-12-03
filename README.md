@@ -31,9 +31,17 @@ This particular package intends to include the following benefits over the origi
 6. Performance improvements.
 7. Improved documentation.
 
+## Currently Supported Languages
+
+* English US (en_US)
+* Spanish/español (es_AR)
+* French/le français (fr_FR)
+* Polish/język polski (pl_PL)
+* Russian/русский язык (ru_RU)
+
 ## Version
 
-1.0.7
+v1.0.8
 
 ## Special Thanks
 
