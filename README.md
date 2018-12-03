@@ -5,7 +5,7 @@ Yet another PHP implementation of the Rapid Automatic Keyword Extraction algorit
 [![Total Downloads](https://poser.pugx.org/donatello-za/rake-php-plus/downloads)](https://packagist.org/packages/donatello-za/rake-php-plus)
 [![License](https://poser.pugx.org/donatello-za/rake-php-plus/license)](https://packagist.org/packages/donatello-za/rake-php-plus)
 
-## What is this package useful for?
+## Why is this package useful?
 
 Keywords describe the main topics expressed in a document/text. Keyword *extraction* in turn allows for the extraction 
 of important words and phrases from text. This in turn can be used for building a list of tags or to build a keyword 
@@ -15,8 +15,10 @@ developers to get a list of keywords and phrases from a string of text.
 This project is based on another project called [RAKE-PHP](https://github.com/Richdark/RAKE-PHP) by Richard Filipčík, 
 which is a translation from a Python implementation simply called [RAKE](https://github.com/aneesha/RAKE).
 
-*As described in: Rose, S., Engel, D., Cramer, N., & Cowley, W. (2010). Automatic Keyword Extraction from Individual 
-Documents. In M. W. Berry & J. Kogan (Eds.), Text Mining: Theory and Applications: John Wiley & Sons.*
+*As described in: Rose, S., Engel, D., Cramer, N., & Cowley, W. (2010). 
+[Automatic Keyword Extraction from Individual Documents](https://www.researchgate.net/publication/227988510_Automatic_Keyword_Extraction_from_Individual_Documents). 
+In M. W. Berry & J. Kogan (Eds.), Text Mining: Theory and Applications: John Wiley & Sons.*
+
 
 This particular package intends to include the following benefits over the original 
 [RAKE-PHP](https://github.com/Richdark/RAKE-PHP) package:
@@ -31,7 +33,7 @@ This particular package intends to include the following benefits over the origi
 
 ## Version
 
-1.0.6
+1.0.7
 
 ## Special Thanks
 
@@ -64,11 +66,11 @@ use DonatelloZa\RakePlus\RakePlus;
 ```php
 <?php
 
-require 'path/to/AbstractStopwordProvider.php'
-require 'path/to/StopwordArray.php'
-require 'path/to/StopwordsPatternFile.php'
-require 'path/to/StopwordsPHP.php'
-require 'path/to/RakePlus.php'
+require 'path/to/AbstractStopwordProvider.php';
+require 'path/to/StopwordArray.php';
+require 'path/to/StopwordsPatternFile.php';
+require 'path/to/StopwordsPHP.php';
+require 'path/to/RakePlus.php';
 
 use DonatelloZa\RakePlus\RakePlus;
 
@@ -423,6 +425,10 @@ using the `-p` switch:
 RakePHP will always first look for a .pattern file and if not found will look
 for a .php file in the ./lang/ directory.
 
+
+## To run tests
+
+`./vendor/bin/phpunit tests/RakePlusTest.php`
 
 ## License
 

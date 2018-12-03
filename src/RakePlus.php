@@ -287,11 +287,7 @@ class RakePlus
      */
     private function splitSentences($text)
     {
-        // This is an alternative pattern but it doesn't
-        // seem to like numbers:
-        // '/[\/:.\?!,;\-"\'\(\)\\\x{2018}\x{2019}\x{2013}\n\t]+/u'
-
-        return preg_split('/[.!?,;:\t\-\"\(\)]/',
+        return preg_split('/[.!?,;:\t\"\(\)]/',
             preg_replace('/\n/', ' ', $text));
     }
 
@@ -304,11 +300,7 @@ class RakePlus
      */
     private function splitSentencesMb($text)
     {
-        // This is an alternative pattern but it doesn't
-        // seem to like numbers:
-        // '/[\/:.\?!,;\-"\'\(\)\\\x{2018}\x{2019}\x{2013}\n\t]+/u'
-
-        return mb_split('[.!?,;:\t\-\"\(\)]',
+        return mb_split('[.!?,;:\t\"\(\)]',
             mb_ereg_replace('\n', ' ', $text));
     }
 

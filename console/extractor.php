@@ -76,7 +76,9 @@ function load_stopwords($stopwords_file)
 }
 
 /**
- * @param array  $stopwords
+ * @param array $stopwords
+ *
+ * @throws Exception
  */
 function render_php_output(array $stopwords)
 {
@@ -130,6 +132,8 @@ function render_pattern_output(array $stopwords)
  * @param array  $stopwords
  * @param string $stopwords_file
  * @param string $option
+ *
+ * @throws Exception
  */
 function render_output(array $stopwords, $stopwords_file, $option)
 {
@@ -153,6 +157,7 @@ check_args($argc);
 $stopwords_file = get_arg($argv, 1);
 $stopwords = load_stopwords($stopwords_file);
 
+/** @noinspection PhpUnhandledExceptionInspection */
 render_output(
     $stopwords,
     $stopwords_file,

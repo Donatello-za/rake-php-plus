@@ -676,4 +676,41 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
             $this->assertInternalType('string', $keyword);
         }
     }
+
+    public function testKeywordsWithHyphens()
+    {
+        $text = "Because of the dominance of the Linux kernel-based Android OS on smartphones, Linux has the " .
+            "largest installed base of all general-purpose operating systems.";
+        $keywords = RakePlus::create($text, 'en_US', 0, false)->keywords();
+
+        $this->assertCount(12, $keywords);
+
+        $this->assertContains('dominance', $keywords);
+        $this->assertContains('linux', $keywords);
+        $this->assertContains('kernel-based', $keywords);
+        $this->assertContains('android', $keywords);
+        $this->assertContains('os', $keywords);
+        $this->assertContains('smartphones', $keywords);
+        $this->assertContains('largest', $keywords);
+        $this->assertContains('installed', $keywords);
+        $this->assertContains('general-purpose', $keywords);
+        $this->assertContains('operating', $keywords);
+        $this->assertContains('systems', $keywords);
+    }
+
+    public function testPhrasesWithHyphens()
+    {
+        $text = "Because of the dominance of the Linux kernel-based Android OS on smartphones, Linux has the " .
+            "largest installed base of all general-purpose operating systems.";
+        $phrases = RakePlus::create($text, 'en_US', 0, false)->get();
+
+        $this->assertCount(6, $phrases);
+
+        $this->assertContains('dominance', $phrases);
+        $this->assertContains('linux kernel-based android os', $phrases);
+        $this->assertContains('smartphones', $phrases);
+        $this->assertContains('linux', $phrases);
+        $this->assertContains('largest installed base', $phrases);
+        $this->assertContains('general-purpose operating systems', $phrases);
+    }
 }
