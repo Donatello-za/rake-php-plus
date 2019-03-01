@@ -41,7 +41,7 @@ This particular package intends to include the following benefits over the origi
 
 ## Version
 
-v1.0.8
+v1.0.9
 
 ## Special Thanks
 
@@ -397,19 +397,33 @@ Array
 
 ```
 
-## The stopword extractor tool
+## How to add additional languages
 
-The library requires a list of "stopwords". Stopwords are common words
-used in a language such as "and", "are", "or", etc. A list of such stopwords
-can be found [here](http://www.lextek.com/manuals/onix/stopwords2.html). You
-can copy and paste the text into a text file and use the extractor tool to
+**Using the stopwords extractor tool**
+
+The library requires a list of "stopwords" for each language. Stopwords are 
+common words used in a language such as "and", "are", "or", etc. An example 
+list of such  stopwords can be found 
+[here (en_US)](http://www.lextek.com/manuals/onix/stopwords2.html). You can
+also [take a look at this list](https://github.com/Donatello-za/stopwords-json) 
+which have stopwords for 50 different languages in individual JSON files.
+
+When working with a simple list such as in the first example, you can copy and 
+paste the text into a text file and use the extractor tool to
 convert it into a format that this library can read efficiently. *An example
 of such a stopwords file that have been copied from the hyperlink above have 
 been included for your convenience (console/stopwords_en_US.txt)*
 
-To extract and convert such a file, run the following from the command line:
+Alternatively you can extract the stopwords from a JSON file of which an
+example have also been supplied, look under `console/stopwords_en_US.json`
+
+To extract stopwords from a text file, run the following from the command line:
 
 `$ php -q extractor.php stopwords_en_US.txt`
+
+To extract stopwords from a JSON file, run the following from the command line:
+
+`$ php -q extractor.php stopwords_en_US.json`
 
 It will output the results to the terminal. You will notice that the results looks
 like PHP and in fact it is. You can write the results directly to a PHP file by
@@ -418,8 +432,8 @@ piping it:
 `$ php -q extractor.php stopwords_en_US.txt > en_US.php` 
 
 Finally, copy the `en_US.php` file to the `lang/` directory (you may have to
-set its permissions for the web server to execute it) and then instantiate php-rake-plus
-like so:
+set its permissions for the web server to execute it) and then instantiate
+ php-rake-plus like so:
 
 ```php
 $rake = RakePlus::create($text, 'en_US');
@@ -430,9 +444,8 @@ using the `-p` switch:
 
 `$ php -q extractor.php stopwords_en_US.txt -p > en_US.pattern` 
 
-RakePHP will always first look for a .pattern file and if not found will look
+RakePHP will always first look for a .pattern file first and if not found will look
 for a .php file in the ./lang/ directory.
-
 
 ## To run tests
 

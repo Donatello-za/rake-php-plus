@@ -1,17 +1,23 @@
 <?php
 
 /**
- * Extracts stopwords from a file copied and pasted from
+ * Stopwords are either supplied in simple text files that
+ * are copied from web pages such as this:
  * http://www.lextek.com/manuals/onix/stopwords2.html
  *
- * and produces an output containing the contents for a
- * PHP language file containing an array with all the
- * stopwords.
+ * or it can be supplied as a .json file that is stored in the
+ * format ["a","a's","able","about","above", .... ]
+ *
+ * This tool extracts the stopwords from these files and
+ * produces either a .php output (containing a PHP array)
+ * or a .pattern file containing a regular expression pattern.
  *
  * Usage:
- *
+ * To generate PHP output:
  * php -q extractor.php stopwords_en_US.txt
  *
+ * To generate a regular expression pattern:
+ * php -q extractor.php stopwords_en_US.txt -p
  */
 
 /**
@@ -24,11 +30,21 @@ function check_args($arg_count)
         echo "Error: Please specify the filename of the stopwords file to extract.\n";
         echo "Example:\n";
         echo "  php -q extractor.php stopwords_en_US.txt\n";
+        echo "  php -q extractor.php stopwords_en_US.json\n";
         echo "\n";
         echo "For better RakePlus performance, use the -p switch to produce regular\n";
         echo "expression pattern instead of a PHP script.\n";
         echo "Example:\n";
         echo "  php -q extractor.php stopwords_en_US.txt -p\n";
+        echo "  php -q extractor.php stopwords_en_US.json -p\n";
+        echo "\n";
+        echo "You can pipe the output of this tool directly into a\n";
+        echo ".php or .pattern file:\n";
+        echo "Example:\n";
+        echo "  php -q extractor.php stopwords_en_US.txt > en_US.php\n";
+        echo "  php -q extractor.php stopwords_en_US.json -p > un_US.pattern\n";
+        echo "\n";
+
         exit(1);
     }
 }
@@ -42,7 +58,7 @@ function check_args($arg_count)
  */
 function get_arg($args, $arg_no, $default = null)
 {
-    if ($arg_no <= count($args)) {
+    if ($arg_no < count($args)) {
         return $args[$arg_no];
     } else {
         return $default;
@@ -58,21 +74,38 @@ function load_stopwords($stopwords_file)
 {
     $stopwords = [];
 
-    if ($h = @fopen($stopwords_file, 'r')) {
-        while (($line = fgets($h)) !== false) {
-            $line = preg_replace('/^[\pZ\pC]+|[\pZ\pC]+$/u', '', $line);
-            if (!empty($line) && $line[0] != '#') {
-                $stopwords[$line] = true;
-            }
-        }
-    } else {
+    $ext = pathinfo($stopwords_file, PATHINFO_EXTENSION);
+    if (!file_exists($stopwords_file)) {
         echo "\n";
-        echo "Error: Could not read file \"{$stopwords_file}\".\n";
+        echo "Error: Stopwords file \"{$stopwords_file}\" not found.\n";
         echo "\n";
         exit(1);
     }
 
-    return $stopwords;
+    if ($ext === 'txt') {
+        if ($h = @fopen($stopwords_file, 'r')) {
+            while (($line = fgets($h)) !== false) {
+                $line = preg_replace('/^[\pZ\pC]+|[\pZ\pC]+$/u', '', $line);
+                if (!empty($line) && $line[0] != '#') {
+                    $stopwords[$line] = true;
+                }
+            }
+
+            return $stopwords;
+        } else {
+            echo "\n";
+            echo "Error: Could not read text file \"{$stopwords_file}\".\n";
+            echo "\n";
+            exit(1);
+        }
+    }
+
+    if ($ext === 'json') {
+        $stopwords = json_decode(file_get_contents($stopwords_file), true);
+        return array_fill_keys($stopwords, true);
+    }
+
+    return [];
 }
 
 /**
