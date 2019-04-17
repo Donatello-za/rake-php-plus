@@ -22,7 +22,12 @@ abstract class AbstractStopwordProvider
         $pattern = [];
 
         foreach ($stopwords as $word) {
-            $pattern[] = '\b' . $word . '\b';
+            if (mb_strlen($word) === 1) {
+                // This pattern allows for words such as a-class and j'aimerais
+                $pattern[] = '\b' . $word . '(?!(-|\'))\b';
+            } else {
+                $pattern[] = '\b' . $word . '\b';
+            }
         }
 
         if (extension_loaded('mbstring')) {

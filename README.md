@@ -41,7 +41,7 @@ This particular package intends to include the following benefits over the origi
 
 ## Version
 
-v1.0.9
+v1.0.10
 
 ## Special Thanks
 
@@ -444,7 +444,7 @@ using the `-p` switch:
 
 `$ php -q extractor.php stopwords_en_US.txt -p > en_US.pattern` 
 
-RakePHP will always first look for a .pattern file first and if not found will look
+RakePHP will always look for a .pattern file first and if not found will look
 for a .php file in the ./lang/ directory.
 
 ## To run tests

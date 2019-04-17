@@ -701,10 +701,11 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
     public function testPhrasesWithHyphens()
     {
         $text = "Because of the dominance of the Linux kernel-based Android OS on smartphones, Linux has the " .
-            "largest installed base of all general-purpose operating systems.";
+            "largest installed base of all general-purpose operating systems. More C-class articles can be read ".
+            "on Wikipedia.";
         $phrases = RakePlus::create($text, 'en_US', 0, false)->get();
 
-        $this->assertCount(6, $phrases);
+        $this->assertCount(9, $phrases);
 
         $this->assertContains('dominance', $phrases);
         $this->assertContains('linux kernel-based android os', $phrases);
@@ -712,5 +713,23 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
         $this->assertContains('linux', $phrases);
         $this->assertContains('largest installed base', $phrases);
         $this->assertContains('general-purpose operating systems', $phrases);
+        $this->assertContains('c-class articles', $phrases);
+        $this->assertContains('read', $phrases);
+        $this->assertContains('wikipedia', $phrases);
+    }
+
+    public function testFrenchShorthand()
+    {
+        $text = "Pour l'Arabie saoudite, l'accueil du Dakar s'inscrit dans un plan visant à préparer l'après-pétrole.";
+        $phrases = RakePlus::create($text, 'fr_FR', 0, false)->get();
+
+        $this->assertCount(6, $phrases);
+
+        $this->assertContains('l\'arabie saoudite', $phrases);
+        $this->assertContains('l\'accueil', $phrases);
+        $this->assertContains('dakar s\'inscrit', $phrases);
+        $this->assertContains('plan visant', $phrases);
+        $this->assertContains('préparer l\'', $phrases);
+        $this->assertContains('-pétrole', $phrases);
     }
 }

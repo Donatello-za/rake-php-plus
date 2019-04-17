@@ -18,6 +18,9 @@
  *
  * To generate a regular expression pattern:
  * php -q extractor.php stopwords_en_US.txt -p
+ *
+ * To generate a regular expression pattern from a php array:
+ * php -q extractor.php en_US.php -p
  */
 
 /**
@@ -105,6 +108,11 @@ function load_stopwords($stopwords_file)
         return array_fill_keys($stopwords, true);
     }
 
+    if ($ext === 'php') {
+        $stopwords = require $stopwords_file;
+        return array_fill_keys($stopwords, true);
+    }
+
     return [];
 }
 
@@ -155,10 +163,20 @@ function render_pattern_output(array $stopwords)
     $regex = [];
 
     foreach ($stopwords as $word) {
-        $regex[] = '\b' . $word . '\b';
+        if (mb_strlen($word) === 1) {
+            // This pattern allows for words such as a-class and j'aimerais, however,
+            // words such as day-z will be broken up into day- and the z will go
+            // missing. A possible workaround is to set the pattern as:
+            // '\b(?!-)' . $word . '(?!(-|\'))\b'
+            // but then two character words such as WA will also be stripped out.
+            $regex[] = '\b' . $word . '(?!(-|\'))\b';
+            // $regex[] = '\b(?!-)' . $word . '(?!(-|\'))\b';
+        } else {
+            $regex[] = '\b' . $word . '\b';
+        }
     }
 
-    echo '/' . implode('|', $regex) . '/iu' . "\n";
+    echo '/' . implode('|', $regex) . '/i' . "\n";
 }
 
 /**

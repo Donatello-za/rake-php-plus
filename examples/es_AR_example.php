@@ -1,7 +1,7 @@
 <?php
 
 // Para ejecutar este ejemplo desde la línea de comando.:
-// ./examples/es_cli.php 'Algun texto de ejemplo'
+// php ./examples/es_AR_example.php "Algun texto de ejemplo"
 
 require 'vendor/autoload.php';
 
@@ -9,7 +9,7 @@ use DonatelloZa\RakePlus\RakePlus;
 
 if ($argc < 2) {
     echo "Especifique el texto que desea analizar, por ejemplo:\n";
-    echo "php ./examples/se_cli.php \"Algún texto de ejemplo del que me gustaría extraer palabras clave.\"\n";
+    echo "php ./examples/es_AR_example.php \"Algún texto de ejemplo del que me gustaría extraer palabras clave.\"\n";
     exit(1);
 }
 
