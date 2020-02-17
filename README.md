@@ -38,15 +38,19 @@ This particular package intends to include the following benefits over the origi
 * French/le français (fr_FR)
 * Polish/język polski (pl_PL)
 * Russian/русский язык (ru_RU)
+* Brazilian Portuguese/português do Brasil (pt_BR)
+* Kurdish/کوردی (ku)
 
 ## Version
 
-v1.0.10
+v1.0.11
 
 ## Special Thanks
 
-Special thanks goes out to [Jarosław Wasilewski](https://github.com/Orajo) for his contribution in adding the Polish
-language and improving multi-byte support.
+* [Jarosław Wasilewski](https://github.com/Orajo): Polish language and improving multi-byte support.
+* [Lev Morozov](https://github.com/levmorozov): French and Russian languages.
+* [Igor Carvalho](https://github.com/Carvlho): Brazilian Portuguese language.
+* [Khoshbin Ali Ahmed](https://github.com/Xoshbin): Kurdish and Arabic languages.
 
 ## Installation
 
@@ -146,7 +150,8 @@ $rake = RakePlus::create($text, 'en_US');
 // 'asc' is optional and is the default sort order
 $phrases = $rake->sort('asc')->get();
 print_r($phrases);
-
+```
+```
 Array
 (
     [0] => algorithms
@@ -166,11 +171,15 @@ Array
     [14] => types
     [15] => upper bounds
 )
+```
 
+```php
 // Sort in descending order
 $phrases = $rake->sort('desc')->get();
 print_r($phrases);
+```
 
+```
 Array
 (
     [0] => upper bounds
@@ -190,11 +199,15 @@ Array
     [14] => compatibility
     [15] => algorithms
 )
+```
 
+```php
 // Sort the phrases by score and return the scores
 $phrase_scores = $rake->sortByScore('desc')->scores();
 print_r($phrase_scores);
+```
 
+```
 Array
 (
     [linear diophantine equations] => 9
@@ -214,8 +227,9 @@ Array
     [types] => 1
     [systems] => 1
 )
+```
 
-
+```php
 // Extract phrases from a new string on the same RakePlus instance. Using the 
 // same RakePlus instance is faster than creating a new instance as the 
 // language files do not have to be re-loaded and parsed.
@@ -223,14 +237,15 @@ Array
 $text = "A fast Fourier transform (FFT) algorithm computes...";
 $phrases = $rake->extract($text)->sort()->get();
 print_r($phrases);
+```
 
+```
 Array
 (
     [0] => algorithm computes
     [1] => fast fourier transform
     [2] => fft
 )
-
 ```
 
 ## Example 3
@@ -248,7 +263,9 @@ $text = "Criteria of compatibility of a system of linear Diophantine equations, 
 
 $keywords = RakePlus::create($text)->keywords();
 print_r($keywords);
+```
 
+```
 Array
 (
     [0] => criteria
@@ -294,7 +311,6 @@ $phrases = $rake->extract()->get();
 
 // Alternative method:
 $phrases = (new RakePlus($text))->get();
-
 ```
 
 ## Example 5
@@ -321,7 +337,6 @@ $rake = RakePlus::create($text, '/path/to/my/stopwords.pattern');
 //    create your own) and pass that to RakePlus:
 $stopwords = StopwordArray::create(['a', 'able', 'about', 'above', ...]);
 $rake = RakePlus::create($text, $stopwords);
-
 ```
 
 ## Example 6
@@ -339,24 +354,29 @@ $text = '6462 Little Crest Suite, 413 Lake Carlietown, WA 12643';
 // Without a minimum
 $phrases = RakePlus::create($text, 'en_US', 0)->get();
 print_r($phrases);
+```
 
+```
 Array
 (
     [0] => crest suite
     [1] => 413 lake carlietown
     [2] => wa 12643
 )
+```
 
+```php
 // With a minimum
 $phrases = RakePlus::create($text, 'en_US', 10)->get();
 print_r($phrases);
+```
 
+```
 Array
 (
     [0] => crest suite
     [1] => 413 lake carlietown
 )
-
 ```
 
 ## Example 7
@@ -364,7 +384,6 @@ Array
 You can specify whether phrases\keywords that consists of a numeric
 number only should be filtered out or not. The default is to filter out
 numerics.
-
 
 ```php
 
@@ -375,18 +394,23 @@ $text = '6462 Little Crest Suite, 413 Lake Carlietown, WA 12643';
 // Filter out numerics
 $phrases = RakePlus::create($text, 'en_US', 0, true)->get();
 print_r($phrases);
+```
 
-Array
+```Array
 (
     [0] => crest suite
     [1] => 413 lake carlietown
     [2] => wa 12643
 )
+```
 
+```php
 // Do not filter out numerics
 $phrases = RakePlus::create($text, 'en_US', 0, false)->get();
 print_r($phrases);
+```
 
+```
 Array
 (
     [0] => 6462
@@ -394,7 +418,6 @@ Array
     [2] => 413 lake carlietown
     [3] => wa 12643
 )
-
 ```
 
 ## How to add additional languages
@@ -419,7 +442,10 @@ example have also been supplied, look under `console/stopwords_en_US.json`
 
 To extract stopwords from a text file, run the following from the command line:
 
-`$ php -q extractor.php stopwords_en_US.txt`
+```sh
+$ cd ./console
+$ php -q extractor.php stopwords_en_US.txt
+```
 
 To extract stopwords from a JSON file, run the following from the command line:
 

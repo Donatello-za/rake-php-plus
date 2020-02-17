@@ -45,7 +45,8 @@ function check_args($arg_count)
         echo ".php or .pattern file:\n";
         echo "Example:\n";
         echo "  php -q extractor.php stopwords_en_US.txt > en_US.php\n";
-        echo "  php -q extractor.php stopwords_en_US.json -p > un_US.pattern\n";
+        echo "  php -q extractor.php stopwords_en_US.json -p > en_US.pattern\n";
+        echo "  php -q extractor.php en_US.php -p > en_US.pattern\n";
         echo "\n";
 
         exit(1);
