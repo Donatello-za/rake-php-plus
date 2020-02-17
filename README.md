@@ -39,7 +39,7 @@ This particular package intends to include the following benefits over the origi
 * Polish/język polski (pl_PL)
 * Russian/русский язык (ru_RU)
 * Brazilian Portuguese/português do Brasil (pt_BR)
-* Kurdish/کوردی (ku)
+* Kurdish/کوردی (ku_TR)
 
 ## Version
 
@@ -106,7 +106,9 @@ $text = "Criteria of compatibility of a system of linear Diophantine equations, 
 $phrases = RakePlus::create($text)->get();
 
 print_r($phrases);
+```
 
+```
 Array
 (
     [0] => criteria
@@ -126,7 +128,6 @@ Array
     [14] => types
     [15] => systems
 )
-
 
 ```
 
@@ -318,7 +319,6 @@ $phrases = (new RakePlus($text))->get();
 You can provide custom stopwords in four different ways:
 
 ```php
-
 use DonatelloZa\RakePlus\RakePlus;
 
 // 1: The standard way (provide a language code)
@@ -346,7 +346,6 @@ must be and if less than the minimum it will be filtered out. The
 default is 0 (no minimum).
 
 ```php
-
 use DonatelloZa\RakePlus\RakePlus;
 
 $text = '6462 Little Crest Suite, 413 Lake Carlietown, WA 12643';
@@ -386,7 +385,6 @@ number only should be filtered out or not. The default is to filter out
 numerics.
 
 ```php
-
 use DonatelloZa\RakePlus\RakePlus;
 
 $text = '6462 Little Crest Suite, 413 Lake Carlietown, WA 12643';
@@ -440,25 +438,41 @@ been included for your convenience (console/stopwords_en_US.txt)*
 Alternatively you can extract the stopwords from a JSON file of which an
 example have also been supplied, look under `console/stopwords_en_US.json`
 
+**Note:** Simply replace `en_US` to whatever locale you wish to use in the 
+examples below.
+
+**Important:** Before using the `extractor` tool, make sure to use the following
+Linux command to check whether your locale is supported:
+
+```sh
+$ locale -a
+```
+
+If you do not see the locale you wish to use in the list you can install it
+as follows: (in this case we are installing the French locale):
+```sh
+$ sudo locale-gen fr_FR
+$ sudo locale-gen fr_FR.utf8
+```
+
 To extract stopwords from a text file, run the following from the command line:
 
 ```sh
 $ cd ./console
-$ php -q extractor.php stopwords_en_US.txt
+$ php extractor.php stopwords_en_US.txt --locale=en_US --output=php
 ```
 
 To extract stopwords from a JSON file, run the following from the command line:
 
-`$ php -q extractor.php stopwords_en_US.json`
+`$ php extractor.php stopwords_en_US.json --locale=en_US --output=php`
 
 It will output the results to the terminal. You will notice that the results looks
 like PHP and in fact it is. You can write the results directly to a PHP file by
 piping it:
 
-`$ php -q extractor.php stopwords_en_US.txt > en_US.php` 
+`$ php extractor.php stopwords_en_US.txt --locale=en_US --output=php > en_US.php` 
 
-Finally, copy the `en_US.php` file to the `lang/` directory (you may have to
-set its permissions for the web server to execute it) and then instantiate
+Finally, copy the `en_US.php` file to the `lang/` directory and then instantiate
  php-rake-plus like so:
 
 ```php
@@ -466,12 +480,12 @@ $rake = RakePlus::create($text, 'en_US');
 ```
 To improve the initial loading speed of the language file within RakePlus, you
 can also set the exporter to produce the results as a regular expression pattern
-using the `-p` switch:
+using the `--output` argument:
 
-`$ php -q extractor.php stopwords_en_US.txt -p > en_US.pattern` 
+`$ php extractor.php stopwords_en_US.txt --locale=en_US --output=pattern > en_US.pattern` 
 
-RakePHP will always look for a .pattern file first and if not found will look
-for a .php file in the ./lang/ directory.
+RakePHP will always look for a `.pattern` file first and if not found it will look
+for a `.php` file in the `./lang/` directory.
 
 ## To run tests
 

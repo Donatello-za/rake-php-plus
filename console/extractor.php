@@ -14,13 +14,26 @@
  *
  * Usage:
  * To generate PHP output:
- * php -q extractor.php stopwords_en_US.txt
+ * php -q extractor.php stopwords_en_US.txt --output=php
  *
  * To generate a regular expression pattern:
- * php -q extractor.php stopwords_en_US.txt -p
+ * php -q extractor.php stopwords_en_US.txt --output=pattern
  *
  * To generate a regular expression pattern from a php array:
- * php -q extractor.php en_US.php -p
+ * php -q extractor.php en_US.php --output=pattern
+ *
+ * Sorting the keywords in descending order, e.g. Z -> A is
+ * important and for the tool to sort languages other than
+ * English properly it needs to set the locale using PHP's
+ * setlocale() function which depends on your system's
+ * available locals. To check your locals on Linux run:
+ *
+ * $ local -a
+ *
+ * To install more locals:
+ *
+ * $ sudo locale-gen es_AR
+ * $ sudo locale-gen es_AR.utf8
  */
 
 /**
@@ -32,21 +45,21 @@ function check_args($arg_count)
         echo "\n";
         echo "Error: Please specify the filename of the stopwords file to extract.\n";
         echo "Example:\n";
-        echo "  php -q extractor.php stopwords_en_US.txt\n";
-        echo "  php -q extractor.php stopwords_en_US.json\n";
+        echo "  php ./console/extractor.php stopwords_en_US.txt --locale=en_US --output=php\n";
+        echo "  php ./console extractor.php stopwords_en_US.json --locale=en_US --output=php\n";
         echo "\n";
-        echo "For better RakePlus performance, use the -p switch to produce regular\n";
-        echo "expression pattern instead of a PHP script.\n";
+        echo "For better RakePlus performance, use the --output argument to produce\n";
+        echo "regular expression pattern instead of a PHP script.\n";
         echo "Example:\n";
-        echo "  php -q extractor.php stopwords_en_US.txt -p\n";
-        echo "  php -q extractor.php stopwords_en_US.json -p\n";
+        echo "  php ./console/extractor.php stopwords_en_US.txt --locale=en_US --output=pattern\n";
+        echo "  php ./console/extractor.php stopwords_en_US.json --locale=en_US --output=pattern\n";
         echo "\n";
         echo "You can pipe the output of this tool directly into a\n";
         echo ".php or .pattern file:\n";
         echo "Example:\n";
-        echo "  php -q extractor.php stopwords_en_US.txt > en_US.php\n";
-        echo "  php -q extractor.php stopwords_en_US.json -p > en_US.pattern\n";
-        echo "  php -q extractor.php en_US.php -p > en_US.pattern\n";
+        echo "  php ./console/extractor.php stopwords_en_US.txt --locale=en_US --output=php > en_US.php\n";
+        echo "  php ./console/extractor.php stopwords_en_US.json --locale=en_US --output=pattern > en_US.pattern\n";
+        echo "  php ./console/extractor.php en_US.php --locale=en_US --output=pattern > en_US.pattern\n";
         echo "\n";
 
         exit(1);
@@ -60,13 +73,52 @@ function check_args($arg_count)
  *
  * @return mixed
  */
-function get_arg($args, $arg_no, $default = null)
+function get_arg_by_index($args, $arg_no, $default = null)
 {
     if ($arg_no < count($args)) {
         return $args[$arg_no];
     } else {
         return $default;
     }
+}
+
+/**
+ * @param array $args
+ * @param string $name
+ * @param mixed $default
+ *
+ * @return mixed
+ */
+function get_arg_by_name($args, $name, $default = null)
+{
+    foreach ($args as $arg) {
+        list($key, $value) = array_pad(explode('=', $arg), 2, $default);
+        if ($key == $name) {
+            return $value;
+        }
+    }
+
+    return $default;
+}
+
+/**
+ * Returns true if one if the arguments consists
+ * of the supplied $arg.
+ *
+ * @param $args
+ * @param $name
+ *
+ * @return mixed
+ */
+function has_arg($args, $name)
+{
+    foreach ($args as $arg) {
+        if ($arg == $name) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 /**
@@ -95,7 +147,7 @@ function load_stopwords($stopwords_file)
                 }
             }
 
-            return $stopwords;
+            return array_keys($stopwords);
         } else {
             echo "\n";
             echo "Error: Could not read text file \"{$stopwords_file}\".\n";
@@ -106,12 +158,13 @@ function load_stopwords($stopwords_file)
 
     if ($ext === 'json') {
         $stopwords = json_decode(file_get_contents($stopwords_file), true);
-        return array_fill_keys($stopwords, true);
+        return array_keys(array_fill_keys($stopwords, true));
     }
 
     if ($ext === 'php') {
+        /** @noinspection PhpIncludeInspection */
         $stopwords = require $stopwords_file;
-        return array_fill_keys($stopwords, true);
+        return array_keys(array_fill_keys($stopwords, true));
     }
 
     return [];
@@ -126,9 +179,6 @@ function render_php_output(array $stopwords)
 {
     $stopword_count = count($stopwords);
     $timestamp = (new DateTime('now', new DateTimeZone('UTC')))->format(DateTime::ATOM);
-
-    $stopwords = array_keys($stopwords);
-    asort($stopwords);
 
     echo "<?php\n";
     echo "\n";
@@ -158,9 +208,6 @@ function render_php_output(array $stopwords)
  */
 function render_pattern_output(array $stopwords)
 {
-    $stopwords = array_keys($stopwords);
-    asort($stopwords);
-
     $regex = [];
 
     foreach ($stopwords as $word) {
@@ -181,19 +228,29 @@ function render_pattern_output(array $stopwords)
 }
 
 /**
+ * @param array $stopwords
+ */
+function render_json_output(array $stopwords)
+{
+    echo json_encode($stopwords, JSON_PRETTY_PRINT) . "\n";
+}
+
+/**
  * @param array  $stopwords
  * @param string $stopwords_file
- * @param string $option
+ * @param string $output
  *
  * @throws Exception
  */
-function render_output(array $stopwords, $stopwords_file, $option)
+function render_output(array $stopwords, $stopwords_file, $output = 'php')
 {
     if (count($stopwords) > 0) {
-        if ($option == '-p') {
+        if ($output == 'pattern') {
             render_pattern_output($stopwords);
-        } else {
+        } else if ($output == 'php') {
             render_php_output($stopwords);
+        } else if ($output == 'json') {
+            render_json_output($stopwords);
         }
 
     } else {
@@ -206,13 +263,42 @@ function render_output(array $stopwords, $stopwords_file, $option)
 
 check_args($argc);
 
-$stopwords_file = get_arg($argv, 1);
+$stopwords_file = get_arg_by_index($argv, 1);
 $stopwords = load_stopwords($stopwords_file);
 
+$locale = get_arg_by_name($argv, '--locale');
+if ($locale === null) {
+    echo "Please specify the locale, e.g. --locale=en_US\n";
+}
+
+if (!has_arg($argv, '--nosort')) {
+    $result = setlocale(LC_COLLATE, $locale . '.utf8');
+    if (!has_arg($argv, '--ascending')) {
+        usort($stopwords, function ($a, $b) {
+            return strcoll($b, $a);
+        });
+    } else {
+        usort($stopwords, function ($a, $b) {
+            return strcoll($a, $b);
+        });
+    }
+
+    /*
+    if (!has_arg($argv, '--ascending')) {
+        rsort($stopwords);
+    } else {
+        sort($stopwords);
+    }
+    */
+}
+
+$OUTPUT_TYPES = ['pattern', 'php', 'json'];
+$output = get_arg_by_name($argv, '--output');
+if (!in_array($output, $OUTPUT_TYPES)) {
+    echo "Please specify the output format, e.g. --output=pattern, --output=php or --output=json\n";
+    exit(1);
+}
+
 /** @noinspection PhpUnhandledExceptionInspection */
-render_output(
-    $stopwords,
-    $stopwords_file,
-    get_arg($argv, 2)
-);
+render_output($stopwords, $stopwords_file, $output);
 

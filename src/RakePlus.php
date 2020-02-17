@@ -128,7 +128,7 @@ class RakePlus
                 $this->pattern = StopwordArray::create($stopwords)->pattern();
             } else if (is_string($stopwords)) {
                 if (is_null($this->pattern) || ($this->language != $stopwords)) {
-                    $extension = strtolower(pathinfo($stopwords, PATHINFO_EXTENSION));
+                    $extension = mb_strtolower(pathinfo($stopwords, PATHINFO_EXTENSION));
                     if (empty($extension)) {
                         // First try the .pattern file
                         $this->language_file = StopwordsPatternFile::languageFile($stopwords);
@@ -212,7 +212,11 @@ class RakePlus
                 // down the line when a developer attempts to
                 // append arrays to one another and one of them
                 // have a mix of integer and string keys.
-                $keywords[$word] = $word;
+                if (!$this->filter_numerics || ($this->filter_numerics && !is_numeric($word))) {
+                    if ($this->min_length === 0 || mb_strlen($word) >= $this->min_length) {
+                        $keywords[$word] = $word;
+                    }
+                }
             }
         }
 
@@ -320,10 +324,10 @@ class RakePlus
             $phrases_temp = preg_replace($pattern, '|', $sentence);
             $phrases = explode('|', $phrases_temp);
             foreach ($phrases as $phrase) {
-                $phrase = strtolower(trim($phrase));
+                $phrase = mb_strtolower(trim($phrase));
                 if (!empty($phrase)) {
                     if (!$this->filter_numerics || ($this->filter_numerics && !is_numeric($phrase))) {
-                        if ($this->min_length === 0 || strlen($phrase) >= $this->min_length) {
+                        if ($this->min_length === 0 || mb_strlen($phrase) >= $this->min_length) {
                             $results[] = $phrase;
                         }
                     }

@@ -2,7 +2,9 @@
 
 namespace DonatelloZa\RakePlus;
 
+use InvalidArgumentException;
 use PHPUnit_Framework_TestCase;
+use RuntimeException;
 
 function extension_loaded($name)
 {
@@ -29,7 +31,7 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \RuntimeException
+     * @expectedException RuntimeException
      */
     public function testEmptyLanguage()
     {
@@ -37,7 +39,7 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \RuntimeException
+     * @expectedException RuntimeException
      */
     public function testInvalidLanguage()
     {
@@ -45,7 +47,7 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \InvalidArgumentException
+     * @expectedException InvalidArgumentException
      */
     public function testNullLanguage()
     {
@@ -53,7 +55,7 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \RuntimeException
+     * @expectedException RuntimeException
      */
     public function testInvalidLangReturnStringFile()
     {
@@ -61,7 +63,7 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \RuntimeException
+     * @expectedException RuntimeException
      */
     public function testInvalidLangReturnEmptyArrayFile()
     {
@@ -69,7 +71,7 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \RuntimeException
+     * @expectedException RuntimeException
      */
     public function testEmptyLanguageArray()
     {
@@ -77,7 +79,7 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \RuntimeException
+     * @expectedException RuntimeException
      */
     public function testNonExistingPatternFile()
     {
@@ -167,7 +169,7 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \InvalidArgumentException
+     * @expectedException InvalidArgumentException
      */
     public function testSetInvalidMinLength()
     {
@@ -716,6 +718,22 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
         $this->assertContains('c-class articles', $phrases);
         $this->assertContains('read', $phrases);
         $this->assertContains('wikipedia', $phrases);
+    }
+
+    public function testPhrasesWithContractions()
+    {
+        $text = "It's of great importance that you're testing this properly. We'll make sure that there's no " .
+            "could've, would've, should've situations this time around.";
+        $phrases = RakePlus::create($text, 'en_US', 0, false)->get();
+
+        $this->assertCount(6, $phrases);
+
+        $this->assertContains('great importance', $phrases);
+        $this->assertContains('testing', $phrases);
+        $this->assertContains('properly', $phrases);
+        $this->assertContains('make', $phrases);
+        $this->assertContains('situations', $phrases);
+        $this->assertContains('time', $phrases);
     }
 
     public function testFrenchShorthand()

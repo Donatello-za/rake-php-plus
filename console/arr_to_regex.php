@@ -6,7 +6,7 @@
  *
  * Usage:
  *
- * php -q ./arr_to_regex.php '../lang/en_US.php'
+ * php ./arr_to_regex.php '../lang/en_US.php'
  *
  */
 
@@ -19,7 +19,7 @@ function check_args($arg_count)
         echo "\n";
         echo "Error: Please specify the .php filename containing the stopwords array.\n";
         echo "Example:\n";
-        echo "  php -q arr_to_regex.php '../lang/en_US.php'\n";
+        echo "  php ./console/arr_to_regex.php './lang/en_US.php'\n";
         echo "\n";
         exit(1);
     }
