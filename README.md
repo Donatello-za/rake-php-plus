@@ -40,6 +40,7 @@ This particular package intends to include the following benefits over the origi
 * Russian/русский язык (ru_RU)
 * Brazilian Portuguese/português do Brasil (pt_BR)
 * Sorani Kurdish/سۆرانی (ckb_IQ)
+* Arabic (United Arab Emirates)/لإمارات العربية المتحدة (ar_AE)
 
 ## Version
 
