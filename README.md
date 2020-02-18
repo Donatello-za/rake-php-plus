@@ -39,18 +39,18 @@ This particular package intends to include the following benefits over the origi
 * Polish/język polski (pl_PL)
 * Russian/русский язык (ru_RU)
 * Brazilian Portuguese/português do Brasil (pt_BR)
-* Kurdish/کوردی (ku_TR)
+* Sorani Kurdish/سۆرانی (ckb_IQ)
 
 ## Version
 
-v1.0.11
+v1.0.12
 
 ## Special Thanks
 
 * [Jarosław Wasilewski](https://github.com/Orajo): Polish language and improving multi-byte support.
 * [Lev Morozov](https://github.com/levmorozov): French and Russian languages.
 * [Igor Carvalho](https://github.com/Carvlho): Brazilian Portuguese language.
-* [Khoshbin Ali Ahmed](https://github.com/Xoshbin): Kurdish and Arabic languages.
+* [Khoshbin Ali Ahmed](https://github.com/Xoshbin): Sorani Kurdish and Arabic languages.
 
 ## Installation
 
