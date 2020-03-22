@@ -4,7 +4,7 @@ namespace DonatelloZa\RakePlus;
 
 use PHPUnit_Framework_TestCase;
 
-class es_AR_Test extends PHPUnit_Framework_TestCase
+class lang_es_AR_Test extends PHPUnit_Framework_TestCase
 {
     public static $mb_support = true;
 

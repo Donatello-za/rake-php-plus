@@ -5,15 +5,7 @@ namespace DonatelloZa\RakePlus;
 use InvalidArgumentException;
 use PHPUnit_Framework_TestCase;
 use RuntimeException;
-
-function extension_loaded($name)
-{
-    if ($name === 'mbstring') {
-        return RakePlusTest::$mb_support;
-    }
-    return \extension_loaded($name);
-}
-
+use stdClass;
 
 class RakePlusTest extends PHPUnit_Framework_TestCase
 {
@@ -211,6 +203,34 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
             "of minimal generating sets of solutions for all types of systems are given.";
 
         $stopwords = StopwordsPatternFile::create('./tests/lang/en_US.ereg.pattern');
+        $phrases = RakePlus::create($text, $stopwords)->get();
+
+        $this->assertContains('algorithms', $phrases);
+        $this->assertContains('compatibility', $phrases);
+        $this->assertContains('components', $phrases);
+        $this->assertContains('considered', $phrases);
+        $this->assertContains('construction', $phrases);
+        $this->assertContains('criteria', $phrases);
+        $this->assertContains('linear diophantine equations', $phrases);
+        $this->assertContains('minimal generating sets', $phrases);
+        $this->assertContains('minimal set', $phrases);
+        $this->assertContains('nonstrict inequations', $phrases);
+        $this->assertContains('solutions', $phrases);
+        $this->assertContains('strict inequations', $phrases);
+        $this->assertContains('system', $phrases);
+        $this->assertContains('systems', $phrases);
+        $this->assertContains('types', $phrases);
+        $this->assertContains('upper bounds', $phrases);
+    }
+
+    public function testLoadStopwordLangPatternFile()
+    {
+        $text = "Criteria of compatibility of a system of linear Diophantine equations, " .
+            "strict inequations, and nonstrict inequations are considered. Upper bounds " .
+            "for components of a minimal set of solutions and algorithms of construction " .
+            "of minimal generating sets of solutions for all types of systems are given.";
+
+        $stopwords = StopwordsPatternFile::create('./tests/lang/en_US.non_ereg.pattern');
         $phrases = RakePlus::create($text, $stopwords)->get();
 
         $this->assertContains('algorithms', $phrases);
@@ -736,18 +756,29 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
         $this->assertContains('time', $phrases);
     }
 
-    public function testFrenchShorthand()
+    public function testWithOwnParseOptions()
     {
-        $text = "Pour l'Arabie saoudite, l'accueil du Dakar s'inscrit dans un plan visant à préparer l'après-pétrole.";
-        $phrases = RakePlus::create($text, 'fr_FR', 0, false)->get();
+        $text = "It's of great importance that you're testing this properly. We'll make sure that there's no " .
+            "could've, would've, should've situations this time around.";
+        $phrases = RakePlus::create($text, 'en_US', 0, false, LangParseOptions::create())->get();
 
         $this->assertCount(6, $phrases);
 
-        $this->assertContains('l\'arabie saoudite', $phrases);
-        $this->assertContains('l\'accueil', $phrases);
-        $this->assertContains('dakar s\'inscrit', $phrases);
-        $this->assertContains('plan visant', $phrases);
-        $this->assertContains('préparer l\'', $phrases);
-        $this->assertContains('-pétrole', $phrases);
+        $this->assertContains('great importance', $phrases);
+        $this->assertContains('testing', $phrases);
+        $this->assertContains('properly', $phrases);
+        $this->assertContains('make', $phrases);
+        $this->assertContains('situations', $phrases);
+        $this->assertContains('time', $phrases);
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testWithInvalidParseOptions()
+    {
+        $text = "It's of great importance that you're testing this properly. We'll make sure that there's no " .
+            "could've, would've, should've situations this time around.";
+        RakePlus::create($text, 'en_US', 0, false, new stdClass())->get();
     }
 }

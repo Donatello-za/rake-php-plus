@@ -8,6 +8,7 @@
 settings.json
 .directory
 /vendor
+/coverage
 Homestead.yaml
 Homestead.json
 .env

@@ -44,7 +44,7 @@ This particular package intends to include the following benefits over the origi
 
 ## Version
 
-v1.0.12
+v1.0.13
 
 ## Special Thanks
 
@@ -490,7 +490,7 @@ for a `.php` file in the `./lang/` directory.
 
 ## To run tests
 
-`./vendor/bin/phpunit tests/RakePlusTest.php`
+`./vendor/bin/phpunit tests`
 
 ## License
 
