@@ -44,7 +44,7 @@ This particular package intends to include the following benefits over the origi
 
 ## Version
 
-v1.0.13 Beta
+v1.0.13
 
 ## Special Thanks
 
