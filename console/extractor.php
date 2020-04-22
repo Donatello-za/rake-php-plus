@@ -180,7 +180,7 @@ function render_php_output(array $stopwords)
     $stopword_count = count($stopwords);
     $timestamp = (new DateTime('now', new DateTimeZone('UTC')))->format(DateTime::ATOM);
 
-    echo "<?php\n";
+    echo "\xEF\xBB\xBF<?php\n";
     echo "\n";
     echo "/**\n";
     echo " * Stopwords list for the use in the PHP package rake-php-plus.\n";
@@ -224,7 +224,7 @@ function render_pattern_output(array $stopwords)
         }
     }
 
-    echo '/' . implode('|', $regex) . '/i' . "\n";
+    echo "\xEF\xBB\xBF".'/' . implode('|', $regex) . '/i' . "\n";
 }
 
 /**
