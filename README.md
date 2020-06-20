@@ -7,21 +7,16 @@ Yet another PHP implementation of the Rapid Automatic Keyword Extraction algorit
 
 ## Why is this package useful?
 
-Keywords describe the main topics expressed in a document/text. Keyword *extraction* in turn allows for the extraction 
-of important words and phrases from text. This in turn can be used for building a list of tags or to build a keyword 
-search index or grouping similar content by its topics and much more. This library provides an easy method for PHP 
-developers to get a list of keywords and phrases from a string of text.
+Keywords describe the main topics expressed in a document/text. Keyword *extraction* in turn allows for the extraction of important words and phrases from text. This in turn can be used for building a list of tags or to build a keyword search index or grouping similar content by its topics and much more. This library provides an easy method for PHP developers to get a list of keywords and phrases from a string of text.
 
-This project is based on another project called [RAKE-PHP](https://github.com/Richdark/RAKE-PHP) by Richard Filipčík, 
-which is a translation from a Python implementation simply called [RAKE](https://github.com/aneesha/RAKE).
+This project is based on another project called [RAKE-PHP](https://github.com/Richdark/RAKE-PHP) by Richard Filipčík, which is a translation from a Python implementation simply called [RAKE](https://github.com/aneesha/RAKE).
 
-*As described in: Rose, S., Engel, D., Cramer, N., & Cowley, W. (2010). 
-[Automatic Keyword Extraction from Individual Documents](https://www.researchgate.net/publication/227988510_Automatic_Keyword_Extraction_from_Individual_Documents). 
+*As described in: Rose, S., Engel, D., Cramer, N., & Cowley, W. (2010).
+[Automatic Keyword Extraction from Individual Documents](https://www.researchgate.net/publication/227988510_Automatic_Keyword_Extraction_from_Individual_Documents).
 In M. W. Berry & J. Kogan (Eds.), Text Mining: Theory and Applications: John Wiley & Sons.*
 
 
-This particular package intends to include the following benefits over the original 
-[RAKE-PHP](https://github.com/Richdark/RAKE-PHP) package:
+This particular package intends to include the following benefits over the original[RAKE-PHP](https://github.com/Richdark/RAKE-PHP) package:
 
 1. Add [PSR-2](http://www.php-fig.org/psr/psr-2/) coding standards.
 2. Implement [PSR-4](http://www.php-fig.org/psr/psr-4/) in order to be [Composer](https://getcomposer.org) installable.
@@ -42,6 +37,7 @@ This particular package intends to include the following benefits over the origi
 * European Portuguese/português europeu (pt_PT)
 * Sorani Kurdish/سۆرانی (ckb_IQ)
 * Arabic (United Arab Emirates)/لإمارات العربية المتحدة (ar_AE)
+* German (Germany)/Deutsch (Deutschland) (de_DE)
 
 ## Version
 
@@ -54,12 +50,16 @@ v1.0.14
 * [Igor Carvalho](https://github.com/Carvlho): Brazilian Portuguese language.
 * [Khoshbin Ali Ahmed](https://github.com/Xoshbin): Sorani Kurdish and Arabic languages.
 * [RhaPT](https://github.com/RhaPT): European Portuguese language.
+* [Peter Thaleikis](https://github.com/spekulatius): German language.
 
 ## Installation
 
 ### With Composer
 
-`$ composer require donatello-za/rake-php-plus`
+```bash
+$ composer require donatello-za/rake-php-plus
+```
+
 
 ```json
 {
@@ -98,10 +98,9 @@ text is English (US).
 
 
 ```php
-
 use DonatelloZa\RakePlus\RakePlus;
 
-$text = "Criteria of compatibility of a system of linear Diophantine equations, " . 
+$text = "Criteria of compatibility of a system of linear Diophantine equations, " .
     "strict inequations, and nonstrict inequations are considered. Upper bounds " .
     "for components of a minimal set of solutions and algorithms of construction " .
     "of minimal generating sets of solutions for all types of systems are given.";
@@ -131,7 +130,6 @@ Array
     [14] => types
     [15] => systems
 )
-
 ```
 
 ## Example 2
@@ -140,10 +138,9 @@ Creates a new instance of RakePlus, extract the phrases in different different o
 and also shows how to get the phrase scores.
 
 ```php
-
 use DonatelloZa\RakePlus\RakePlus;
 
-$text = "Criteria of compatibility of a system of linear Diophantine equations, " . 
+$text = "Criteria of compatibility of a system of linear Diophantine equations, " .
     "strict inequations, and nonstrict inequations are considered. Upper bounds " .
     "for components of a minimal set of solutions and algorithms of construction " .
     "of minimal generating sets of solutions for all types of systems are given.";
@@ -155,6 +152,7 @@ $rake = RakePlus::create($text, 'en_US');
 $phrases = $rake->sort('asc')->get();
 print_r($phrases);
 ```
+
 ```
 Array
 (
@@ -234,8 +232,8 @@ Array
 ```
 
 ```php
-// Extract phrases from a new string on the same RakePlus instance. Using the 
-// same RakePlus instance is faster than creating a new instance as the 
+// Extract phrases from a new string on the same RakePlus instance. Using the
+// same RakePlus instance is faster than creating a new instance as the
 // language files do not have to be re-loaded and parsed.
 
 $text = "A fast Fourier transform (FFT) algorithm computes...";
@@ -257,10 +255,9 @@ Array
 Creates a new instance of RakePlus and extract the unique keywords from the phrases.
 
 ```php
-
 use DonatelloZa\RakePlus\RakePlus;
 
-$text = "Criteria of compatibility of a system of linear Diophantine equations, " . 
+$text = "Criteria of compatibility of a system of linear Diophantine equations, " .
     "strict inequations, and nonstrict inequations are considered. Upper bounds " .
     "for components of a minimal set of solutions and algorithms of construction " .
     "of minimal generating sets of solutions for all types of systems are given.";
@@ -302,10 +299,9 @@ Array
 Creates a new instance of RakePlus without using the static RakePlus::create method.
 
 ```php
-
 use DonatelloZa\RakePlus;
 
-$text = "Criteria of compatibility of a system of linear Diophantine equations, " . 
+$text = "Criteria of compatibility of a system of linear Diophantine equations, " .
     "strict inequations, and nonstrict inequations are considered. Upper bounds " .
     "for components of a minimal set of solutions and algorithms of construction " .
     "of minimal generating sets of solutions for all types of systems are given.";
@@ -332,7 +328,7 @@ $rake = RakePlus::create($text, 'en_US');
 // 2: Pass an array containing stopwords
 $rake = RakePlus::create($text, ['a', 'able', 'about', 'above', ...]);
 
-// 3: Pass the name of a PHP or pattern file, 
+// 3: Pass the name of a PHP or pattern file,
 //    see lang/en_US.php and lang/en_US.pattern for examples.
 $rake = RakePlus::create($text, '/path/to/my/stopwords.pattern');
 
@@ -370,6 +366,7 @@ Array
 ```php
 // With a minimum
 $phrases = RakePlus::create($text, 'en_US', 10)->get();
+
 print_r($phrases);
 ```
 
@@ -408,6 +405,7 @@ print_r($phrases);
 ```php
 // Do not filter out numerics
 $phrases = RakePlus::create($text, 'en_US', 0, false)->get();
+
 print_r($phrases);
 ```
 
@@ -425,34 +423,22 @@ Array
 
 **Using the stopwords extractor tool**
 
-The library requires a list of "stopwords" for each language. Stopwords are 
-common words used in a language such as "and", "are", "or", etc. An example 
-list of such  stopwords can be found 
-[here (en_US)](http://www.lextek.com/manuals/onix/stopwords2.html). You can
-also [take a look at this list](https://github.com/Donatello-za/stopwords-json) 
-which have stopwords for 50 different languages in individual JSON files.
+The library requires a list of "stopwords" for each language. Stopwords are common words used in a language such as "and", "are", "or", etc. An example list of such  stopwords can be found [here (en_US)](http://www.lextek.com/manuals/onix/stopwords2.html). You can also [take a look at this list](https://github.com/Donatello-za/stopwords-json) which have stopwords for 50 different languages in individual JSON files.
 
-When working with a simple list such as in the first example, you can copy and 
-paste the text into a text file and use the extractor tool to
-convert it into a format that this library can read efficiently. *An example
-of such a stopwords file that have been copied from the hyperlink above have 
-been included for your convenience (console/stopwords_en_US.txt)*
+When working with a simple list such as in the first example, you can copy and paste the text into a text file and use the extractor tool to convert it into a format that this library can read efficiently. *An example of such a stopwords file that have been copied from the hyperlink above have been included for your convenience (console/stopwords_en_US.txt)*
 
-Alternatively you can extract the stopwords from a JSON file of which an
-example have also been supplied, look under `console/stopwords_en_US.json`
+Alternatively you can extract the stopwords from a JSON file of which an example have also been supplied, look under `console/stopwords_en_US.json`
 
-**Note:** Simply replace `en_US` to whatever locale you wish to use in the 
-examples below.
+**Note:** Simply replace `en_US` to whatever locale you wish to use in the examples below.
 
-**Important:** Before using the `extractor` tool, make sure to use the following
-Linux command to check whether your locale is supported:
+**Important:** Before using the `extractor` tool, make sure to use the following Linux command to check whether your locale is supported:
 
 ```sh
 $ locale -a
 ```
 
-If you do not see the locale you wish to use in the list you can install it
-as follows: (in this case we are installing the French locale):
+If you do not see the locale you wish to use in the list you can install it as follows: (in this case we are installing the French locale):
+
 ```sh
 $ sudo locale-gen fr_FR
 $ sudo locale-gen fr_FR.utf8
@@ -469,26 +455,20 @@ To extract stopwords from a JSON file, run the following from the command line:
 
 `$ php extractor.php stopwords_en_US.json --locale=en_US --output=php`
 
-It will output the results to the terminal. You will notice that the results looks
-like PHP and in fact it is. You can write the results directly to a PHP file by
-piping it:
+It will output the results to the terminal. You will notice that the results looks like PHP and in fact it is. You can write the results directly to a PHP file by piping it:
 
-`$ php extractor.php stopwords_en_US.txt --locale=en_US --output=php > en_US.php` 
+`$ php extractor.php stopwords_en_US.txt --locale=en_US --output=php > en_US.php`
 
-Finally, copy the `en_US.php` file to the `lang/` directory and then instantiate
- php-rake-plus like so:
+Finally, copy the `en_US.php` file to the `lang/` directory and then instantiate php-rake-plus like so:
 
 ```php
 $rake = RakePlus::create($text, 'en_US');
 ```
-To improve the initial loading speed of the language file within RakePlus, you
-can also set the exporter to produce the results as a regular expression pattern
-using the `--output` argument:
+To improve the initial loading speed of the language file within RakePlus, you can also set the exporter to produce the results as a regular expression pattern using the `--output` argument:
 
-`$ php extractor.php stopwords_en_US.txt --locale=en_US --output=pattern > en_US.pattern` 
+`$ php extractor.php stopwords_en_US.txt --locale=en_US --output=pattern > en_US.pattern`
 
-RakePHP will always look for a `.pattern` file first and if not found it will look
-for a `.php` file in the `./lang/` directory.
+RakePHP will always look for a `.pattern` file first and if not found it will look for a `.php` file in the `./lang/` directory.
 
 ## To run tests
 
