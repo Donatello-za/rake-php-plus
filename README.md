@@ -41,7 +41,7 @@ This particular package intends to include the following benefits over the origi
 
 ## Version
 
-v1.0.14
+v1.0.15
 
 ## Special Thanks
 
