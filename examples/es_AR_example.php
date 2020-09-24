@@ -3,7 +3,7 @@
 // Para ejecutar este ejemplo desde la línea de comando.:
 // php ./examples/es_AR_example.php "Algun texto de ejemplo"
 
-require 'vendor/autoload.php';
+require '../vendor/autoload.php';
 
 use DonatelloZa\RakePlus\RakePlus;
 
@@ -14,9 +14,9 @@ if ($argc < 2) {
 }
 
 $keywords = RakePlus::create($argv[1], 'es_AR')->keywords();
-print "Resultados de palabras clave: {$argv[1]}\n";
+print "Resultados de palabras clave: \"{$argv[1]}\"\n";
 print_r($keywords);
 
 $phrases = RakePlus::create($argv[1], 'es_AR')->get();
-print "Resultados de la frase: {$argv[1]}\n";
+print "Resultados de la frase: \"{$argv[1]}\"\n";
 print_r($phrases);
