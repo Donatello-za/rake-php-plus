@@ -16,7 +16,7 @@ This project is based on another project called [RAKE-PHP](https://github.com/Ri
 In M. W. Berry & J. Kogan (Eds.), Text Mining: Theory and Applications: John Wiley & Sons.*
 
 
-This particular package intends to include the following benefits over the original[RAKE-PHP](https://github.com/Richdark/RAKE-PHP) package:
+This particular package intends to include the following benefits over the original [RAKE-PHP](https://github.com/Richdark/RAKE-PHP) package:
 
 1. Add [PSR-2](http://www.php-fig.org/psr/psr-2/) coding standards.
 2. Implement [PSR-4](http://www.php-fig.org/psr/psr-4/) in order to be [Composer](https://getcomposer.org) installable.
