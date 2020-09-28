@@ -1,7 +1,8 @@
 <?php
 
 // To run this example from the command line:
-// php ./examples/de_DE_example.php "Dein Beispielsatz"
+// $ cd examples
+// $ php de_DE_example.php "Ein Beispieltext aus dem du die Schlüsselwörter extrahieren möchtest."
 
 require '../vendor/autoload.php';
 
@@ -9,7 +10,7 @@ use DonatelloZa\RakePlus\RakePlus;
 
 if ($argc < 2) {
     echo "Please specify the text you would like to be parsed, e.g.:\n";
-    echo "php ./examples/de_DE_example.php \"Ein Beispieltext aus dem du die Schlüsselwörter extrahieren möchtest.\"\n";
+    echo "php de_DE_example.php \"Ein Beispieltext aus dem du die Schlüsselwörter extrahieren möchtest.\"\n";
     exit(1);
 }
 
