@@ -82,6 +82,8 @@ use DonatelloZa\RakePlus\RakePlus;
 <?php
 
 require 'path/to/AbstractStopwordProvider.php';
+require 'path/to/ILangParseOptions.php';
+require 'path/to/LangParseOptions.php';
 require 'path/to/StopwordArray.php';
 require 'path/to/StopwordsPatternFile.php';
 require 'path/to/StopwordsPHP.php';
