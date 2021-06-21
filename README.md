@@ -1,47 +1,65 @@
 # rake-php-plus
-Yet another PHP implementation of the Rapid Automatic Keyword Extraction algorithm (RAKE).
+A keyword and phrase extraction library based on the Rapid Automatic Keyword Extraction algorithm (RAKE).
 
 [![Latest Stable Version](https://poser.pugx.org/donatello-za/rake-php-plus/v/stable)](https://packagist.org/packages/donatello-za/rake-php-plus)
 [![Total Downloads](https://poser.pugx.org/donatello-za/rake-php-plus/downloads)](https://packagist.org/packages/donatello-za/rake-php-plus)
 [![License](https://poser.pugx.org/donatello-za/rake-php-plus/license)](https://packagist.org/packages/donatello-za/rake-php-plus)
 
-## Why is this package useful?
+## Introduction
 
-Keywords describe the main topics expressed in a document/text. Keyword *extraction* in turn allows for the extraction of important words and phrases from text. This in turn can be used for building a list of tags or to build a keyword search index or grouping similar content by its topics and much more. This library provides an easy method for PHP developers to get a list of keywords and phrases from a string of text.
+Keywords describe the main topics expressed in a document/text. Keyword *extraction* in turn allows for the extraction of important words and phrases from text. 
 
-This project is based on another project called [RAKE-PHP](https://github.com/Richdark/RAKE-PHP) by Richard Filipčík, which is a translation from a Python implementation simply called [RAKE](https://github.com/aneesha/RAKE).
+Extracted keywords can be used for things like:
+- Building a list of useful tags out of a larger text
+- Building search indexes and search engines
+- Grouping similar content by its topic.
 
-*As described in: Rose, S., Engel, D., Cramer, N., & Cowley, W. (2010).
+Extracted phrases can be used for things like:
+- Highlighting important areas of a larger text
+- Language or documentation analysis
+- Building intelligent searches based on contextual terms
+
+This library provides an easy method for PHP developers to get a list of keywords and phrases from a string of text 
+and is based on another smaller and unmaintained project called [RAKE-PHP](https://github.com/Richdark/RAKE-PHP) by Richard Filipčík, 
+which is a translation from a Python implementation simply called [RAKE](https://github.com/aneesha/RAKE).
+
+> *As described in: Rose, S., Engel, D., Cramer, N., & Cowley, W. (2010).
 [Automatic Keyword Extraction from Individual Documents](https://www.researchgate.net/publication/227988510_Automatic_Keyword_Extraction_from_Individual_Documents).
 In M. W. Berry & J. Kogan (Eds.), Text Mining: Theory and Applications: John Wiley & Sons.*
 
-
 This particular package intends to include the following benefits over the original [RAKE-PHP](https://github.com/Richdark/RAKE-PHP) package:
 
-1. Add [PSR-2](http://www.php-fig.org/psr/psr-2/) coding standards.
-2. Implement [PSR-4](http://www.php-fig.org/psr/psr-4/) in order to be [Composer](https://getcomposer.org) installable.
-3. Add additional functionality such as method chaining.
-4. Add multiple ways to provide source stopwords.
+1. [PSR-2](http://www.php-fig.org/psr/psr-2/) coding standards.
+2. [PSR-4](http://www.php-fig.org/psr/psr-4/) to be [Composer](https://getcomposer.org) installable.
+3. Additional functionality such as method chaining.
+4. Multiple ways to provide source stopwords.
 5. Full unit test coverage.
 6. Performance improvements.
 7. Improved documentation.
+8. Easy language integration and multibyte string support.
 
 ## Currently Supported Languages
 
+* Arabic (United Arab Emirates)/لإمارات العربية المتحدة (ar_AE)
+* Brazilian Portuguese/português do Brasil (pt_BR)
 * English US (en_US)
-* Spanish/español (es_AR)
+* European Portuguese/português europeu (pt_PT)
 * French/le français (fr_FR)
+* German (Germany)/Deutsch (Deutschland) (de_DE)
+* Italian (Italiano)
 * Polish/język polski (pl_PL)
 * Russian/русский язык (ru_RU)
-* Brazilian Portuguese/português do Brasil (pt_BR)
-* European Portuguese/português europeu (pt_PT)
 * Sorani Kurdish/سۆرانی (ckb_IQ)
-* Arabic (United Arab Emirates)/لإمارات العربية المتحدة (ar_AE)
-* German (Germany)/Deutsch (Deutschland) (de_DE)
+* Spanish/español (es_AR)
+* Tamil (தமிழ்)
+* Turkish (Türkçe)
+
+> If your language is not listed here it can be added, please see the section
+called **How to add additional languages** at the bottom of the page.
 
 ## Version
 
-v1.0.16
+v1.0.17
 
 ## Special Thanks
 
@@ -51,6 +69,9 @@ v1.0.16
 * [Khoshbin Ali Ahmed](https://github.com/Xoshbin): Sorani Kurdish and Arabic languages.
 * [RhaPT](https://github.com/RhaPT): European Portuguese language.
 * [Peter Thaleikis](https://github.com/spekulatius): German language.
+* [Yusuf Usta](https://github.com/yusufusta): Turkish language.
+* [orthosie](https://github.com/orthosie): Tamil language.
+* [ScIEnzY](https://github.com/ScIEnzY): Italian language.
 
 ## Installation
 
@@ -423,54 +444,95 @@ Array
 
 ## How to add additional languages
 
+The library requires a list of "stopwords" for each language. Stopwords are common words used in a language such as "and", "are", "or", etc.
+
+There are [stopwords for 50 languages](https://github.com/Donatello-za/stopwords-json#languages) (including the ones already supported) available in JSON format.
+If you are lucky enough to have your language listed then you can easily import it into the library. To
+do so, read the section below:
+
 **Using the stopwords extractor tool**
 
-The library requires a list of "stopwords" for each language. Stopwords are common words used in a language such as "and", "are", "or", etc. An example list of such  stopwords can be found [here (en_US)](http://www.lextek.com/manuals/onix/stopwords2.html). You can also [take a look at this list](https://github.com/Donatello-za/stopwords-json) which have stopwords for 50 different languages in individual JSON files.
+> Note: These instructions assumes you are using Linux
 
-When working with a simple list such as in the first example, you can copy and paste the text into a text file and use the extractor tool to convert it into a format that this library can read efficiently. *An example of such a stopwords file that have been copied from the hyperlink above have been included for your convenience (console/stopwords_en_US.txt)*
+We will be using the Greek language as an example:
 
-Alternatively you can extract the stopwords from a JSON file of which an example have also been supplied, look under `console/stopwords_en_US.json`
-
-**Note:** Simply replace `en_US` to whatever locale you wish to use in the examples below.
-
-**Important:** Before using the `extractor` tool, make sure to use the following Linux command to check whether your locale is supported:
+1. Check to see if your operating have the Greek localisation files, the Greek locale
+   code you have to look for is: `el_GR`. So run the command `$ locale -a` to see if it is listed.
+2. If it is not listed, you'll need to create it, so run:
 
 ```sh
-$ locale -a
+sudo locale-gen el_GR
+sudo locale-gen el_GR.utf8
 ```
 
-If you do not see the locale you wish to use in the list you can install it as follows: (in this case we are installing the French locale):
+3. Go the [list of stopword files](https://github.com/Donatello-za/stopwords-json#languages)  and
+find the Greek language, the file will be called `el.json` and it will contain 75 stopwords.
+4. Download the `el.json` file and store it somewhere on your system.
+5. In you terminal, go to the directory of the `rake-php-plus` library, it will 
+   be under `vendor/donatello-za/rake-php-plus` if you used Composer to install it.
+
+We now need to use the JSON file to create two new files, one will be a `.php` file
+that contains the stopwords as a PHP array and one fill be a `.pattern` file which
+is a text file containing the stopwords as a regular expression:
+
+1. Extract and convert the .json file to a PHP file by running:
 
 ```sh
-$ sudo locale-gen fr_FR
-$ sudo locale-gen fr_FR.utf8
+$ php ./console/extractor.php path/to/el.json --locale=el_GR --output=php > ./some/dir/el_GR.php
 ```
 
-To extract stopwords from a text file, run the following from the command line:
+2. Extract and convert the .json file to a .pattern file by running:
 
 ```sh
-$ cd ./console
-$ php extractor.php stopwords_en_US.txt --locale=en_US --output=php
+$ php ./console/extractor.php path/to/el.json --locale=el_GR --output=pattern > ./some/dir/el_GR.pattern
 ```
 
-To extract stopwords from a JSON file, run the following from the command line:
-
-`$ php extractor.php stopwords_en_US.json --locale=en_US --output=php`
-
-It will output the results to the terminal. You will notice that the results looks like PHP and in fact it is. You can write the results directly to a PHP file by piping it:
-
-`$ php extractor.php stopwords_en_US.txt --locale=en_US --output=php > en_US.php`
-
-Finally, copy the `en_US.php` file to the `lang/` directory and then instantiate php-rake-plus like so:
+That is it! You can now use the new stopwords by specifying it when creating an instance
+of the RakePlus class, for example:
 
 ```php
-$rake = RakePlus::create($text, 'en_US');
+$rake = RakePlus::create($text, '/some/dir/el_GR.pattern');
 ```
-To improve the initial loading speed of the language file within RakePlus, you can also set the exporter to produce the results as a regular expression pattern using the `--output` argument:
 
-`$ php extractor.php stopwords_en_US.txt --locale=en_US --output=pattern > en_US.pattern`
+or
 
-RakePHP will always look for a `.pattern` file first and if not found it will look for a `.php` file in the `./lang/` directory.
+```php
+$rake = RakePlus::create($text, '/some/dir/el_GR.php');
+```
+
+**Contribute by Adding a Language**
+
+If you want your language to be officially support, you can fork this library,
+generate the `.pattern` and `.php` stopword files as described above, place it
+in the `./rake-php-plus/lang/` directory and submit it as a pull request.
+
+Once your language is officially supported, you'll be able to specify the language
+without having to specify the file to use, for example:
+
+```php
+$rake = RakePlus::create($text, 'el_GR');
+```
+
+RakePHP will always look for a `.pattern` file first and if not found it will 
+look for a `.php` file in the `./lang/` directory.
+
+**I don't have a stopwords file for my language, what now?**
+
+If your language is not covered in the [list of 50 languages here](https://github.com/Donatello-za/stopwords-json#languages)
+you may have to try and find it elsewhere, try searching for "yourlanguage stopwords". If you
+find a list or decide to create your own list, you can also just place it in a standard text
+file instead of a .json file and extract the stopwords using the extractor tool, for
+example:
+
+```sh
+$ php ./console/extractor.php path/to/mystopwords.txt --locale=LOCAL_CODE --output=php > ./some/dir/LOCAL_CODE.php
+$ php ./console/extractor.php path/to/mystopwords.txt --locale=LOCAL_CODE --output=php > ./some/dir/LOCAL_CODE.php
+```
+
+*Remember to replace `LOCAL_CODE` for the correct local you wish to use.*
+
+Here is an example text file containing stopwords that was copied and pasted from a 
+site: [stopwords_en_US](./console/stopwords_en_US.txt)
 
 ## To run tests
 
