@@ -37,7 +37,7 @@ class LangParseOptions implements ILangParseOptions
                 break;
 
             default:
-                $this->setSentenceRegEx('[.!?,;:\t\"\(\)]');
+                $this->setSentenceRegEx('[.!?,;:\t\"\“\”\(\)]');
         }
     }
 
