@@ -55,7 +55,7 @@ This particular package intends to include the following benefits over the origi
 * Turkish (Türkçe)
 
 > If your language is not listed here it can be added, please see the section
-called **How to add additional languages** at the bottom of the page.
+called **[How to add additional languages](#how-to-add-additional-languages)** at the bottom of the page.
 
 ## Version
 
@@ -157,7 +157,7 @@ Array
 
 ## Example 2
 
-Creates a new instance of RakePlus, extract the phrases in different different orders
+Creates a new instance of RakePlus, extract the phrases in different orders
 and also shows how to get the phrase scores.
 
 ```php
