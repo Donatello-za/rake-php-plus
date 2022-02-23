@@ -40,26 +40,29 @@ This particular package intends to include the following benefits over the origi
 
 ## Currently Supported Languages
 
+* Afrikaans (af_ZA)
 * Arabic (United Arab Emirates)/لإمارات العربية المتحدة (ar_AE)
 * Brazilian Portuguese/português do Brasil (pt_BR)
 * English US (en_US)
 * European Portuguese/português europeu (pt_PT)
 * French/le français (fr_FR)
 * German (Germany)/Deutsch (Deutschland) (de_DE)
-* Italian (Italiano)
+* Italian/italiano (it_IT)
 * Polish/język polski (pl_PL)
 * Russian/русский язык (ru_RU)
 * Sorani Kurdish/سۆرانی (ckb_IQ)
 * Spanish/español (es_AR)
-* Tamil (தமிழ்)
-* Turkish (Türkçe)
+* Tamil/தமிழ் (ta_TA)
+* Turkish/Türkçe (tr_TR)
+* Persian/Farsi/فارسی (fa_IR)
+* Dutch/Nederlands (nl_NL)
 
 > If your language is not listed here it can be added, please see the section
 called **[How to add additional languages](#how-to-add-additional-languages)** at the bottom of the page.
 
 ## Version
 
-v1.0.17
+v1.0.18
 
 ## Special Thanks
 
@@ -72,6 +75,8 @@ v1.0.17
 * [Yusuf Usta](https://github.com/yusufusta): Turkish language.
 * [orthosie](https://github.com/orthosie): Tamil language.
 * [ScIEnzY](https://github.com/ScIEnzY): Italian language.
+* [Reza Rabbani](https://github.com/thrashzone13): Persian language.
+* [Anne van der Aar](https://github.com/annevanderaar): Dutch language.
 
 ## Installation
 
