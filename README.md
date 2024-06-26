@@ -56,13 +56,14 @@ This particular package intends to include the following benefits over the origi
 * Turkish/Türkçe (tr_TR)
 * Persian/Farsi/فارسی (fa_IR)
 * Dutch/Nederlands (nl_NL)
+* Swedish/svenska (sv_SE)
 
 > If your language is not listed here it can be added, please see the section
 called **[How to add additional languages](#how-to-add-additional-languages)** at the bottom of the page.
 
 ## Version
 
-v1.0.18
+v1.0.19
 
 ## Special Thanks
 
@@ -540,6 +541,8 @@ Here is an example text file containing stopwords that was copied and pasted fro
 site: [stopwords_en_US](./console/stopwords_en_US.txt)
 
 ## To run tests
+
+Unit testing is performed using PHPUnit v11.2 running on PHP v8.3.0+.
 
 `./vendor/bin/phpunit tests`
 

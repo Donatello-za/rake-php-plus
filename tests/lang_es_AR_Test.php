@@ -1,14 +1,14 @@
-<?php
+<?php declare(strict_types=1);
 
-namespace DonatelloZa\RakePlus;
+use DonatelloZa\RakePlus\RakePlus;
+use PHPUnit\Framework\TestCase;
 
-use PHPUnit_Framework_TestCase;
 
-class lang_es_AR_Test extends PHPUnit_Framework_TestCase
+class lang_es_AR_Test extends TestCase
 {
-    public static $mb_support = true;
+    public static bool $mb_support = true;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         self::$mb_support = true;
     }
@@ -87,7 +87,7 @@ class lang_es_AR_Test extends PHPUnit_Framework_TestCase
         $this->assertContains('12643', $keywords);
 
         foreach ($keywords as $keyword) {
-            $this->assertInternalType('string', $keyword);
+            $this->assertIsString($keyword);
         }
     }
 

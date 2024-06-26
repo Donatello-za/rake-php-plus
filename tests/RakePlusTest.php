@@ -1,17 +1,17 @@
-<?php
+<?php declare(strict_types=1);
 
-namespace DonatelloZa\RakePlus;
+use DonatelloZa\RakePlus\RakePlus;
+use DonatelloZa\RakePlus\LangParseOptions;
+use DonatelloZa\RakePlus\StopwordArray;
+use DonatelloZa\RakePlus\StopwordsPatternFile;
+use DonatelloZa\RakePlus\StopwordsPHP;
+use PHPUnit\Framework\TestCase;
 
-use InvalidArgumentException;
-use PHPUnit_Framework_TestCase;
-use RuntimeException;
-use stdClass;
-
-class RakePlusTest extends PHPUnit_Framework_TestCase
+class RakePlusTest extends TestCase
 {
-    public static $mb_support = true;
+    public static bool $mb_support = true;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         self::$mb_support = true;
     }
@@ -22,59 +22,45 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
         $this->assertInstanceOf(RakePlus::class, $rake, 'RakePlus::create() returned invalid instance');
     }
 
-    /**
-     * @expectedException RuntimeException
-     */
     public function testEmptyLanguage()
     {
+        $this->expectException(RuntimeException::class);
         RakePlus::create("Hello World", "");
     }
 
-    /**
-     * @expectedException RuntimeException
-     */
     public function testInvalidLanguage()
     {
+        $this->expectException(RuntimeException::class);
         RakePlus::create("Hello World", "blah");
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     */
     public function testNullLanguage()
     {
+        $this->expectException(InvalidArgumentException::class);
         RakePlus::create("Hello World", null);
     }
 
-    /**
-     * @expectedException RuntimeException
-     */
     public function testInvalidLangReturnStringFile()
     {
+        $this->expectException(RuntimeException::class);
         RakePlus::create("Hello World", __DIR__ . '/test_string_lang.php');
     }
 
-    /**
-     * @expectedException RuntimeException
-     */
     public function testInvalidLangReturnEmptyArrayFile()
     {
+        $this->expectException(RuntimeException::class);
         RakePlus::create("Hello World", __DIR__ . '/test_empty_array_lang.php');
     }
 
-    /**
-     * @expectedException RuntimeException
-     */
     public function testEmptyLanguageArray()
     {
+        $this->expectException(RuntimeException::class);
         RakePlus::create("Hello World", []);
     }
 
-    /**
-     * @expectedException RuntimeException
-     */
     public function testNonExistingPatternFile()
     {
+        $this->expectException(RuntimeException::class);
         RakePlus::create("Hello World", 'file_does_not_exist.pattern');
     }
 
@@ -110,13 +96,13 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
     public function testPhrasesGetType()
     {
         $phrases = RakePlus::create("Hello World")->get();
-        $this->assertInternalType('array', $phrases, 'RakePlus::create()->get() array expected');
+        $this->assertIsArray($phrases, 'RakePlus::create()->get() array expected');
     }
 
     public function testScoresGetType()
     {
         $scores = RakePlus::create("Hello World")->scores();
-        $this->assertInternalType('array', $scores, 'RakePlus::create()->scores() array expected');
+        $this->assertIsArray($scores, 'RakePlus::create()->scores() array expected');
     }
 
     public function testLanguage()
@@ -128,7 +114,7 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
     public function testLanguageFile()
     {
         $language_file = RakePlus::create("Hello World")->languageFile();
-        $this->assertContains("/lang/en_US.pattern", $language_file);
+        $this->assertStringContainsString("/lang/en_US.pattern", $language_file);
     }
 
     public function testArrayProvider()
@@ -139,7 +125,8 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
             "of minimal generating sets of solutions for all types of systems are given.";
 
         $stopwords = StopwordArray::create(['of', 'a', 'and', 'set', 'are', 'for']);
-        RakePlus::create($text, $stopwords);
+        $phrases = RakePlus::create($text, $stopwords)->get();
+        $this->assertCount(17, $phrases);
     }
 
     public function testNonMbPhrases()
@@ -151,7 +138,8 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
             "for components of a minimal set of solutions and algorithms of construction " .
             "of minimal generating sets of solutions for all types of systems are given.";
 
-        RakePlus::create($text)->get();
+        $phrases = RakePlus::create($text)->get();
+        $this->assertCount(16, $phrases);
     }
 
     public function testGetMinLength()
@@ -160,11 +148,9 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(20, $rake->getMinLength());
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     */
     public function testSetInvalidMinLength()
     {
+        $this->expectException(InvalidArgumentException::class);
         RakePlus::create("Hello World")->setMinLength(-1);
     }
 
@@ -365,22 +351,22 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
 
         $this->assertCount(16, $scores);
 
-        $this->assertEquals($scores['criteria'], 1);
-        $this->assertEquals($scores['compatibility'], 1);
-        $this->assertEquals($scores['system'], 1);
-        $this->assertEquals($scores['considered'], 1);
-        $this->assertEquals($scores['components'], 1);
-        $this->assertEquals($scores['solutions'], 1);
-        $this->assertEquals($scores['algorithms'], 1);
-        $this->assertEquals($scores['construction'], 1);
-        $this->assertEquals($scores['types'], 1);
-        $this->assertEquals($scores['systems'], 1);
-        $this->assertEquals($scores['strict inequations'], 4);
-        $this->assertEquals($scores['nonstrict inequations'], 4);
-        $this->assertEquals($scores['upper bounds'], 4);
-        $this->assertEquals($scores['minimal set'], 4.5);
-        $this->assertEquals($scores['minimal generating sets'], 8.5);
-        $this->assertEquals($scores['linear diophantine equations'], 9);
+        $this->assertEquals(1, $scores['criteria']);
+        $this->assertEquals(1, $scores['compatibility']);
+        $this->assertEquals(1, $scores['system']);
+        $this->assertEquals(1, $scores['considered']);
+        $this->assertEquals(1, $scores['components']);
+        $this->assertEquals(1, $scores['solutions']);
+        $this->assertEquals(1, $scores['algorithms']);
+        $this->assertEquals(1, $scores['construction']);
+        $this->assertEquals(1, $scores['types']);
+        $this->assertEquals(1, $scores['systems']);
+        $this->assertEquals(4, $scores['strict inequations']);
+        $this->assertEquals(4, $scores['nonstrict inequations']);
+        $this->assertEquals(4, $scores['upper bounds']);
+        $this->assertEquals(4.5, $scores['minimal set']);
+        $this->assertEquals(8.5, $scores['minimal generating sets']);
+        $this->assertEquals(9, $scores['linear diophantine equations']);
     }
 
     public function testScoreValuesDesc()
@@ -394,22 +380,22 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
 
         $this->assertCount(16, $scores);
 
-        $this->assertEquals($scores['criteria'], 1);
-        $this->assertEquals($scores['compatibility'], 1);
-        $this->assertEquals($scores['system'], 1);
-        $this->assertEquals($scores['considered'], 1);
-        $this->assertEquals($scores['components'], 1);
-        $this->assertEquals($scores['solutions'], 1);
-        $this->assertEquals($scores['algorithms'], 1);
-        $this->assertEquals($scores['construction'], 1);
-        $this->assertEquals($scores['types'], 1);
-        $this->assertEquals($scores['systems'], 1);
-        $this->assertEquals($scores['strict inequations'], 4);
-        $this->assertEquals($scores['nonstrict inequations'], 4);
-        $this->assertEquals($scores['upper bounds'], 4);
-        $this->assertEquals($scores['minimal set'], 4.5);
-        $this->assertEquals($scores['minimal generating sets'], 8.5);
-        $this->assertEquals($scores['linear diophantine equations'], 9);
+        $this->assertEquals(1, $scores['criteria']);
+        $this->assertEquals(1, $scores['compatibility']);
+        $this->assertEquals(1, $scores['system']);
+        $this->assertEquals(1, $scores['considered']);
+        $this->assertEquals(1, $scores['components']);
+        $this->assertEquals(1, $scores['solutions']);
+        $this->assertEquals(1, $scores['algorithms']);
+        $this->assertEquals(1, $scores['construction']);
+        $this->assertEquals(1, $scores['types']);
+        $this->assertEquals(1, $scores['systems']);
+        $this->assertEquals(4, $scores['strict inequations']);
+        $this->assertEquals(4, $scores['nonstrict inequations']);
+        $this->assertEquals(4, $scores['upper bounds']);
+        $this->assertEquals(4.5, $scores['minimal set']);
+        $this->assertEquals(8.5, $scores['minimal generating sets']);
+        $this->assertEquals(9, $scores['linear diophantine equations']);
     }
 
     public function testArrayStopwords()
@@ -421,23 +407,23 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
 
         $scores = RakePlus::create($text, ['of', 'a', 'and', 'set', 'are', 'for'])->sortByScore()->scores();
 
-        $this->assertEquals($scores['criteria'], 1);
-        $this->assertEquals($scores['compatibility'], 1);
-        $this->assertEquals($scores['system'], 1);
-        $this->assertEquals($scores['considered'], 1);
-        $this->assertEquals($scores['components'], 1);
-        $this->assertEquals($scores['solutions'], 1);
-        $this->assertEquals($scores['algorithms'], 1);
-        $this->assertEquals($scores['construction'], 1);
-        $this->assertEquals($scores['systems'], 1);
-        $this->assertEquals($scores['given'], 1);
-        $this->assertEquals($scores['minimal'], 2);
-        $this->assertEquals($scores['strict inequations'], 4);
-        $this->assertEquals($scores['nonstrict inequations'], 4);
-        $this->assertEquals($scores['upper bounds'], 4);
-        $this->assertEquals($scores['all types'], 4);
-        $this->assertEquals($scores['minimal generating sets'], 8);
-        $this->assertEquals($scores['linear diophantine equations'], 9);
+        $this->assertEquals(1, $scores['criteria']);
+        $this->assertEquals(1, $scores['compatibility']);
+        $this->assertEquals(1, $scores['system']);
+        $this->assertEquals(1, $scores['considered']);
+        $this->assertEquals(1, $scores['components']);
+        $this->assertEquals(1, $scores['solutions']);
+        $this->assertEquals(1, $scores['algorithms']);
+        $this->assertEquals(1, $scores['construction']);
+        $this->assertEquals(1, $scores['systems']);
+        $this->assertEquals(1, $scores['given']);
+        $this->assertEquals(2, $scores['minimal']);
+        $this->assertEquals(4, $scores['strict inequations']);
+        $this->assertEquals(4, $scores['nonstrict inequations']);
+        $this->assertEquals(4, $scores['upper bounds']);
+        $this->assertEquals(4, $scores['all types']);
+        $this->assertEquals(8, $scores['minimal generating sets']);
+        $this->assertEquals(9, $scores['linear diophantine equations']);
     }
 
     public function testArrayStopwordsNonMb()
@@ -452,23 +438,23 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
         $stopwords = StopwordArray::create(['of', 'a', 'and', 'set', 'are', 'for']);
         $scores = RakePlus::create($text, $stopwords)->sortByScore()->scores();
 
-        $this->assertEquals($scores['criteria'], 1);
-        $this->assertEquals($scores['compatibility'], 1);
-        $this->assertEquals($scores['system'], 1);
-        $this->assertEquals($scores['considered'], 1);
-        $this->assertEquals($scores['components'], 1);
-        $this->assertEquals($scores['solutions'], 1);
-        $this->assertEquals($scores['algorithms'], 1);
-        $this->assertEquals($scores['construction'], 1);
-        $this->assertEquals($scores['systems'], 1);
-        $this->assertEquals($scores['given'], 1);
-        $this->assertEquals($scores['minimal'], 2);
-        $this->assertEquals($scores['strict inequations'], 4);
-        $this->assertEquals($scores['nonstrict inequations'], 4);
-        $this->assertEquals($scores['upper bounds'], 4);
-        $this->assertEquals($scores['all types'], 4);
-        $this->assertEquals($scores['minimal generating sets'], 8);
-        $this->assertEquals($scores['linear diophantine equations'], 9);
+        $this->assertEquals(1, $scores['criteria']);
+        $this->assertEquals(1, $scores['compatibility']);
+        $this->assertEquals(1, $scores['system']);
+        $this->assertEquals(1, $scores['considered']);
+        $this->assertEquals(1, $scores['components']);
+        $this->assertEquals(1, $scores['solutions']);
+        $this->assertEquals(1, $scores['algorithms']);
+        $this->assertEquals(1, $scores['construction']);
+        $this->assertEquals(1, $scores['systems']);
+        $this->assertEquals(1, $scores['given']);
+        $this->assertEquals(2, $scores['minimal']);
+        $this->assertEquals(4, $scores['strict inequations']);
+        $this->assertEquals(4, $scores['nonstrict inequations']);
+        $this->assertEquals(4, $scores['upper bounds']);
+        $this->assertEquals(4, $scores['all types']);
+        $this->assertEquals(8, $scores['minimal generating sets']);
+        $this->assertEquals(9, $scores['linear diophantine equations']);
 
         $this->assertEquals(['of', 'a', 'and', 'set', 'are', 'for'], $stopwords->stopwords());
     }
@@ -482,22 +468,22 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
 
         $scores = RakePlus::create($text, __DIR__ . '/test_en_US.php')->sortByScore()->scores();
 
-        $this->assertEquals($scores['criteria'], 1);
-        $this->assertEquals($scores['compatibility'], 1);
-        $this->assertEquals($scores['system'], 1);
-        $this->assertEquals($scores['considered'], 1);
-        $this->assertEquals($scores['components'], 1);
-        $this->assertEquals($scores['solutions'], 1);
-        $this->assertEquals($scores['algorithms'], 1);
-        $this->assertEquals($scores['construction'], 1);
-        $this->assertEquals($scores['types'], 1);
-        $this->assertEquals($scores['systems'], 1);
-        $this->assertEquals($scores['strict inequations'], 4);
-        $this->assertEquals($scores['nonstrict inequations'], 4);
-        $this->assertEquals($scores['upper bounds'], 4);
-        $this->assertEquals($scores['minimal set'], 4.5);
-        $this->assertEquals($scores['minimal generating sets'], 8.5);
-        $this->assertEquals($scores['linear diophantine equations'], 9);
+        $this->assertEquals(1, $scores['criteria']);
+        $this->assertEquals(1, $scores['compatibility']);
+        $this->assertEquals(1, $scores['system']);
+        $this->assertEquals(1, $scores['considered']);
+        $this->assertEquals(1, $scores['components']);
+        $this->assertEquals(1, $scores['solutions']);
+        $this->assertEquals(1, $scores['algorithms']);
+        $this->assertEquals(1, $scores['construction']);
+        $this->assertEquals(1, $scores['types']);
+        $this->assertEquals(1, $scores['systems']);
+        $this->assertEquals(4, $scores['strict inequations']);
+        $this->assertEquals(4, $scores['nonstrict inequations']);
+        $this->assertEquals(4, $scores['upper bounds']);
+        $this->assertEquals(4.5, $scores['minimal set']);
+        $this->assertEquals(8.5, $scores['minimal generating sets']);
+        $this->assertEquals(9, $scores['linear diophantine equations']);
     }
 
     public function testStopWordArrayInstance()
@@ -510,23 +496,23 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
         $stopwords = StopwordArray::create(['of', 'a', 'and', 'set', 'are', 'for']);
         $scores = RakePlus::create($text, $stopwords)->sortByScore()->scores();
 
-        $this->assertEquals($scores['criteria'], 1);
-        $this->assertEquals($scores['compatibility'], 1);
-        $this->assertEquals($scores['system'], 1);
-        $this->assertEquals($scores['considered'], 1);
-        $this->assertEquals($scores['components'], 1);
-        $this->assertEquals($scores['solutions'], 1);
-        $this->assertEquals($scores['algorithms'], 1);
-        $this->assertEquals($scores['construction'], 1);
-        $this->assertEquals($scores['systems'], 1);
-        $this->assertEquals($scores['given'], 1);
-        $this->assertEquals($scores['minimal'], 2);
-        $this->assertEquals($scores['strict inequations'], 4);
-        $this->assertEquals($scores['nonstrict inequations'], 4);
-        $this->assertEquals($scores['upper bounds'], 4);
-        $this->assertEquals($scores['all types'], 4);
-        $this->assertEquals($scores['minimal generating sets'], 8);
-        $this->assertEquals($scores['linear diophantine equations'], 9);
+        $this->assertEquals(1, $scores['criteria']);
+        $this->assertEquals(1, $scores['compatibility']);
+        $this->assertEquals(1, $scores['system']);
+        $this->assertEquals(1, $scores['considered']);
+        $this->assertEquals(1, $scores['components']);
+        $this->assertEquals(1, $scores['solutions']);
+        $this->assertEquals(1, $scores['algorithms']);
+        $this->assertEquals(1, $scores['construction']);
+        $this->assertEquals(1, $scores['systems']);
+        $this->assertEquals(1, $scores['given']);
+        $this->assertEquals(2, $scores['minimal']);
+        $this->assertEquals(4, $scores['strict inequations']);
+        $this->assertEquals(4, $scores['nonstrict inequations']);
+        $this->assertEquals(4, $scores['upper bounds']);
+        $this->assertEquals(4, $scores['all types']);
+        $this->assertEquals(8, $scores['minimal generating sets']);
+        $this->assertEquals(9, $scores['linear diophantine equations']);
 
         $this->assertEquals(['of', 'a', 'and', 'set', 'are', 'for'], $stopwords->stopwords());
     }
@@ -541,26 +527,26 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
         $stopwords = StopwordsPHP::createFromLanguage('en_US');
         $scores = RakePlus::create($text, $stopwords)->sortByScore()->scores();
 
-        $this->assertContains("/lang/en_US.php", $stopwords->filename());
+        $this->assertStringContainsString("/lang/en_US.php", $stopwords->filename());
 
-        $this->assertEquals($scores['criteria'], 1);
-        $this->assertEquals($scores['compatibility'], 1);
-        $this->assertEquals($scores['system'], 1);
-        $this->assertEquals($scores['considered'], 1);
-        $this->assertEquals($scores['components'], 1);
-        $this->assertEquals($scores['solutions'], 1);
-        $this->assertEquals($scores['algorithms'], 1);
-        $this->assertEquals($scores['construction'], 1);
-        $this->assertEquals($scores['types'], 1);
-        $this->assertEquals($scores['systems'], 1);
-        $this->assertEquals($scores['strict inequations'], 4);
-        $this->assertEquals($scores['nonstrict inequations'], 4);
-        $this->assertEquals($scores['upper bounds'], 4);
-        $this->assertEquals($scores['minimal set'], 4.5);
-        $this->assertEquals($scores['minimal generating sets'], 8.5);
-        $this->assertEquals($scores['linear diophantine equations'], 9);
+        $this->assertEquals(1, $scores['criteria']);
+        $this->assertEquals(1, $scores['compatibility']);
+        $this->assertEquals(1, $scores['system']);
+        $this->assertEquals(1, $scores['considered']);
+        $this->assertEquals(1, $scores['components']);
+        $this->assertEquals(1, $scores['solutions']);
+        $this->assertEquals(1, $scores['algorithms']);
+        $this->assertEquals(1, $scores['construction']);
+        $this->assertEquals(1, $scores['types']);
+        $this->assertEquals(1, $scores['systems']);
+        $this->assertEquals(4, $scores['strict inequations']);
+        $this->assertEquals(4, $scores['nonstrict inequations']);
+        $this->assertEquals(4, $scores['upper bounds']);
+        $this->assertEquals(4.5, $scores['minimal set']);
+        $this->assertEquals(8.5, $scores['minimal generating sets']);
+        $this->assertEquals(9, $scores['linear diophantine equations']);
 
-        $this->assertInternalType('array', $stopwords->stopwords());
+        $this->assertIsArray($stopwords->stopwords());
         $this->assertGreaterThan(0, count($stopwords->stopwords()));
     }
 
@@ -574,24 +560,24 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
         $stopwords = StopwordsPatternFile::createFromLanguage('en_US');
         $scores = RakePlus::create($text, $stopwords)->sortByScore()->scores();
 
-        $this->assertContains("/lang/en_US.pattern", $stopwords->filename());
+        $this->assertStringContainsString("/lang/en_US.pattern", $stopwords->filename());
 
-        $this->assertEquals($scores['criteria'], 1);
-        $this->assertEquals($scores['compatibility'], 1);
-        $this->assertEquals($scores['system'], 1);
-        $this->assertEquals($scores['considered'], 1);
-        $this->assertEquals($scores['components'], 1);
-        $this->assertEquals($scores['solutions'], 1);
-        $this->assertEquals($scores['algorithms'], 1);
-        $this->assertEquals($scores['construction'], 1);
-        $this->assertEquals($scores['types'], 1);
-        $this->assertEquals($scores['systems'], 1);
-        $this->assertEquals($scores['strict inequations'], 4);
-        $this->assertEquals($scores['nonstrict inequations'], 4);
-        $this->assertEquals($scores['upper bounds'], 4);
-        $this->assertEquals($scores['minimal set'], 4.5);
-        $this->assertEquals($scores['minimal generating sets'], 8.5);
-        $this->assertEquals($scores['linear diophantine equations'], 9);
+        $this->assertEquals(1, $scores['criteria']);
+        $this->assertEquals(1, $scores['compatibility']);
+        $this->assertEquals(1, $scores['system']);
+        $this->assertEquals(1, $scores['considered']);
+        $this->assertEquals(1, $scores['components']);
+        $this->assertEquals(1, $scores['solutions']);
+        $this->assertEquals(1, $scores['algorithms']);
+        $this->assertEquals(1, $scores['construction']);
+        $this->assertEquals(1, $scores['types']);
+        $this->assertEquals(1, $scores['systems']);
+        $this->assertEquals(4, $scores['strict inequations']);
+        $this->assertEquals(4, $scores['nonstrict inequations']);
+        $this->assertEquals(4, $scores['upper bounds']);
+        $this->assertEquals(4.5, $scores['minimal set']);
+        $this->assertEquals(8.5, $scores['minimal generating sets']);
+        $this->assertEquals(9, $scores['linear diophantine equations']);
     }
 
     public function testFilterNumerics()
@@ -601,12 +587,12 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
         $rake = RakePlus::create($text, 'en_US', 0, false);
         $scores = $rake->scores();
 
-        $this->assertEquals(false, $rake->getFilterNumerics());
+        $this->assertFalse($rake->getFilterNumerics());
         $this->assertCount(3, $scores);
 
-        $this->assertEquals($scores['6462'], 0);
-        $this->assertEquals($scores['wa 12643'], 1);
-        $this->assertEquals($scores['crest suite 413 lake carlietown'], 16);
+        $this->assertEquals(0, $scores['6462']);
+        $this->assertEquals(1, $scores['wa 12643']);
+        $this->assertEquals(16, $scores['crest suite 413 lake carlietown']);
     }
 
     public function testDonNotFilterNumerics()
@@ -616,8 +602,8 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
 
         $this->assertCount(2, $scores);
 
-        $this->assertEquals($scores['wa 12643'], 1);
-        $this->assertEquals($scores['crest suite 413 lake carlietown'], 16);
+        $this->assertEquals(1, $scores['wa 12643']);
+        $this->assertEquals(16, $scores['crest suite 413 lake carlietown']);
     }
 
     public function testMinLengthScores()
@@ -631,17 +617,17 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
 
         $this->assertCount(11, $scores);
 
-        $this->assertEquals($scores['compatibility'], 1);
-        $this->assertEquals($scores['considered'], 1);
-        $this->assertEquals($scores['components'], 1);
-        $this->assertEquals($scores['algorithms'], 1);
-        $this->assertEquals($scores['construction'], 1);
-        $this->assertEquals($scores['strict inequations'], 4);
-        $this->assertEquals($scores['nonstrict inequations'], 4);
-        $this->assertEquals($scores['upper bounds'], 4);
-        $this->assertEquals($scores['minimal set'], 4.5);
-        $this->assertEquals($scores['minimal generating sets'], 8.5);
-        $this->assertEquals($scores['linear diophantine equations'], 9);
+        $this->assertEquals(1, $scores['compatibility']);
+        $this->assertEquals(1, $scores['considered']);
+        $this->assertEquals(1, $scores['components']);
+        $this->assertEquals(1, $scores['algorithms']);
+        $this->assertEquals(1, $scores['construction']);
+        $this->assertEquals(4, $scores['strict inequations']);
+        $this->assertEquals(4, $scores['nonstrict inequations']);
+        $this->assertEquals(4, $scores['upper bounds']);
+        $this->assertEquals(4.5, $scores['minimal set']);
+        $this->assertEquals(8.5, $scores['minimal generating sets']);
+        $this->assertEquals(9, $scores['linear diophantine equations']);
     }
 
     public function testKeywords()
@@ -695,7 +681,7 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
         $this->assertContains('12643', $keywords);
 
         foreach ($keywords as $keyword) {
-            $this->assertInternalType('string', $keyword);
+            $this->assertIsString($keyword);
         }
     }
 
@@ -772,11 +758,9 @@ class RakePlusTest extends PHPUnit_Framework_TestCase
         $this->assertContains('time', $phrases);
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     */
     public function testWithInvalidParseOptions()
     {
+        $this->expectException(InvalidArgumentException::class);
         $text = "It's of great importance that you're testing this properly. We'll make sure that there's no " .
             "could've, would've, should've situations this time around.";
         RakePlus::create($text, 'en_US', 0, false, new stdClass())->get();

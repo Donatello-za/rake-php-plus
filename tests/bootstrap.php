@@ -2,7 +2,9 @@
 
 namespace DonatelloZa\RakePlus;
 
-function extension_loaded($name)
+use RakePlusTest;
+
+function extension_loaded($name): bool
 {
     if ($name === 'mbstring') {
         return RakePlusTest::$mb_support;

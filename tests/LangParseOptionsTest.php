@@ -1,12 +1,12 @@
-<?php
+<?php declare(strict_types=1);
 
-namespace DonatelloZa\RakePlus;
+use DonatelloZa\RakePlus\LangParseOptions;
+use PHPUnit\Framework\TestCase;
 
-use PHPUnit_Framework_TestCase;
 
-class LangParseOptionsTest extends PHPUnit_Framework_TestCase
+class LangParseOptionsTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
     }
 
