@@ -7,6 +7,8 @@
 *.sublime-workspace
 settings.json
 .directory
+/.phpunit.cache
+/build
 /vendor
 /coverage
 Homestead.yaml
