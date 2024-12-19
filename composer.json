@@ -48,6 +48,7 @@
   },
   "scripts": {
     "test": "./vendor/bin/phpunit --no-coverage",
-    "test-coverage": "./vendor/bin/phpunit --coverage-html build/coverage"
+    "test-coverage": "./vendor/bin/phpunit --coverage-html build/coverage",
+    "phpunit": "./vendor/bin/phpunit"
   }
 }
