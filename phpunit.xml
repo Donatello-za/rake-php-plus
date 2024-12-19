@@ -1,5 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bootstrap="vendor/autoload.php" colors="true" xsi:noNamespaceSchemaLocation="./vendor/phpunit/phpunit/phpunit.xsd" cacheDirectory=".phpunit.cache">
+<phpunit bootstrap="vendor/autoload.php"
+         backupGlobals="false"
+         colors="true"
+         stopOnError="false"
+         stopOnFailure="false"
+         stopOnRisky="false"
+         stopOnWarning="false"
+         processIsolation="false"
+         cacheDirectory=".phpunit.cache">
+  <testsuites>
+    <testsuite name="RAKE PHP Plus Test Suite">
+      <directory>tests</directory>
+    </testsuite>
+  </testsuites>
   <source>
     <include>
       <directory suffix=".php">src</directory>
