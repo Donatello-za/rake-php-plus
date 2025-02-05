@@ -81,6 +81,12 @@ class RakePlusTest extends TestCase
         $this->assertEmpty($sorted_scores, "Sorted scores is supposed to be an empty array.");
     }
 
+    public function testCreateWithNullText()
+    {
+        $phrases = RakePlus::create(null)->get();
+        $this->assertCount(0, $phrases);
+    }
+
     public function testSortInstance()
     {
         $rake = RakePlus::create("Hello World")->sort();
