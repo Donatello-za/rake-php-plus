@@ -63,7 +63,7 @@ called **[How to add additional languages](#how-to-add-additional-languages)** a
 
 ## Version
 
-v1.0.19
+v1.0.20
 
 ## Special Thanks
 
