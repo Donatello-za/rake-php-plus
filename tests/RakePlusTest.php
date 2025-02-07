@@ -1,7 +1,8 @@
-<?php declare(strict_types=1);
+<?php
+declare(strict_types=1);
 
-use DonatelloZa\RakePlus\RakePlus;
 use DonatelloZa\RakePlus\LangParseOptions;
+use DonatelloZa\RakePlus\RakePlus;
 use DonatelloZa\RakePlus\StopwordArray;
 use DonatelloZa\RakePlus\StopwordsPatternFile;
 use DonatelloZa\RakePlus\StopwordsPHP;
@@ -472,7 +473,7 @@ class RakePlusTest extends TestCase
             "for components of a minimal set of solutions and algorithms of construction " .
             "of minimal generating sets of solutions for all types of systems are given.";
 
-        $scores = RakePlus::create($text, __DIR__ . '/test_en_US.php')->sortByScore()->scores();
+        $scores = RakePlus::create($text, __DIR__ . '/fixtures/test_en_US.php')->sortByScore()->scores();
 
         $this->assertEquals(1, $scores['criteria']);
         $this->assertEquals(1, $scores['compatibility']);
@@ -715,7 +716,7 @@ class RakePlusTest extends TestCase
     public function testPhrasesWithHyphens()
     {
         $text = "Because of the dominance of the Linux kernel-based Android OS on smartphones, Linux has the " .
-            "largest installed base of all general-purpose operating systems. More C-class articles can be read ".
+            "largest installed base of all general-purpose operating systems. More C-class articles can be read " .
             "on Wikipedia.";
         $phrases = RakePlus::create($text, 'en_US', 0, false)->get();
 
