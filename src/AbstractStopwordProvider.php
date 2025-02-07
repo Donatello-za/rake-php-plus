@@ -5,12 +5,14 @@ namespace DonatelloZa\RakePlus;
 abstract class AbstractStopwordProvider
 {
     /**
-     * Returns a string containing a regular expression pattern.
+     * Returns a string that contains a regular expression pattern.
+     *
+     * @return string
      */
     abstract public function pattern();
 
     /**
-     * Builds a string containing a big regular expression with all the
+     * Builds a string that contains a big regular expression with all the
      * stopwords in it.
      *
      * @param array $stopwords
