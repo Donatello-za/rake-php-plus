@@ -9,7 +9,7 @@ abstract class AbstractStopwordProvider
      *
      * @return string
      */
-    abstract public function pattern();
+    abstract public function pattern(): string;
 
     /**
      * Builds a string that contains a big regular expression with all the
