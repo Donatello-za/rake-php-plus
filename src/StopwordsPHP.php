@@ -23,7 +23,7 @@ class StopwordsPHP extends AbstractStopwordProvider
     }
 
     /**
-     * Constructs a new instance of the StopwordsPHP class.
+     * Creates a new instance of the StopwordsPHP class.
      *
      * @param string $filename
      *
@@ -35,7 +35,7 @@ class StopwordsPHP extends AbstractStopwordProvider
     }
 
     /**
-     * Constructs a new instance of the StopwordsPHP class
+     * Creates a new instance of the StopwordsPHP class
      * but automatically determines the filename to use
      * based on the language string provided.
      *
