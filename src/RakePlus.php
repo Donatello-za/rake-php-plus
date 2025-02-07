@@ -6,38 +6,18 @@ use InvalidArgumentException;
 
 class RakePlus
 {
-    /** @var string */
-    protected $language = 'en_US';
-
-    /** @var string */
-    protected $language_file = "";
-
-    /** @var string|null */
-    private $pattern = null;
-
-    /** @var array */
-    private $phrase_scores = [];
-
-    /** @var int */
-    private $min_length = 0;
-
-    /** @var bool */
-    private $filter_numerics = true;
-
-    /** @var string */
-    private $sentence_regex;
-
-    /** @var string */
-    private $line_terminator;
-
-    /** @var bool */
-    public $mb_support = false;
-
-    /** @var LangParseOptions */
-    public $parseOptions;
+    protected string $language = 'en_US';
+    protected string $language_file = "";
+    private ?string $pattern = null;
+    private array $phrase_scores = [];
+    private int $min_length = 0;
+    private bool $filter_numerics = true;
+    private string $sentence_regex;
+    private string $line_terminator;
+    public bool $mb_support = false;
+    public ILangParseOptions $parseOptions;
 
     const ORDER_ASC = 'asc';
-
     const ORDER_DESC = 'desc';
 
     /**
@@ -64,11 +44,11 @@ class RakePlus
      * @param AbstractStopwordProvider|string|array $stopwords         Stopwords/language to use.
      * @param int                                   $phrase_min_length Minimum keyword/phrase length.
      * @param bool                                  $filter_numerics   Filter out numeric numbers.
-     * @param null|LangParseOptions                 $parseOptions      Additional text parsing options, see:
+     * @param null|ILangParseOptions                $parseOptions      Additional text parsing options, see:
      *                                                                 @LangParseOptions
      */
-    public function __construct($text = null, $stopwords = 'en_US', $phrase_min_length = 0, $filter_numerics = true,
-                                $parseOptions = null)
+    public function __construct(?string $text = null, $stopwords = 'en_US', int $phrase_min_length = 0,
+                                bool $filter_numerics = true, ?ILangParseOptions $parseOptions = null)
     {
         $this->mb_support = extension_loaded('mbstring');
 
@@ -76,11 +56,9 @@ class RakePlus
         $this->setFilterNumerics($filter_numerics);
 
         if ($parseOptions === null) {
-            $this->parseOptions = LangParseOptions::create($stopwords);
-        } else if ($parseOptions instanceof ILangParseOptions) {
-            $this->parseOptions = $parseOptions;
+            $this->parseOptions = LangParseOptions::create(is_string($stopwords) ? $stopwords : $this->language);
         } else {
-            throw new InvalidArgumentException("The \$parseOptions argument must be an instance of ILangParseOptions.");
+            $this->parseOptions = $parseOptions;
         }
 
         $this->sentence_regex = $this->parseOptions->getSentenceRegex();
@@ -115,13 +93,13 @@ class RakePlus
      * @param AbstractStopwordProvider|string|array $stopwords         Stopwords to use.
      * @param int                                   $phrase_min_length Minimum keyword/phrase length.
      * @param bool                                  $filter_numerics   Filter out numeric numbers.
-     * @param null|LangParseOptions                 $parseOptions      Additional text parsing options, see:
+     * @param ILangParseOptions|null                $parseOptions      Additional text parsing options, see:
      *                                                                 @LangParseOptions
      *
      * @return RakePlus
      */
-    public static function create($text, $stopwords = 'en_US', $phrase_min_length = 0, $filter_numerics = true,
-                                  $parseOptions = null)
+    public static function create(?string $text, $stopwords = 'en_US', int $phrase_min_length = 0,
+                                  bool    $filter_numerics = true, ?ILangParseOptions $parseOptions = null): RakePlus
     {
         return (new self($text, $stopwords, $phrase_min_length, $filter_numerics, $parseOptions));
     }
@@ -150,52 +128,52 @@ class RakePlus
      *
      * @return RakePlus
      */
-    public function extract($text, $stopwords = 'en_US')
+    public function extract(string $text, $stopwords = 'en_US'): RakePlus
     {
-        if ($text != '') {
-            if (is_array($stopwords)) {
-                $this->pattern = StopwordArray::create($stopwords)->pattern();
-            } else if (is_string($stopwords)) {
-                if (is_null($this->pattern) || ($this->language != $stopwords)) {
-                    $extension = mb_strtolower(pathinfo($stopwords, PATHINFO_EXTENSION));
-                    if (empty($extension)) {
-                        // First try the .pattern file
-                        $this->language_file = StopwordsPatternFile::languageFile($stopwords);
-                        if (file_exists($this->language_file)) {
-                            $this->pattern = StopwordsPatternFile::create($this->language_file)->pattern();
-                        } else {
-                            $this->language_file = StopwordsPHP::languageFile($stopwords);
-                            $this->pattern = StopwordsPHP::create($this->language_file)->pattern();
-                        }
-                        $this->language = $stopwords;
-                    } else if ($extension == 'pattern') {
-                        $this->language = $stopwords;
-                        $this->language_file = $stopwords;
+        if ($text === '') return $this;
+
+        if (is_array($stopwords)) {
+            $this->pattern = StopwordArray::create($stopwords)->pattern();
+        } else if (is_string($stopwords)) {
+            if (is_null($this->pattern) || ($this->language != $stopwords)) {
+                $extension = mb_strtolower(pathinfo($stopwords, PATHINFO_EXTENSION));
+                if (empty($extension)) {
+                    // First try the .pattern file
+                    $this->language_file = StopwordsPatternFile::languageFile($stopwords);
+                    if (file_exists($this->language_file)) {
                         $this->pattern = StopwordsPatternFile::create($this->language_file)->pattern();
-                    } else if ($extension == 'php') {
-                        $language_file = $stopwords;
-                        $this->language = $stopwords;
-                        $this->language_file = $language_file;
+                    } else {
+                        $this->language_file = StopwordsPHP::languageFile($stopwords);
                         $this->pattern = StopwordsPHP::create($this->language_file)->pattern();
                     }
+                    $this->language = $stopwords;
+                } else if ($extension == 'pattern') {
+                    $this->language = $stopwords;
+                    $this->language_file = $stopwords;
+                    $this->pattern = StopwordsPatternFile::create($this->language_file)->pattern();
+                } else if ($extension == 'php') {
+                    $language_file = $stopwords;
+                    $this->language = $stopwords;
+                    $this->language_file = $language_file;
+                    $this->pattern = StopwordsPHP::create($this->language_file)->pattern();
                 }
-            } elseif (is_subclass_of($stopwords, 'DonatelloZa\RakePlus\AbstractStopwordProvider')) {
-                $this->pattern = $stopwords->pattern();
-            } else {
-                throw new InvalidArgumentException('Invalid stopwords list provided for RakePlus.');
             }
-
-            if ($this->mb_support) {
-                $sentences = $this->splitSentencesMb($text);
-                $phrases = $this->getPhrasesMb($sentences, $this->pattern);
-            } else {
-                $sentences = $this->splitSentences($text);
-                $phrases = $this->getPhrases($sentences, $this->pattern);
-            }
-            $word_scores = $this->calcWordScores($phrases);
-            $this->phrase_scores = $this->calcPhraseScores($phrases, $word_scores);
+        } elseif (is_subclass_of($stopwords, 'DonatelloZa\RakePlus\AbstractStopwordProvider')) {
+            $this->pattern = $stopwords->pattern();
+        } else {
+            throw new InvalidArgumentException('Invalid stopwords list provided for RakePlus.');
         }
 
+        if ($this->mb_support) {
+            $sentences = $this->splitSentencesMb($text);
+            $phrases = $this->getPhrasesMb($sentences, $this->pattern);
+        } else {
+            $sentences = $this->splitSentences($text);
+            $phrases = $this->getPhrases($sentences, $this->pattern);
+        }
+
+        $word_scores = $this->calcWordScores($phrases);
+        $this->phrase_scores = $this->calcPhraseScores($phrases, $word_scores);
         return $this;
     }
 
@@ -204,7 +182,7 @@ class RakePlus
      *
      * @return array
      */
-    public function get()
+    public function get(): array
     {
         return array_keys($this->phrase_scores);
     }
@@ -215,7 +193,7 @@ class RakePlus
      *
      * @return array
      */
-    public function scores()
+    public function scores(): array
     {
         return $this->phrase_scores;
     }
@@ -226,7 +204,7 @@ class RakePlus
      *
      * @return array
      */
-    public function keywords()
+    public function keywords(): array
     {
         $keywords = [];
         $phrases = $this->get();
@@ -241,7 +219,7 @@ class RakePlus
                 // down the line when a developer attempts to
                 // append arrays to one another and one of them
                 // have a mix of integer and string keys.
-                if (!$this->filter_numerics || ($this->filter_numerics && !is_numeric($word))) {
+                if (!$this->filter_numerics || !is_numeric($word)) {
                     if ($this->min_length === 0 || mb_strlen($word) >= $this->min_length) {
                         $keywords[$word] = $word;
                     }
@@ -258,9 +236,9 @@ class RakePlus
      *
      * @param string $order Default is 'asc'
      *
-     * @return $this
+     * @return RakePlus
      */
-    public function sortByScore($order = self::ORDER_ASC)
+    public function sortByScore(string $order = self::ORDER_ASC): RakePlus
     {
         if ($order == self::ORDER_DESC) {
             arsort($this->phrase_scores);
@@ -279,7 +257,7 @@ class RakePlus
      *
      * @return $this
      */
-    public function sort($order = self::ORDER_ASC)
+    public function sort(string $order = self::ORDER_ASC): RakePlus
     {
         if ($order == self::ORDER_DESC) {
             krsort($this->phrase_scores);
@@ -295,7 +273,7 @@ class RakePlus
      *
      * @return string
      */
-    public function language()
+    public function language(): string
     {
         return $this->language;
     }
@@ -306,7 +284,7 @@ class RakePlus
      *
      * @return string|null
      */
-    public function languageFile()
+    public function languageFile(): ?string
     {
         return $this->language_file;
     }
@@ -318,7 +296,7 @@ class RakePlus
      *
      * @return array
      */
-    private function splitSentences($text)
+    private function splitSentences(string $text): array
     {
         return preg_split('/' . $this->sentence_regex . '/',
             preg_replace('/' . $this->line_terminator . '/', ' ', $text));
@@ -331,7 +309,7 @@ class RakePlus
      *
      * @return array
      */
-    private function splitSentencesMb($text)
+    private function splitSentencesMb(string $text): array
     {
         return mb_split($this->sentence_regex,
             mb_ereg_replace($this->line_terminator, ' ', $text));
@@ -345,7 +323,7 @@ class RakePlus
      *
      * @return array
      */
-    private function getPhrases(array $sentences, $pattern)
+    private function getPhrases(array $sentences, string $pattern): array
     {
         $results = [];
 
@@ -355,7 +333,7 @@ class RakePlus
             foreach ($phrases as $phrase) {
                 $phrase = mb_strtolower(trim($phrase));
                 if (!empty($phrase)) {
-                    if (!$this->filter_numerics || ($this->filter_numerics && !is_numeric($phrase))) {
+                    if (!$this->filter_numerics || !is_numeric($phrase)) {
                         if ($this->min_length === 0 || mb_strlen($phrase) >= $this->min_length) {
                             $results[] = $phrase;
                         }
@@ -376,7 +354,7 @@ class RakePlus
      *
      * @return array
      */
-    private function getPhrasesMb(array $sentences, $pattern)
+    private function getPhrasesMb(array $sentences, string $pattern): array
     {
         $results = [];
 
@@ -386,7 +364,7 @@ class RakePlus
             foreach ($phrases as $phrase) {
                 $phrase = mb_strtolower(preg_replace('/^[\pZ\pC]+|[\pZ\pC]+$/u', '', $phrase));
                 if (!empty($phrase)) {
-                    if (!$this->filter_numerics || ($this->filter_numerics && !is_numeric($phrase))) {
+                    if (!$this->filter_numerics || !is_numeric($phrase)) {
                         if ($this->min_length === 0 || mb_strlen($phrase) >= $this->min_length) {
                             $results[] = $phrase;
                         }
@@ -405,7 +383,7 @@ class RakePlus
      *
      * @return array
      */
-    private function calcWordScores($phrases)
+    private function calcWordScores(array $phrases): array
     {
         $frequencies = [];
         $degrees = [];
@@ -444,7 +422,7 @@ class RakePlus
      *
      * @return array
      */
-    private function calcPhraseScores($phrases, $scores)
+    private function calcPhraseScores(array $phrases, array $scores): array
     {
         $keywords = [];
 
@@ -471,7 +449,7 @@ class RakePlus
      *
      * @return array
      */
-    private function splitPhraseIntoWords($phrase)
+    private function splitPhraseIntoWords(string $phrase): array
     {
         return array_filter(preg_split('/\W+/u', $phrase, -1, PREG_SPLIT_NO_EMPTY), function ($word) {
             return !is_numeric($word);
@@ -483,7 +461,7 @@ class RakePlus
      *
      * @return int
      */
-    public function getMinLength()
+    public function getMinLength(): int
     {
         return $this->min_length;
     }
@@ -495,13 +473,13 @@ class RakePlus
      *
      * @return RakePlus
      */
-    public function setMinLength($min_length)
+    public function setMinLength(int $min_length): RakePlus
     {
-        if ((int)$min_length < 0) {
+        if ($min_length < 0) {
             throw new InvalidArgumentException('Minimum phrase length must be greater than or equal to 0.');
         }
 
-        $this->min_length = (int)$min_length;
+        $this->min_length = $min_length;
         return $this;
     }
 
@@ -509,11 +487,11 @@ class RakePlus
      * Sets whether numeric-only phrases/keywords should be filtered
      * out or not.
      *
-     * @param $filter_numerics
+     * @param bool $filter_numerics
      *
      * @return RakePlus
      */
-    public function setFilterNumerics($filter_numerics = true)
+    public function setFilterNumerics(bool $filter_numerics = true): RakePlus
     {
         $this->filter_numerics = $filter_numerics;
         return $this;
@@ -525,7 +503,7 @@ class RakePlus
      *
      * @return bool
      */
-    public function getFilterNumerics()
+    public function getFilterNumerics(): bool
     {
         return $this->filter_numerics;
     }

@@ -2,13 +2,12 @@
 
 namespace DonatelloZa\RakePlus;
 
+use RuntimeException;
+
 class StopwordArray extends AbstractStopwordProvider
 {
-    /** @var array */
-    protected $stopwords = [];
-
-    /** @var string */
-    protected $pattern = "";
+    protected array $stopwords = [];
+    protected string $pattern = "";
 
     /**
      * StopwordArray constructor.
@@ -21,7 +20,7 @@ class StopwordArray extends AbstractStopwordProvider
             $this->stopwords = $stopwords;
             $this->pattern = $this->buildPatternFromArray($stopwords);
         } else {
-            throw new \RuntimeException('The language array can not be empty.');
+            throw new RuntimeException('The language array can not be empty.');
         }
     }
 
@@ -32,7 +31,7 @@ class StopwordArray extends AbstractStopwordProvider
      *
      * @return StopwordArray
      */
-    public static function create(array $stopwords)
+    public static function create(array $stopwords): StopwordArray
     {
         return (new self($stopwords));
     }
@@ -42,7 +41,7 @@ class StopwordArray extends AbstractStopwordProvider
      *
      * @return string
      */
-    public function pattern()
+    public function pattern(): string
     {
         return $this->pattern;
     }
@@ -52,7 +51,7 @@ class StopwordArray extends AbstractStopwordProvider
      *
      * @return array
      */
-    public function stopwords()
+    public function stopwords(): array
     {
         return $this->stopwords;
     }

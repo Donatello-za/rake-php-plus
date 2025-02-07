@@ -63,7 +63,7 @@ called **[How to add additional languages](#how-to-add-additional-languages)** a
 
 ## Version
 
-v1.0.20
+v2.0.0
 
 ## Special Thanks
 
@@ -83,15 +83,25 @@ v1.0.20
 
 ### With Composer
 
+Although v1 of this library is compatible up to PHP 8.3 and will be
+maintained for the foreseeable future, it is recommended to install
+v2 to get the benefits of what PHP 7.4 and above has to offer.
+
 ```bash
-$ composer require donatello-za/rake-php-plus
+# Latest: PHP v7.4 to v8.3 support
+$ composer require donatello-za/rake-php-plus:^2.0
+
+# Older: PHP v5.4 to v8.3 support
+$ composer require donatello-za/rake-php-plus:^1.0
 ```
 
+Or add the following to your `composer.json` and run
+```composer install```
 
 ```json
 {
     "require": {
-        "donatello-za/rake-php-plus": "^1.0"
+        "donatello-za/rake-php-plus": "^2.0"
     }
 }
 ```

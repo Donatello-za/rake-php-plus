@@ -15,9 +15,9 @@ if ($argc < 2) {
 }
 
 $keywords = RakePlus::create($argv[1], 'it_IT')->keywords();
-print "Parole chiave estratte da \"{$argv[1]}\":\n";
+print "Parole chiave estratte da \"$argv[1]\":\n";
 print_r($keywords);
 
 $phrases = RakePlus::create($argv[1])->get();
-print "Frasi estratte da \"{$argv[1]}\":\n";
+print "Frasi estratte da \"$argv[1]\":\n";
 print_r($phrases);

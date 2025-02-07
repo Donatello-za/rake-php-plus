@@ -2,20 +2,19 @@
 
 namespace DonatelloZa\RakePlus;
 
+use RuntimeException;
+
 class StopwordsPatternFile extends AbstractStopwordProvider
 {
-    /** @var string */
-    protected $pattern = "";
-
-    /** @var string */
-    protected $filename = "";
+    protected string $pattern = "";
+    protected string $filename = "";
 
     /**
      * StopwordsPatternFile constructor.
      *
      * @param string $filename
      */
-    public function __construct($filename)
+    public function __construct(string $filename)
     {
         $this->filename = $filename;
         $this->pattern = $this->loadLangPatternFile($filename);
@@ -28,7 +27,7 @@ class StopwordsPatternFile extends AbstractStopwordProvider
      *
      * @return StopwordsPatternFile
      */
-    public static function create($filename)
+    public static function create(string $filename): StopwordsPatternFile
     {
         return (new self($filename));
     }
@@ -45,7 +44,7 @@ class StopwordsPatternFile extends AbstractStopwordProvider
      *
      * @return StopwordsPatternFile
      */
-    public static function createFromLanguage($language = 'en_US')
+    public static function createFromLanguage(string $language = 'en_US'): StopwordsPatternFile
     {
         return (new self(self::languageFile($language)));
     }
@@ -58,7 +57,7 @@ class StopwordsPatternFile extends AbstractStopwordProvider
      *
      * @return string
      */
-    public static function languageFile($language = 'en_US')
+    public static function languageFile(string $language = 'en_US'): string
     {
         return __DIR__ . '/../lang/' . $language . '.pattern';
     }
@@ -68,7 +67,7 @@ class StopwordsPatternFile extends AbstractStopwordProvider
      *
      * @return string
      */
-    public function pattern()
+    public function pattern(): string
     {
         return $this->pattern;
     }
@@ -78,7 +77,7 @@ class StopwordsPatternFile extends AbstractStopwordProvider
      *
      * @return string
      */
-    public function filename()
+    public function filename(): string
     {
         return $this->filename;
     }
@@ -88,12 +87,12 @@ class StopwordsPatternFile extends AbstractStopwordProvider
      *
      * @param string $language_file
      *
-     * @return array|false
+     * @return false|string
      */
-    protected function loadLangPatternFile($language_file)
+    protected function loadLangPatternFile(string $language_file)
     {
         if (!file_exists($language_file)) {
-            throw new \RuntimeException('Could not find the RAKE stopwords file: ' . $language_file);
+            throw new RuntimeException("Could not find the RAKE stopwords file: $language_file");
         } else {
             if (extension_loaded('mbstring')) {
                 // Trim leading "/" character and trailing "/i" if it exists in the string

@@ -2,23 +2,20 @@
 
 namespace DonatelloZa\RakePlus;
 
+use RuntimeException;
+
 class StopwordsPHP extends AbstractStopwordProvider
 {
-    /** @var array */
-    protected $stopwords = [];
-
-    /** @var string */
-    protected $pattern = "";
-
-    /** @var string */
-    protected $filename = "";
+    protected array $stopwords = [];
+    protected string $pattern = "";
+    protected string $filename = "";
 
     /**
      * StopwordsPHP constructor.
      *
      * @param string $filename
      */
-    public function __construct($filename)
+    public function __construct(string $filename)
     {
         $this->filename = $filename;
         $this->stopwords = $this->loadLangPHPFile($filename);
@@ -32,7 +29,7 @@ class StopwordsPHP extends AbstractStopwordProvider
      *
      * @return StopwordsPHP
      */
-    public static function create($filename)
+    public static function create(string $filename): StopwordsPHP
     {
         return (new self($filename));
     }
@@ -49,7 +46,7 @@ class StopwordsPHP extends AbstractStopwordProvider
      *
      * @return StopwordsPHP
      */
-    public static function createFromLanguage($language = 'en_US')
+    public static function createFromLanguage(string $language = 'en_US'): StopwordsPHP
     {
         return (new self(self::languageFile($language)));
     }
@@ -62,7 +59,7 @@ class StopwordsPHP extends AbstractStopwordProvider
      *
      * @return string
      */
-    public static function languageFile($language = 'en_US')
+    public static function languageFile(string $language = 'en_US'): string
     {
         return __DIR__ . '/../lang/' . $language . '.php';
     }
@@ -72,7 +69,7 @@ class StopwordsPHP extends AbstractStopwordProvider
      *
      * @return string
      */
-    public function pattern()
+    public function pattern(): string
     {
         return $this->pattern;
     }
@@ -82,7 +79,7 @@ class StopwordsPHP extends AbstractStopwordProvider
      *
      * @return array
      */
-    public function stopwords()
+    public function stopwords(): array
     {
         return $this->stopwords;
     }
@@ -92,7 +89,7 @@ class StopwordsPHP extends AbstractStopwordProvider
      *
      * @return string
      */
-    public function filename()
+    public function filename(): string
     {
         return $this->filename;
     }
@@ -104,22 +101,21 @@ class StopwordsPHP extends AbstractStopwordProvider
      *
      * @return array
      */
-    protected function loadLangPHPFile($language_file)
+    protected function loadLangPHPFile(string $language_file): array
     {
         if (!file_exists($language_file)) {
-            throw new \RuntimeException('Could not find the RAKE stopwords file: ' . $language_file);
+            throw new RuntimeException("Could not find the RAKE stopwords file: $language_file");
         } else {
-            /** @noinspection PhpIncludeInspection */
             $stopwords = include($language_file);
 
             if (is_array($stopwords)) {
                 if (count($stopwords) < 1) {
-                    throw new \RuntimeException('No words found in RAKE stopwords file: ' . $language_file);
+                    throw new RuntimeException("No words found in RAKE stopwords file: $language_file");
                 } else {
                     return $stopwords;
                 }
             } else {
-                throw new \RuntimeException('Invalid results retrieved from RAKE stopwords file: ' . $language_file);
+                throw new RuntimeException("Invalid results retrieved from RAKE stopwords file: $language_file");
             }
         }
     }

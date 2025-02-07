@@ -763,12 +763,4 @@ class RakePlusTest extends TestCase
         $this->assertContains('situations', $phrases);
         $this->assertContains('time', $phrases);
     }
-
-    public function testWithInvalidParseOptions()
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $text = "It's of great importance that you're testing this properly. We'll make sure that there's no " .
-            "could've, would've, should've situations this time around.";
-        RakePlus::create($text, 'en_US', 0, false, new stdClass())->get();
-    }
 }

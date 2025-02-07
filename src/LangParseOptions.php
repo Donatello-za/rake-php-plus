@@ -10,21 +10,16 @@ namespace DonatelloZa\RakePlus;
  */
 class LangParseOptions implements ILangParseOptions
 {
-    /** @var string */
-    private $language;
-
-    /** @var string */
-    private $sentence_regex;
-
-    /** @var string */
-    private $line_terminator;
+    private string $language;
+    private string $sentence_regex;
+    private string $line_terminator;
 
     /**
      * LangParseOptions constructor.
      *
      * @param string $language
      */
-    public function __construct($language = 'en_US')
+    public function __construct(string $language = 'en_US')
     {
         $this->language = $language;
 
@@ -46,9 +41,9 @@ class LangParseOptions implements ILangParseOptions
      *
      * @param string $language
      *
-     * @return $this
+     * @return static
      */
-    public static function create($language = 'en_US')
+    public static function create(string $language = 'en_US'): ILangParseOptions
     {
         return (new self($language));
     }
@@ -58,7 +53,7 @@ class LangParseOptions implements ILangParseOptions
      *
      * @return string
      */
-    public function getLanguage()
+    public function getLanguage(): string
     {
         return $this->language;
     }
@@ -69,9 +64,9 @@ class LangParseOptions implements ILangParseOptions
      * @param string $sentence_regex The regular expression to use when
      *                               splitting sentences.
      *
-     * @return $this
+     * @return static
      */
-    public function setSentenceRegEx($sentence_regex)
+    public function setSentenceRegEx(string $sentence_regex): ILangParseOptions
     {
         $this->sentence_regex = $sentence_regex;
         return $this;
@@ -82,7 +77,7 @@ class LangParseOptions implements ILangParseOptions
      *
      * @return string
      */
-    public function getSentenceRegex()
+    public function getSentenceRegex(): string
     {
         return $this->sentence_regex;
     }
@@ -92,7 +87,7 @@ class LangParseOptions implements ILangParseOptions
      *
      * @return string
      */
-    public function getLineTerminator()
+    public function getLineTerminator(): string
     {
         return $this->line_terminator;
     }
@@ -104,7 +99,7 @@ class LangParseOptions implements ILangParseOptions
      *
      * @return $this
      */
-    public function setLineTerminator($line_terminator)
+    public function setLineTerminator(string $line_terminator): ILangParseOptions
     {
         $this->line_terminator = $line_terminator;
         return $this;

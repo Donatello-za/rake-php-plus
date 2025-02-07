@@ -17,7 +17,7 @@ abstract class AbstractStopwordProvider
      *
      * @return string
      */
-    protected function buildPatternFromArray(array $stopwords)
+    protected function buildPatternFromArray(array $stopwords): string
     {
         $pattern = [];
 

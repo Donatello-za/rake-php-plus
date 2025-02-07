@@ -11,9 +11,11 @@
  */
 
 /**
+ * Checks the number of supplied arguments.
+ *
  * @param int $arg_count
  */
-function check_args($arg_count)
+function check_args(int $arg_count)
 {
     if ($arg_count < 2) {
         echo "\n";
@@ -26,13 +28,15 @@ function check_args($arg_count)
 }
 
 /**
+ * Return the value of a specific argument from the array of arguments.
+ *
  * @param array $args
  * @param int   $arg_no
  * @param mixed $default
  *
  * @return mixed
  */
-function get_arg($args, $arg_no, $default = null)
+function get_arg(array $args, int $arg_no, $default = null)
 {
     if ($arg_no <= count($args)) {
         return $args[$arg_no];
@@ -42,24 +46,27 @@ function get_arg($args, $arg_no, $default = null)
 }
 
 /**
+ * Loads from a .php file.
+ *
  * @param string $php_file
  *
  * @return array
  */
-function load_stopwords($php_file)
+function load_stopwords(string $php_file): array
 {
     try {
-        /** @noinspection PhpIncludeInspection */
         return require($php_file);
     } catch (Exception $e) {
         echo "\n";
-        echo "Error: Could not read file \"{$php_file}\".\n";
+        echo "Error: Could not read file \"$php_file\".\n";
         echo "\n";
         exit(1);
     }
 }
 
 /**
+ * Render a reg-ex formatted output to console.
+ *
  * @param array $stopwords
  */
 function render_pattern_output(array $stopwords)
@@ -76,16 +83,18 @@ function render_pattern_output(array $stopwords)
 }
 
 /**
+ * Render the output to console.
+ *
  * @param array $stopwords
  * @param string $php_file
  */
-function render_output(array $stopwords, $php_file)
+function render_output(array $stopwords, string $php_file)
 {
     if (count($stopwords) > 0) {
         render_pattern_output($stopwords);
     } else {
         echo "\n";
-        echo "Error: No stopwords found in file \"{$php_file}\".\n";
+        echo "Error: No stopwords found in file \"$php_file\".\n";
         echo "\n";
         exit(1);
     }

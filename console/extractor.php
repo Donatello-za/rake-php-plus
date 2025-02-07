@@ -39,7 +39,7 @@
 /**
  * @param int $arg_count
  */
-function check_args($arg_count)
+function check_args(int $arg_count)
 {
     if ($arg_count < 2) {
         echo "\n";
@@ -73,7 +73,7 @@ function check_args($arg_count)
  *
  * @return mixed
  */
-function get_arg_by_index($args, $arg_no, $default = null)
+function get_arg_by_index(array $args, int $arg_no, $default = null)
 {
     if ($arg_no < count($args)) {
         return $args[$arg_no];
@@ -89,7 +89,7 @@ function get_arg_by_index($args, $arg_no, $default = null)
  *
  * @return mixed
  */
-function get_arg_by_name($args, $name, $default = null)
+function get_arg_by_name(array $args, string $name, $default = null)
 {
     foreach ($args as $arg) {
         list($key, $value) = array_pad(explode('=', $arg), 2, $default);
@@ -102,38 +102,38 @@ function get_arg_by_name($args, $name, $default = null)
 }
 
 /**
- * Returns true if one if the arguments consists
+ * Returns true if one of the arguments consists
  * of the supplied $arg.
  *
- * @param $args
- * @param $name
+ * @param array $args
+ * @param string $name
  *
- * @return mixed
+ * @return bool
  */
-function has_arg($args, $name)
+function has_arg(array $args, string $name): bool
 {
-    foreach ($args as $arg) {
-        if ($arg == $name) {
-            return true;
-        }
+    if (in_array($name, $args)) {
+        return true;
     }
 
     return false;
 }
 
 /**
+ * Loads stopwords from a .txt, .json or .php file.
+ *
  * @param string $stopwords_file
  *
  * @return array
  */
-function load_stopwords($stopwords_file)
+function load_stopwords(string $stopwords_file): array
 {
     $stopwords = [];
 
     $ext = pathinfo($stopwords_file, PATHINFO_EXTENSION);
     if (!file_exists($stopwords_file)) {
         echo "\n";
-        echo "Error: Stopwords file \"{$stopwords_file}\" not found.\n";
+        echo "Error: Stopwords file \"$stopwords_file\" not found.\n";
         echo "\n";
         exit(1);
     }
@@ -150,7 +150,7 @@ function load_stopwords($stopwords_file)
             return array_keys($stopwords);
         } else {
             echo "\n";
-            echo "Error: Could not read text file \"{$stopwords_file}\".\n";
+            echo "Error: Could not read text file \"$stopwords_file\".\n";
             echo "\n";
             exit(1);
         }
@@ -162,7 +162,6 @@ function load_stopwords($stopwords_file)
     }
 
     if ($ext === 'php') {
-        /** @noinspection PhpIncludeInspection */
         $stopwords = require $stopwords_file;
         return array_keys(array_fill_keys($stopwords, true));
     }
@@ -171,6 +170,8 @@ function load_stopwords($stopwords_file)
 }
 
 /**
+ * Render a PHP formatted output to console.
+ *
  * @param array $stopwords
  *
  * @throws Exception
@@ -178,7 +179,7 @@ function load_stopwords($stopwords_file)
 function render_php_output(array $stopwords)
 {
     $stopword_count = count($stopwords);
-    $timestamp = (new DateTime('now', new DateTimeZone('UTC')))->format(DateTime::ATOM);
+    $timestamp = (new DateTime('now', new DateTimeZone('UTC')))->format(DateTimeInterface::ATOM);
 
     echo "\xEF\xBB\xBF<?php\n";
     echo "\n";
@@ -186,7 +187,7 @@ function render_php_output(array $stopwords)
     echo " * Stopwords list for the use in the PHP package rake-php-plus.\n";
     echo " * See: https://github.com/Donatello-za/rake-php-plus\n";
     echo " *\n";
-    echo " * Extracted using extractor.php @ {$timestamp} \n";
+    echo " * Extracted using extractor.php @ $timestamp \n";
     echo " */\n";
     echo "\n";
     echo 'return [' . "\n";
@@ -204,6 +205,8 @@ function render_php_output(array $stopwords)
 }
 
 /**
+ * Render a reg-ex formatted output to console.
+ *
  * @param array $stopwords
  */
 function render_pattern_output(array $stopwords)
@@ -228,6 +231,8 @@ function render_pattern_output(array $stopwords)
 }
 
 /**
+ * Render a JSON formatted output to console.
+ *
  * @param array $stopwords
  */
 function render_json_output(array $stopwords)
@@ -236,13 +241,15 @@ function render_json_output(array $stopwords)
 }
 
 /**
+ * Render the output to console.
+ *
  * @param array  $stopwords
  * @param string $stopwords_file
  * @param string $output
  *
  * @throws Exception
  */
-function render_output(array $stopwords, $stopwords_file, $output = 'php')
+function render_output(array $stopwords, string $stopwords_file, string $output = 'php')
 {
     if (count($stopwords) > 0) {
         if ($output == 'pattern') {
@@ -255,7 +262,7 @@ function render_output(array $stopwords, $stopwords_file, $output = 'php')
 
     } else {
         echo "\n";
-        echo "Error: No stopwords found in file \"{$stopwords_file}\".\n";
+        echo "Error: No stopwords found in file \"$stopwords_file\".\n";
         echo "\n";
         exit(1);
     }

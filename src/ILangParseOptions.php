@@ -9,16 +9,16 @@ interface ILangParseOptions
      *
      * @param string $language
      */
-    public function __construct($language = 'en_US');
+    public function __construct(string $language = 'en_US');
 
     /**
      * Instantiates a language parse options instance.
      *
      * @param string $language
      *
-     * @return $this
+     * @return static
      */
-    public static function create($language = 'en_US');
+    public static function create(string $language = 'en_US'): ILangParseOptions;
 
     /**
      * Set the text parsing options.
@@ -26,30 +26,30 @@ interface ILangParseOptions
      * @param string $sentence_regex The regular expression to use when
      *                               splitting sentences.
      *
-     * @return $this
+     * @return static
      */
-    public function setSentenceRegEx($sentence_regex);
+    public function setSentenceRegEx(string $sentence_regex): ILangParseOptions;
 
     /**
      * Returns the regular expression that is used to split sentences.
      *
      * @return string
      */
-    public function getSentenceRegex();
+    public function getSentenceRegex(): string;
 
     /**
      * Returns the line terminator that is typically used in the source text.
      *
      * @return string
      */
-    public function getLineTerminator();
+    public function getLineTerminator(): string;
 
     /**
      * Sets the line terminator that is typically used in the source text.
      *
      * @param string $line_terminator
      *
-     * @return LangParseOptions
+     * @return ILangParseOptions
      */
-    public function setLineTerminator($line_terminator);
+    public function setLineTerminator(string $line_terminator): ILangParseOptions;
 }

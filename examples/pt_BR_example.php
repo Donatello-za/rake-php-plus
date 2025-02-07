@@ -15,9 +15,9 @@ if ($argc < 2) {
 }
 
 $keywords = RakePlus::create($argv[1], 'pt_BR')->keywords();
-print "Resultados de palabras clave: \"{$argv[1]}\"\n";
+print "Resultados de palabras clave: \"$argv[1]\"\n";
 print_r($keywords);
 
 $phrases = RakePlus::create($argv[1], 'pt_BR')->scores();
-print "Resultados de la frase: \"{$argv[1]}\"\n";
+print "Resultados de la frase: \"$argv[1]\"\n";
 print_r($phrases);
