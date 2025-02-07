@@ -7,7 +7,9 @@ use RuntimeException;
 class StopwordsPHP extends AbstractStopwordProvider
 {
     protected array $stopwords = [];
+
     protected string $pattern = "";
+
     protected string $filename = "";
 
     /**
