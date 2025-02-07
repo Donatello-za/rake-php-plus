@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 use DonatelloZa\RakePlus\LangParseOptions;
@@ -44,13 +45,17 @@ class RakePlusTest extends TestCase
     public function testInvalidLangReturnStringFile()
     {
         $this->expectException(RuntimeException::class);
-        RakePlus::create("Hello World", __DIR__ . '/test_string_lang.php');
+        $this->expectExceptionMessage('Invalid');
+
+        RakePlus::create("Hello World", __DIR__ . '/fixtures/string_lang.php');
     }
 
     public function testInvalidLangReturnEmptyArrayFile()
     {
         $this->expectException(RuntimeException::class);
-        RakePlus::create("Hello World", __DIR__ . '/test_empty_array_lang.php');
+        $this->expectExceptionMessage('No words found');
+
+        RakePlus::create("Hello World", __DIR__ . '/fixtures/empty_lang.php');
     }
 
     public function testEmptyLanguageArray()
@@ -473,7 +478,7 @@ class RakePlusTest extends TestCase
             "for components of a minimal set of solutions and algorithms of construction " .
             "of minimal generating sets of solutions for all types of systems are given.";
 
-        $scores = RakePlus::create($text, __DIR__ . '/fixtures/test_en_US.php')->sortByScore()->scores();
+        $scores = RakePlus::create($text, __DIR__ . '/fixtures/en_US.php')->sortByScore()->scores();
 
         $this->assertEquals(1, $scores['criteria']);
         $this->assertEquals(1, $scores['compatibility']);
