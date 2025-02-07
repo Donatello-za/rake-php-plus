@@ -107,18 +107,18 @@ class StopwordsPHP extends AbstractStopwordProvider
     {
         if (!file_exists($language_file)) {
             throw new RuntimeException("Could not find the RAKE stopwords file: $language_file");
-        } else {
-            $stopwords = include($language_file);
+        }
 
-            if (is_array($stopwords)) {
-                if (count($stopwords) < 1) {
-                    throw new RuntimeException("No words found in RAKE stopwords file: $language_file");
-                } else {
-                    return $stopwords;
-                }
+        $stopwords = include($language_file);
+
+        if (is_array($stopwords)) {
+            if (count($stopwords) < 1) {
+                throw new RuntimeException("No words found in RAKE stopwords file: $language_file");
             } else {
-                throw new RuntimeException("Invalid results retrieved from RAKE stopwords file: $language_file");
+                return $stopwords;
             }
+        } else {
+            throw new RuntimeException("Invalid results retrieved from RAKE stopwords file: $language_file");
         }
     }
 }
