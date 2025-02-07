@@ -7,6 +7,7 @@ use RuntimeException;
 class StopwordArray extends AbstractStopwordProvider
 {
     protected array $stopwords = [];
+
     protected string $pattern = "";
 
     /**
