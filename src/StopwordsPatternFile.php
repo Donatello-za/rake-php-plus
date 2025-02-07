@@ -11,8 +11,6 @@ class StopwordsPatternFile extends AbstractStopwordProvider
     protected string $filename = "";
 
     /**
-     * StopwordsPatternFile constructor.
-     *
      * @param string $filename
      */
     public function __construct(string $filename)
@@ -22,7 +20,7 @@ class StopwordsPatternFile extends AbstractStopwordProvider
     }
 
     /**
-     * Constructs a new instance of the StopwordsPatternFile class.
+     * Creates a new instance of the StopwordsPatternFile class.
      *
      * @param string $filename
      *
@@ -34,7 +32,7 @@ class StopwordsPatternFile extends AbstractStopwordProvider
     }
 
     /**
-     * Constructs a new instance of the StopwordsPHP class
+     * Creates a new instance of the StopwordsPHP class
      * but automatically determines the filename to use
      * based on the language string provided.
      *
