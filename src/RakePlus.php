@@ -59,7 +59,7 @@ class RakePlus
     {
         $this->setMinLength($phrase_min_length);
         $this->initMinLength($phrase_min_length);
-        $this->setFilterNumerics($filter_numerics);
+        $this->initFilterNumerics($filter_numerics);
 
         if ($parseOptions === null) {
             $this->parseOptions = LangParseOptions::create(is_string($stopwords) ? $stopwords : $this->language);
@@ -82,6 +82,11 @@ class RakePlus
         }
 
         $this->min_length = $min_length;
+    }
+
+    protected function initFilterNumerics($filter_numerics): void
+    {
+        $this->filter_numerics = $filter_numerics;
     }
 
     /**
@@ -507,7 +512,8 @@ class RakePlus
      */
     public function setFilterNumerics(bool $filter_numerics = true): RakePlus
     {
-        $this->filter_numerics = $filter_numerics;
+        $this->initFilterNumerics($filter_numerics);
+
         return $this;
     }
 
