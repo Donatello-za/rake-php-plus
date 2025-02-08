@@ -158,6 +158,10 @@ class RakePlus
         return $this;
     }
 
+    /**
+     * @param array|string|AbstractStopwordProvider $stopwords
+     * @return void
+     */
     protected function initPattern($stopwords): void
     {
         $this->validateStopwords($stopwords);
