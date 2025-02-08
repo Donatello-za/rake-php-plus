@@ -58,6 +58,7 @@ class RakePlus
                                 bool $filter_numerics = true, ?ILangParseOptions $parseOptions = null)
     {
         $this->setMinLength($phrase_min_length);
+        $this->initMinLength($phrase_min_length);
         $this->setFilterNumerics($filter_numerics);
 
         if ($parseOptions === null) {
@@ -72,6 +73,15 @@ class RakePlus
         if (!is_null($text)) {
             $this->extract($text, $stopwords);
         }
+    }
+
+    protected function initMinLength(int $min_length): void
+    {
+        if ($min_length < 0) {
+            throw new InvalidArgumentException('Minimum phrase length must be greater than or equal to 0.');
+        }
+
+        $this->min_length = $min_length;
     }
 
     /**
@@ -482,11 +492,8 @@ class RakePlus
      */
     public function setMinLength(int $min_length): RakePlus
     {
-        if ($min_length < 0) {
-            throw new InvalidArgumentException('Minimum phrase length must be greater than or equal to 0.');
-        }
+        $this->initMinLength($min_length);
 
-        $this->min_length = $min_length;
         return $this;
     }
 
