@@ -154,7 +154,7 @@ class RakePlus
         }
 
         $word_scores = $this->calculateWordScores($phrases);
-        $this->phrase_scores = $this->calcPhraseScores($phrases, $word_scores);
+        $this->phrase_scores = $this->calculatePhraseScores($phrases, $word_scores);
         return $this;
     }
 
@@ -458,7 +458,7 @@ class RakePlus
      *
      * @return array
      */
-    private function calcPhraseScores(array $phrases, array $scores): array
+    private function calculatePhraseScores(array $phrases, array $scores): array
     {
         $keywords = [];
 
