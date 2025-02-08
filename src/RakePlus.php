@@ -35,7 +35,7 @@ class RakePlus
      *
      * If $stopwords is a string the method will:
      *
-     * 1) Determine if it is has a .pattern or .php extension and if
+     * 1) Determine if it has a .pattern or .php extension and if
      *    so will attempt to load the stopwords from the specified path
      *    and filename.
      * 2) If it does not have a .pattern or .php extension, it will assume
@@ -84,7 +84,7 @@ class RakePlus
      *
      * If $stopwords is a string the method will:
      *
-     * 1) Determine if it is has a .pattern or .php extension and if
+     * 1) Determine if it has a .pattern or .php extension and if
      *    so will attempt to load the stopwords from the specified path
      *    and filename.
      * 2) If it does not have a .pattern or .php extension, it will assume
@@ -118,7 +118,7 @@ class RakePlus
      *
      * If $stopwords is a string the method will:
      *
-     * 1) Determine if it is has a .pattern or .php extension and if
+     * 1) Determine if it has a .pattern or .php extension and if
      *    so will attempt to load the stopwords from the specified path
      *    and filename.
      * 2) If it does not have a .pattern or .php extension, it will assume
