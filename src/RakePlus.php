@@ -22,8 +22,6 @@ class RakePlus
 
     private string $line_terminator;
 
-    public ILangParseOptions $parseOptions;
-
     const ORDER_ASC = 'asc';
     const ORDER_DESC = 'desc';
 
@@ -88,8 +86,8 @@ class RakePlus
     {
         $this->parseOptions = $parseOptions;
 
-        $this->sentence_regex = $this->parseOptions->getSentenceRegex();
-        $this->line_terminator = $this->parseOptions->getLineTerminator();
+        $this->sentence_regex = $parseOptions->getSentenceRegex();
+        $this->line_terminator = $parseOptions->getLineTerminator();
     }
 
     /**
