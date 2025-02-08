@@ -153,7 +153,7 @@ class RakePlus
             $phrases = $this->getPhrases($sentences, $this->pattern);
         }
 
-        $word_scores = $this->calcWordScores($phrases);
+        $word_scores = $this->calculateWordScores($phrases);
         $this->phrase_scores = $this->calcPhraseScores($phrases, $word_scores);
         return $this;
     }
@@ -419,7 +419,7 @@ class RakePlus
      *
      * @return array
      */
-    private function calcWordScores(array $phrases): array
+    private function calculateWordScores(array $phrases): array
     {
         $frequencies = [];
         $degrees = [];
