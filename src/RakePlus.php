@@ -139,39 +139,11 @@ class RakePlus
      */
     public function extract(string $text, $stopwords = 'en_US'): RakePlus
     {
-        if ($text === '') return $this;
-
-        if (is_array($stopwords)) {
-            $this->pattern = StopwordArray::create($stopwords)->pattern();
-        } else if (is_string($stopwords)) {
-            if (is_null($this->pattern) || ($this->language != $stopwords)) {
-                $extension = mb_strtolower(pathinfo($stopwords, PATHINFO_EXTENSION));
-                if (empty($extension)) {
-                    // First try the .pattern file
-                    $this->language_file = StopwordsPatternFile::languageFile($stopwords);
-                    if (file_exists($this->language_file)) {
-                        $this->pattern = StopwordsPatternFile::create($this->language_file)->pattern();
-                    } else {
-                        $this->language_file = StopwordsPHP::languageFile($stopwords);
-                        $this->pattern = StopwordsPHP::create($this->language_file)->pattern();
-                    }
-                    $this->language = $stopwords;
-                } else if ($extension == 'pattern') {
-                    $this->language = $stopwords;
-                    $this->language_file = $stopwords;
-                    $this->pattern = StopwordsPatternFile::create($this->language_file)->pattern();
-                } else if ($extension == 'php') {
-                    $language_file = $stopwords;
-                    $this->language = $stopwords;
-                    $this->language_file = $language_file;
-                    $this->pattern = StopwordsPHP::create($this->language_file)->pattern();
-                }
-            }
-        } elseif (is_subclass_of($stopwords, 'DonatelloZa\RakePlus\AbstractStopwordProvider')) {
-            $this->pattern = $stopwords->pattern();
-        } else {
-            throw new InvalidArgumentException('Invalid stopwords list provided for RakePlus.');
+        if (trim($text) === '') {
+            return $this;
         }
+
+        $this->initPattern($stopwords);
 
         if ($this->mb_support) {
             $sentences = $this->splitSentencesMb($text);
@@ -181,9 +153,78 @@ class RakePlus
             $phrases = $this->getPhrases($sentences, $this->pattern);
         }
 
-        $word_scores = $this->calcWordScores($phrases);
-        $this->phrase_scores = $this->calcPhraseScores($phrases, $word_scores);
+        $word_scores = $this->calculateWordScores($phrases);
+        $this->phrase_scores = $this->calculatePhraseScores($phrases, $word_scores);
         return $this;
+    }
+
+    /**
+     * @param array|string|AbstractStopwordProvider $stopwords
+     * @return void
+     */
+    protected function initPattern($stopwords): void
+    {
+        if (is_array($stopwords)) {
+            $this->initPatternFromArray($stopwords);
+            return;
+        }
+
+        if (is_string($stopwords)) {
+            $this->initPatternFromString($stopwords);
+            return;
+        }
+
+        if (is_object($stopwords) && is_a($stopwords, AbstractStopwordProvider::class, false)) {
+            $this->initPatternFromProvider($stopwords);
+            return;
+        }
+
+        throw new InvalidArgumentException('Invalid stopwords list provided for RakePlus.');
+    }
+
+    protected function initPatternFromArray($stopwords): void
+    {
+        $this->pattern = StopwordArray::create($stopwords)->pattern();
+    }
+
+    protected function initPatternFromString($stopwords): void
+    {
+        // @note ideally, this conditional should be called somehow
+        if (!is_null($this->pattern) && ($this->language == $stopwords)) {
+            return;
+        }
+
+        $extension = mb_strtolower(pathinfo($stopwords, PATHINFO_EXTENSION));
+
+        switch ($extension) {
+            case 'pattern':
+                $this->language = $stopwords;
+                $this->language_file = $stopwords;
+                $this->pattern = StopwordsPatternFile::create($this->language_file)->pattern();
+                break;
+
+            case 'php':
+                $this->language = $stopwords;
+                $this->language_file = $stopwords;
+                $this->pattern = StopwordsPHP::create($this->language_file)->pattern();
+                break;
+
+            default:
+                // First try the .pattern file
+                $this->language_file = StopwordsPatternFile::languageFile($stopwords);
+                if (file_exists($this->language_file)) {
+                    $this->pattern = StopwordsPatternFile::create($this->language_file)->pattern();
+                } else {
+                    $this->language_file = StopwordsPHP::languageFile($stopwords);
+                    $this->pattern = StopwordsPHP::create($this->language_file)->pattern();
+                }
+                $this->language = $stopwords;
+        }
+    }
+
+    protected function initPatternFromProvider($stopwords): void
+    {
+        $this->pattern = $stopwords->pattern();
     }
 
     /**
@@ -307,8 +348,10 @@ class RakePlus
      */
     private function splitSentences(string $text): array
     {
-        return preg_split('/' . $this->sentence_regex . '/',
-            preg_replace('/' . $this->line_terminator . '/', ' ', $text));
+        return preg_split(
+            '/' . $this->sentence_regex . '/',
+            preg_replace('/' . $this->line_terminator . '/', ' ', $text),
+        );
     }
 
     /**
@@ -320,8 +363,10 @@ class RakePlus
      */
     private function splitSentencesMb(string $text): array
     {
-        return mb_split($this->sentence_regex,
-            mb_ereg_replace($this->line_terminator, ' ', $text));
+        return mb_split(
+            $this->sentence_regex,
+            mb_ereg_replace($this->line_terminator, ' ', $text),
+        );
     }
 
     /**
@@ -340,10 +385,10 @@ class RakePlus
             $phrases_temp = preg_replace($pattern, '|', $sentence);
             $phrases = explode('|', $phrases_temp);
             foreach ($phrases as $phrase) {
-                $phrase = mb_strtolower(trim($phrase));
+                $phrase = strtolower(trim($phrase));
                 if (!empty($phrase)) {
                     if (!$this->filter_numerics || !is_numeric($phrase)) {
-                        if ($this->min_length === 0 || mb_strlen($phrase) >= $this->min_length) {
+                        if ($this->min_length === 0 || strlen($phrase) >= $this->min_length) {
                             $results[] = $phrase;
                         }
                     }
@@ -392,7 +437,7 @@ class RakePlus
      *
      * @return array
      */
-    private function calcWordScores(array $phrases): array
+    private function calculateWordScores(array $phrases): array
     {
         $frequencies = [];
         $degrees = [];
@@ -431,7 +476,7 @@ class RakePlus
      *
      * @return array
      */
-    private function calcPhraseScores(array $phrases, array $scores): array
+    private function calculatePhraseScores(array $phrases, array $scores): array
     {
         $keywords = [];
 
@@ -460,7 +505,9 @@ class RakePlus
      */
     private function splitPhraseIntoWords(string $phrase): array
     {
-        return array_filter(preg_split('/\W+/u', $phrase, -1, PREG_SPLIT_NO_EMPTY), function ($word) {
+        $splitPhrase = preg_split('/\W+/u', $phrase, -1, PREG_SPLIT_NO_EMPTY);
+
+        return array_filter($splitPhrase, static function ($word) {
             return !is_numeric($word);
         });
     }
