@@ -146,7 +146,7 @@ class RakePlus
         $this->initPattern($stopwords);
 
         $sentences = $this->splitSentences($text);
-        $phrases = $this->getPhrases($sentences, $this->pattern);
+        $phrases = $this->getPhrases($sentences);
 
         $word_scores = $this->calculateWordScores($phrases);
         $this->phrase_scores = $this->calculatePhraseScores($phrases, $word_scores);
@@ -359,18 +359,17 @@ class RakePlus
     /**
      * Split sentences into phrases by using the stopwords. Uses mb_* functions if available.
      *
-     * @param array  $sentences
-     * @param string $pattern
+     * @param array $sentences
      *
      * @return array
      */
-    private function getPhrases(array $sentences, string $pattern): array
+    private function getPhrases(array $sentences): array
     {
         $results = [];
 
         if ($this->mb_support) {
             foreach ($sentences as $sentence) {
-                $phrases_temp = mb_eregi_replace($pattern, '|', $sentence);
+                $phrases_temp = mb_eregi_replace($this->pattern, '|', $sentence);
                 $phrases = explode('|', $phrases_temp);
                 foreach ($phrases as $phrase) {
                     $phrase = mb_strtolower(preg_replace('/^[\pZ\pC]+|[\pZ\pC]+$/u', '', $phrase));
@@ -388,7 +387,7 @@ class RakePlus
         }
 
         foreach ($sentences as $sentence) {
-            $phrases_temp = preg_replace($pattern, '|', $sentence);
+            $phrases_temp = preg_replace($this->pattern, '|', $sentence);
             $phrases = explode('|', $phrases_temp);
             foreach ($phrases as $phrase) {
                 $phrase = strtolower(trim($phrase));
