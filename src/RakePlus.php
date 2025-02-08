@@ -347,8 +347,10 @@ class RakePlus
      */
     private function splitSentences(string $text): array
     {
-        return preg_split('/' . $this->sentence_regex . '/',
-            preg_replace('/' . $this->line_terminator . '/', ' ', $text));
+        return preg_split(
+            '/' . $this->sentence_regex . '/',
+            preg_replace('/' . $this->line_terminator . '/', ' ', $text),
+        );
     }
 
     /**
@@ -360,8 +362,10 @@ class RakePlus
      */
     private function splitSentencesMb(string $text): array
     {
-        return mb_split($this->sentence_regex,
-            mb_ereg_replace($this->line_terminator, ' ', $text));
+        return mb_split(
+            $this->sentence_regex,
+            mb_ereg_replace($this->line_terminator, ' ', $text),
+        );
     }
 
     /**
