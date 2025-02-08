@@ -5,13 +5,6 @@ use PHPUnit\Framework\TestCase;
 
 class lang_ckb_IQ_Test extends TestCase
 {
-    public static bool $mb_support = true;
-
-    protected function setUp(): void
-    {
-        self::$mb_support = true;
-    }
-
     public function testGeneralKurdishPhrase()
     {
         $text = "كوردێكی دانیشتوی فینلاند، تابلۆیه‌كی به‌ ناوی \"ڤایرۆسی كۆرۆنا\" كێشا، ئێسته‌ له‌ یه‌كێك له‌ به‌ناوبانگترین ماڵپه‌ڕه‌كانی فرۆشتنی تابلۆی ئۆنلاین، خستویه‌تییه‌ڕو بۆ فرۆشتن.";
