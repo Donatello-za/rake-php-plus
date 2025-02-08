@@ -145,11 +145,10 @@ class RakePlus
 
         $this->initPattern($stopwords);
 
+        $sentences = $this->splitSentences($text);
         if ($this->mb_support) {
-            $sentences = $this->splitSentencesMb($text);
             $phrases = $this->getPhrasesMb($sentences, $this->pattern);
         } else {
-            $sentences = $this->splitSentences($text);
             $phrases = $this->getPhrases($sentences, $this->pattern);
         }
 
@@ -340,7 +339,7 @@ class RakePlus
     }
 
     /**
-     * Splits the text into an array of sentences.
+     * Splits the text into an array of sentences. Uses mb_* functions if available.
      *
      * @param string $text
      *
@@ -348,24 +347,16 @@ class RakePlus
      */
     private function splitSentences(string $text): array
     {
+        if ($this->mb_support) {
+            return mb_split(
+                $this->sentence_regex,
+                mb_ereg_replace($this->line_terminator, ' ', $text),
+            );
+        }
+
         return preg_split(
             '/' . $this->sentence_regex . '/',
-            preg_replace('/' . $this->line_terminator . '/', ' ', $text)
-        );
-    }
-
-    /**
-     * Splits the text into an array of sentences. Uses mb_* functions.
-     *
-     * @param string $text
-     *
-     * @return array
-     */
-    private function splitSentencesMb(string $text): array
-    {
-        return mb_split(
-            $this->sentence_regex,
-            mb_ereg_replace($this->line_terminator, ' ', $text)
+            preg_replace('/' . $this->line_terminator . '/', ' ', $text),
         );
     }
 
