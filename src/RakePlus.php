@@ -370,9 +370,7 @@ class RakePlus
 
     private function isAppropriatePhrase(string $phrase): bool
     {
-        $length = mb_strlen($phrase);
-
-        if ($length === 0) {
+        if (empty($phrase)) {
             return false;
         }
 
@@ -380,7 +378,7 @@ class RakePlus
             return false;
         }
 
-        return $length >= $this->min_length;
+        return mb_strlen($phrase) >= $this->min_length;
     }
 
     /**
