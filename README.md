@@ -67,6 +67,7 @@ v2.0.0
 
 ## Special Thanks
 
+* [Sergey Kudashev](https://github.com/kudashevs): Big help with refactoring v2 of the library.
 * [Jarosław Wasilewski](https://github.com/Orajo): Polish language and improving multi-byte support.
 * [Lev Morozov](https://github.com/levmorozov): French and Russian languages.
 * [Igor Carvalho](https://github.com/Carvlho): Brazilian Portuguese language.
