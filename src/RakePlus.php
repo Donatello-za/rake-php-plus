@@ -143,6 +143,23 @@ class RakePlus
             return $this;
         }
 
+        $this->initPattern($stopwords);
+
+        if ($this->mb_support) {
+            $sentences = $this->splitSentencesMb($text);
+            $phrases = $this->getPhrasesMb($sentences, $this->pattern);
+        } else {
+            $sentences = $this->splitSentences($text);
+            $phrases = $this->getPhrases($sentences, $this->pattern);
+        }
+
+        $word_scores = $this->calcWordScores($phrases);
+        $this->phrase_scores = $this->calcPhraseScores($phrases, $word_scores);
+        return $this;
+    }
+
+    protected function initPattern($stopwords): void
+    {
         $this->validateStopwords($stopwords);
 
         if (is_array($stopwords)) {
@@ -181,21 +198,7 @@ class RakePlus
 
         if (is_a($stopwords, AbstractStopwordProvider::class, false)) {
             $this->pattern = $stopwords->pattern();
-        } else {
-            throw new InvalidArgumentException('Invalid stopwords list provided for RakePlus.');
         }
-
-        if ($this->mb_support) {
-            $sentences = $this->splitSentencesMb($text);
-            $phrases = $this->getPhrasesMb($sentences, $this->pattern);
-        } else {
-            $sentences = $this->splitSentences($text);
-            $phrases = $this->getPhrases($sentences, $this->pattern);
-        }
-
-        $word_scores = $this->calcWordScores($phrases);
-        $this->phrase_scores = $this->calcPhraseScores($phrases, $word_scores);
-        return $this;
     }
 
     protected function validateStopwords($stopwords): void
