@@ -22,8 +22,6 @@ class RakePlus
 
     private string $line_terminator;
 
-    public bool $mb_support = false;
-
     public ILangParseOptions $parseOptions;
 
     const ORDER_ASC = 'asc';
@@ -59,8 +57,6 @@ class RakePlus
     public function __construct(?string $text = null, $stopwords = 'en_US', int $phrase_min_length = 0,
                                 bool $filter_numerics = true, ?ILangParseOptions $parseOptions = null)
     {
-        $this->mb_support = extension_loaded('mbstring');
-
         $this->setMinLength($phrase_min_length);
         $this->setFilterNumerics($filter_numerics);
 
@@ -343,16 +339,9 @@ class RakePlus
      */
     private function splitSentences(string $text): array
     {
-        if ($this->mb_support) {
-            return mb_split(
-                $this->sentence_regex,
-                mb_ereg_replace($this->line_terminator, ' ', $text),
-            );
-        }
-
-        return preg_split(
-            '/' . $this->sentence_regex . '/',
-            preg_replace('/' . $this->line_terminator . '/', ' ', $text),
+        return mb_split(
+            $this->sentence_regex,
+            mb_ereg_replace($this->line_terminator, ' ', $text),
         );
     }
 
@@ -365,26 +354,11 @@ class RakePlus
      */
     private function getPhrases(array $sentences): array
     {
-        if ($this->mb_support) {
-            return array_reduce($sentences, function ($results, $sentence) {
-                $phrases_temp = mb_eregi_replace($this->pattern, '|', $sentence);
-                $phrases = explode('|', $phrases_temp);
-                foreach ($phrases as $phrase) {
-                    $phrase = mb_strtolower(preg_replace('/^[\pZ\pC]+|[\pZ\pC]+$/u', '', $phrase));
-                    if ($this->isAppropriatePhrase($phrase)) {
-                        $results[] = $phrase;
-                    }
-                }
-
-                return $results;
-            }, []);
-        }
-
         return array_reduce($sentences, function ($results, $sentence) {
-            $phrases_temp = preg_replace($this->pattern, '|', $sentence);
+            $phrases_temp = mb_eregi_replace($this->pattern, '|', $sentence);
             $phrases = explode('|', $phrases_temp);
             foreach ($phrases as $phrase) {
-                $phrase = strtolower(trim($phrase));
+                $phrase = mb_strtolower(preg_replace('/^[\pZ\pC]+|[\pZ\pC]+$/u', '', $phrase));
                 if ($this->isAppropriatePhrase($phrase)) {
                     $results[] = $phrase;
                 }
@@ -396,7 +370,7 @@ class RakePlus
 
     private function isAppropriatePhrase(string $phrase): bool
     {
-        $length = ($this->mb_support) ? mb_strlen($phrase) : strlen($phrase);
+        $length = mb_strlen($phrase);
 
         if ($length === 0) {
             return false;

@@ -11,13 +11,6 @@ use PHPUnit\Framework\TestCase;
 
 class RakePlusTest extends TestCase
 {
-    public static bool $mb_support = true;
-
-    protected function setUp(): void
-    {
-        self::$mb_support = true;
-    }
-
     public function testInstanceOf()
     {
         $rake = RakePlus::create("Hello World");
@@ -141,10 +134,8 @@ class RakePlusTest extends TestCase
         $this->assertCount(17, $phrases);
     }
 
-    public function testNonMbPhrases()
+    public function testWithoutMbPhrases()
     {
-        self::$mb_support = false;
-
         $text = "Criteria of compatibility of a system of linear Diophantine equations, " .
             "strict inequations, and nonstrict inequations are considered. Upper bounds " .
             "for components of a minimal set of solutions and algorithms of construction " .
@@ -438,10 +429,8 @@ class RakePlusTest extends TestCase
         $this->assertEquals(9, $scores['linear diophantine equations']);
     }
 
-    public function testArrayStopwordsNonMb()
+    public function testArrayStopwordsWithoutMb()
     {
-        self::$mb_support = false;
-
         $text = "Criteria of compatibility of a system of linear Diophantine equations, " .
             "strict inequations, and nonstrict inequations are considered. Upper bounds " .
             "for components of a minimal set of solutions and algorithms of construction " .
