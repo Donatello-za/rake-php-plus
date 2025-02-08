@@ -58,7 +58,6 @@ class RakePlus
         $this->setMinLength($phrase_min_length);
         $this->initMinLength($phrase_min_length);
         $this->initFilterNumerics($filter_numerics);
-
         $this->initParseOptions(
             $parseOptions ?? LangParseOptions::create(is_string($stopwords) ? $stopwords : $this->language)
         );
