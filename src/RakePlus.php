@@ -139,11 +139,17 @@ class RakePlus
      */
     public function extract(string $text, $stopwords = 'en_US'): RakePlus
     {
-        if ($text === '') return $this;
+        if ($text === '') {
+            return $this;
+        }
+
+        $this->validateStopwords($stopwords);
 
         if (is_array($stopwords)) {
             $this->pattern = StopwordArray::create($stopwords)->pattern();
-        } else if (is_string($stopwords)) {
+        }
+
+        if (is_string($stopwords)) {
             if (is_null($this->pattern) || ($this->language != $stopwords)) {
                 $extension = mb_strtolower(pathinfo($stopwords, PATHINFO_EXTENSION));
                 if (empty($extension)) {
@@ -156,18 +162,24 @@ class RakePlus
                         $this->pattern = StopwordsPHP::create($this->language_file)->pattern();
                     }
                     $this->language = $stopwords;
-                } else if ($extension == 'pattern') {
-                    $this->language = $stopwords;
-                    $this->language_file = $stopwords;
-                    $this->pattern = StopwordsPatternFile::create($this->language_file)->pattern();
-                } else if ($extension == 'php') {
-                    $language_file = $stopwords;
-                    $this->language = $stopwords;
-                    $this->language_file = $language_file;
-                    $this->pattern = StopwordsPHP::create($this->language_file)->pattern();
+                } else {
+                    if ($extension == 'pattern') {
+                        $this->language = $stopwords;
+                        $this->language_file = $stopwords;
+                        $this->pattern = StopwordsPatternFile::create($this->language_file)->pattern();
+                    } else {
+                        if ($extension == 'php') {
+                            $language_file = $stopwords;
+                            $this->language = $stopwords;
+                            $this->language_file = $language_file;
+                            $this->pattern = StopwordsPHP::create($this->language_file)->pattern();
+                        }
+                    }
                 }
             }
-        } elseif (is_subclass_of($stopwords, 'DonatelloZa\RakePlus\AbstractStopwordProvider')) {
+        }
+
+        if (is_a($stopwords, AbstractStopwordProvider::class, false)) {
             $this->pattern = $stopwords->pattern();
         } else {
             throw new InvalidArgumentException('Invalid stopwords list provided for RakePlus.');
@@ -184,6 +196,18 @@ class RakePlus
         $word_scores = $this->calcWordScores($phrases);
         $this->phrase_scores = $this->calcPhraseScores($phrases, $word_scores);
         return $this;
+    }
+
+    protected function validateStopwords($stopwords): void
+    {
+        if (
+            !is_array($stopwords)
+            && !is_string($stopwords)
+            && !is_object($stopwords)
+            && !is_a($stopwords, AbstractStopwordProvider::class, false)
+        ) {
+            throw new InvalidArgumentException('Invalid stopwords list provided for RakePlus.');
+        }
     }
 
     /**
