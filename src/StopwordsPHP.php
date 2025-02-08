@@ -7,12 +7,12 @@ use RuntimeException;
 class StopwordsPHP extends AbstractStopwordProvider
 {
     protected array $stopwords = [];
+
     protected string $pattern = "";
+
     protected string $filename = "";
 
     /**
-     * StopwordsPHP constructor.
-     *
      * @param string $filename
      */
     public function __construct(string $filename)
@@ -23,7 +23,7 @@ class StopwordsPHP extends AbstractStopwordProvider
     }
 
     /**
-     * Constructs a new instance of the StopwordsPHP class.
+     * Creates a new instance of the StopwordsPHP class.
      *
      * @param string $filename
      *
@@ -35,7 +35,7 @@ class StopwordsPHP extends AbstractStopwordProvider
     }
 
     /**
-     * Constructs a new instance of the StopwordsPHP class
+     * Creates a new instance of the StopwordsPHP class
      * but automatically determines the filename to use
      * based on the language string provided.
      *
@@ -105,18 +105,18 @@ class StopwordsPHP extends AbstractStopwordProvider
     {
         if (!file_exists($language_file)) {
             throw new RuntimeException("Could not find the RAKE stopwords file: $language_file");
-        } else {
-            $stopwords = include($language_file);
-
-            if (is_array($stopwords)) {
-                if (count($stopwords) < 1) {
-                    throw new RuntimeException("No words found in RAKE stopwords file: $language_file");
-                } else {
-                    return $stopwords;
-                }
-            } else {
-                throw new RuntimeException("Invalid results retrieved from RAKE stopwords file: $language_file");
-            }
         }
+
+        $stopwords = include($language_file);
+
+        if (!is_array($stopwords)) {
+            throw new RuntimeException("Invalid results retrieved from RAKE stopwords file: $language_file");
+        }
+
+        if (count($stopwords) < 1) {
+            throw new RuntimeException("No words found in RAKE stopwords file: $language_file");
+        }
+
+        return $stopwords;
     }
 }

@@ -7,14 +7,23 @@ use InvalidArgumentException;
 class RakePlus
 {
     protected string $language = 'en_US';
+
     protected string $language_file = "";
+
     private ?string $pattern = null;
+
     private array $phrase_scores = [];
+
     private int $min_length = 0;
+
     private bool $filter_numerics = true;
+
     private string $sentence_regex;
+
     private string $line_terminator;
+
     public bool $mb_support = false;
+
     public ILangParseOptions $parseOptions;
 
     const ORDER_ASC = 'asc';

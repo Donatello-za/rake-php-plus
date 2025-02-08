@@ -7,11 +7,10 @@ use RuntimeException;
 class StopwordArray extends AbstractStopwordProvider
 {
     protected array $stopwords = [];
+
     protected string $pattern = "";
 
     /**
-     * StopwordArray constructor.
-     *
      * @param array $stopwords
      */
     public function __construct(array $stopwords)
@@ -25,7 +24,7 @@ class StopwordArray extends AbstractStopwordProvider
     }
 
     /**
-     * Constructs a new instance of the StopwordArray class.
+     * Creates a new instance of the StopwordArray class.
      *
      * @param array $stopwords
      *
