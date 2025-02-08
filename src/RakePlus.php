@@ -340,10 +340,10 @@ class RakePlus
             $phrases_temp = preg_replace($pattern, '|', $sentence);
             $phrases = explode('|', $phrases_temp);
             foreach ($phrases as $phrase) {
-                $phrase = mb_strtolower(trim($phrase));
+                $phrase = strtolower(trim($phrase));
                 if (!empty($phrase)) {
                     if (!$this->filter_numerics || !is_numeric($phrase)) {
-                        if ($this->min_length === 0 || mb_strlen($phrase) >= $this->min_length) {
+                        if ($this->min_length === 0 || strlen($phrase) >= $this->min_length) {
                             $results[] = $phrase;
                         }
                     }
