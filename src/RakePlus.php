@@ -164,19 +164,22 @@ class RakePlus
      */
     protected function initPattern($stopwords): void
     {
-        $this->validateStopwords($stopwords);
-
         if (is_array($stopwords)) {
             $this->initPatternFromArray($stopwords);
+            return;
         }
 
         if (is_string($stopwords)) {
             $this->initPatternFromString($stopwords);
+            return;
         }
 
-        if (is_a($stopwords, AbstractStopwordProvider::class, false)) {
+        if (is_object($stopwords) && is_a($stopwords, AbstractStopwordProvider::class, false)) {
             $this->initPatternFromProvider($stopwords);
+            return;
         }
+
+        throw new InvalidArgumentException('Invalid stopwords list provided for RakePlus.');
     }
 
     protected function initPatternFromArray($stopwords): void
@@ -221,18 +224,6 @@ class RakePlus
     protected function initPatternFromProvider($stopwords): void
     {
         $this->pattern = $stopwords->pattern();
-    }
-
-    protected function validateStopwords($stopwords): void
-    {
-        if (
-            !is_array($stopwords)
-            && !is_string($stopwords)
-            && !is_object($stopwords)
-            && !is_a($stopwords, AbstractStopwordProvider::class, false)
-        ) {
-            throw new InvalidArgumentException('Invalid stopwords list provided for RakePlus.');
-        }
     }
 
     /**
