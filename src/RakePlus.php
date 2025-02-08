@@ -139,7 +139,7 @@ class RakePlus
      */
     public function extract(string $text, $stopwords = 'en_US'): RakePlus
     {
-        if ($text === '') {
+        if (trim($text) === '') {
             return $this;
         }
 
