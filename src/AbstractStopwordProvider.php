@@ -32,10 +32,6 @@ abstract class AbstractStopwordProvider
             }
         }
 
-        if (extension_loaded('mbstring')) {
-            return implode('|', $pattern);
-        } else {
-            return '/' . implode('|', $pattern) . '/i';
-        }
+        return implode('|', $pattern);
     }
 }
