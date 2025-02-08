@@ -186,9 +186,26 @@ class RakePlus
 
     protected function initPatternFromString($stopwords): void
     {
-        if (is_null($this->pattern) || ($this->language != $stopwords)) {
-            $extension = mb_strtolower(pathinfo($stopwords, PATHINFO_EXTENSION));
-            if (empty($extension)) {
+        if (!is_null($this->pattern) && ($this->language == $stopwords)) {
+            return;
+        }
+
+        $extension = mb_strtolower(pathinfo($stopwords, PATHINFO_EXTENSION));
+
+        switch ($extension) {
+            case 'pattern':
+                $this->language = $stopwords;
+                $this->language_file = $stopwords;
+                $this->pattern = StopwordsPatternFile::create($this->language_file)->pattern();
+                break;
+
+            case 'php':
+                $this->language = $stopwords;
+                $this->language_file = $stopwords;
+                $this->pattern = StopwordsPHP::create($this->language_file)->pattern();
+                break;
+
+            default:
                 // First try the .pattern file
                 $this->language_file = StopwordsPatternFile::languageFile($stopwords);
                 if (file_exists($this->language_file)) {
@@ -198,20 +215,6 @@ class RakePlus
                     $this->pattern = StopwordsPHP::create($this->language_file)->pattern();
                 }
                 $this->language = $stopwords;
-            } else {
-                if ($extension == 'pattern') {
-                    $this->language = $stopwords;
-                    $this->language_file = $stopwords;
-                    $this->pattern = StopwordsPatternFile::create($this->language_file)->pattern();
-                } else {
-                    if ($extension == 'php') {
-                        $language_file = $stopwords;
-                        $this->language = $stopwords;
-                        $this->language_file = $language_file;
-                        $this->pattern = StopwordsPHP::create($this->language_file)->pattern();
-                    }
-                }
-            }
         }
     }
 
