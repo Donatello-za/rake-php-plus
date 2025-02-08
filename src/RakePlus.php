@@ -132,8 +132,8 @@ class RakePlus
      * If $stopwords is a derived instance of StopwordAbstract it will simply
      * retrieve the stopwords from the instance.
      *
-     * @param string                                $text
-     * @param AbstractStopwordProvider|string|array $stopwords
+     * @param string $text
+     * @param array|string|AbstractStopwordProvider $stopwords
      *
      * @return RakePlus
      */
@@ -365,43 +365,48 @@ class RakePlus
      */
     private function getPhrases(array $sentences): array
     {
-        $results = [];
-
         if ($this->mb_support) {
-            foreach ($sentences as $sentence) {
+            return array_reduce($sentences, function ($results, $sentence) {
                 $phrases_temp = mb_eregi_replace($this->pattern, '|', $sentence);
                 $phrases = explode('|', $phrases_temp);
                 foreach ($phrases as $phrase) {
                     $phrase = mb_strtolower(preg_replace('/^[\pZ\pC]+|[\pZ\pC]+$/u', '', $phrase));
-                    if (!empty($phrase)) {
-                        if (!$this->filter_numerics || !is_numeric($phrase)) {
-                            if ($this->min_length === 0 || mb_strlen($phrase) >= $this->min_length) {
-                                $results[] = $phrase;
-                            }
-                        }
+                    if ($this->isAppropriatePhrase($phrase)) {
+                        $results[] = $phrase;
                     }
                 }
-            }
 
-            return $results;
+                return $results;
+            }, []);
         }
 
-        foreach ($sentences as $sentence) {
+        return array_reduce($sentences, function ($results, $sentence) {
             $phrases_temp = preg_replace($this->pattern, '|', $sentence);
             $phrases = explode('|', $phrases_temp);
             foreach ($phrases as $phrase) {
                 $phrase = strtolower(trim($phrase));
-                if (!empty($phrase)) {
-                    if (!$this->filter_numerics || !is_numeric($phrase)) {
-                        if ($this->min_length === 0 || strlen($phrase) >= $this->min_length) {
-                            $results[] = $phrase;
-                        }
-                    }
+                if ($this->isAppropriatePhrase($phrase)) {
+                    $results[] = $phrase;
                 }
             }
+
+            return $results;
+        }, []);
+    }
+
+    private function isAppropriatePhrase(string $phrase): bool
+    {
+        $length = ($this->mb_support) ? mb_strlen($phrase) : strlen($phrase);
+
+        if ($length === 0) {
+            return false;
         }
 
-        return $results;
+        if ($this->filter_numerics && is_numeric($phrase)) {
+            return false;
+        }
+
+        return $length >= $this->min_length;
     }
 
     /**
