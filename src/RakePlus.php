@@ -61,14 +61,9 @@ class RakePlus
         $this->initMinLength($phrase_min_length);
         $this->initFilterNumerics($filter_numerics);
 
-        if ($parseOptions === null) {
-            $this->parseOptions = LangParseOptions::create(is_string($stopwords) ? $stopwords : $this->language);
-        } else {
-            $this->parseOptions = $parseOptions;
-        }
-
-        $this->sentence_regex = $this->parseOptions->getSentenceRegex();
-        $this->line_terminator = $this->parseOptions->getLineTerminator();
+        $this->initParseOptions(
+            $parseOptions ?? LangParseOptions::create(is_string($stopwords) ? $stopwords : $this->language)
+        );
 
         if (!is_null($text)) {
             $this->extract($text, $stopwords);
@@ -87,6 +82,14 @@ class RakePlus
     protected function initFilterNumerics($filter_numerics): void
     {
         $this->filter_numerics = $filter_numerics;
+    }
+
+    protected function initParseOptions(ILangParseOptions $parseOptions): void
+    {
+        $this->parseOptions = $parseOptions;
+
+        $this->sentence_regex = $this->parseOptions->getSentenceRegex();
+        $this->line_terminator = $this->parseOptions->getLineTerminator();
     }
 
     /**
