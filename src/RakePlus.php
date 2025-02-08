@@ -189,6 +189,7 @@ class RakePlus
 
     protected function initPatternFromString($stopwords): void
     {
+        // @note ideally, this conditional should be called somehow
         if (!is_null($this->pattern) && ($this->language == $stopwords)) {
             return;
         }
