@@ -460,7 +460,9 @@ class RakePlus
      */
     private function splitPhraseIntoWords(string $phrase): array
     {
-        return array_filter(preg_split('/\W+/u', $phrase, -1, PREG_SPLIT_NO_EMPTY), function ($word) {
+        $splitPhrase = preg_split('/\W+/u', $phrase, -1, PREG_SPLIT_NO_EMPTY);
+
+        return array_filter($splitPhrase, static function ($word) {
             return !is_numeric($word);
         });
     }
