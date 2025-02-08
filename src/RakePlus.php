@@ -146,11 +146,7 @@ class RakePlus
         $this->initPattern($stopwords);
 
         $sentences = $this->splitSentences($text);
-        if ($this->mb_support) {
-            $phrases = $this->getPhrasesMb($sentences, $this->pattern);
-        } else {
-            $phrases = $this->getPhrases($sentences, $this->pattern);
-        }
+        $phrases = $this->getPhrases($sentences, $this->pattern);
 
         $word_scores = $this->calculateWordScores($phrases);
         $this->phrase_scores = $this->calculatePhraseScores($phrases, $word_scores);
@@ -361,7 +357,7 @@ class RakePlus
     }
 
     /**
-     * Split sentences into phrases by using the stopwords.
+     * Split sentences into phrases by using the stopwords. Uses mb_* functions if available.
      *
      * @param array  $sentences
      * @param string $pattern
@@ -372,6 +368,25 @@ class RakePlus
     {
         $results = [];
 
+        if ($this->mb_support) {
+            foreach ($sentences as $sentence) {
+                $phrases_temp = mb_eregi_replace($pattern, '|', $sentence);
+                $phrases = explode('|', $phrases_temp);
+                foreach ($phrases as $phrase) {
+                    $phrase = mb_strtolower(preg_replace('/^[\pZ\pC]+|[\pZ\pC]+$/u', '', $phrase));
+                    if (!empty($phrase)) {
+                        if (!$this->filter_numerics || !is_numeric($phrase)) {
+                            if ($this->min_length === 0 || mb_strlen($phrase) >= $this->min_length) {
+                                $results[] = $phrase;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return $results;
+        }
+
         foreach ($sentences as $sentence) {
             $phrases_temp = preg_replace($pattern, '|', $sentence);
             $phrases = explode('|', $phrases_temp);
@@ -380,37 +395,6 @@ class RakePlus
                 if (!empty($phrase)) {
                     if (!$this->filter_numerics || !is_numeric($phrase)) {
                         if ($this->min_length === 0 || strlen($phrase) >= $this->min_length) {
-                            $results[] = $phrase;
-                        }
-                    }
-                }
-            }
-        }
-
-        return $results;
-    }
-
-    /**
-     * Split sentences into phrases by using the stopwords. Makes use of
-     * PHP's mb_* functions.
-     *
-     * @param array  $sentences
-     * @param string $pattern
-     *
-     * @return array
-     */
-    private function getPhrasesMb(array $sentences, string $pattern): array
-    {
-        $results = [];
-
-        foreach ($sentences as $sentence) {
-            $phrases_temp = mb_eregi_replace($pattern, '|', $sentence);
-            $phrases = explode('|', $phrases_temp);
-            foreach ($phrases as $phrase) {
-                $phrase = mb_strtolower(preg_replace('/^[\pZ\pC]+|[\pZ\pC]+$/u', '', $phrase));
-                if (!empty($phrase)) {
-                    if (!$this->filter_numerics || !is_numeric($phrase)) {
-                        if ($this->min_length === 0 || mb_strlen($phrase) >= $this->min_length) {
                             $results[] = $phrase;
                         }
                     }
