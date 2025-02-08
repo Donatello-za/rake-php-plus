@@ -94,10 +94,6 @@ class StopwordsPatternFile extends AbstractStopwordProvider
             throw new RuntimeException("Could not find the RAKE stopwords file: $language_file");
         }
 
-        if (!extension_loaded('mbstring')) {
-            return file_get_contents($language_file);
-        }
-
         // Trim leading "/" character and trailing "/i" if it exists in the string
         $pattern = trim(file_get_contents($language_file));
 
