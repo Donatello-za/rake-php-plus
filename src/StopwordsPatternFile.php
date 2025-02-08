@@ -6,9 +6,9 @@ use RuntimeException;
 
 class StopwordsPatternFile extends AbstractStopwordProvider
 {
-    protected string $pattern = "";
+    protected string $pattern = '';
 
-    protected string $filename = "";
+    protected string $filename = '';
 
     /**
      * @param string $filename

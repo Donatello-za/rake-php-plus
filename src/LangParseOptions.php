@@ -11,7 +11,9 @@ namespace DonatelloZa\RakePlus;
 class LangParseOptions implements ILangParseOptions
 {
     private string $language;
+
     private string $sentence_regex;
+
     private string $line_terminator;
 
     /**

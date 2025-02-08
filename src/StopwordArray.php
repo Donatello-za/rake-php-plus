@@ -8,7 +8,7 @@ class StopwordArray extends AbstractStopwordProvider
 {
     protected array $stopwords = [];
 
-    protected string $pattern = "";
+    protected string $pattern = '';
 
     /**
      * @param array $stopwords

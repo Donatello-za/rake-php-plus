@@ -8,7 +8,7 @@ class RakePlus
 {
     protected string $language = 'en_US';
 
-    protected string $language_file = "";
+    protected string $language_file = '';
 
     private ?string $pattern = null;
 
@@ -174,7 +174,7 @@ class RakePlus
             return;
         }
 
-        if (is_object($stopwords) && is_a($stopwords, AbstractStopwordProvider::class, false)) {
+        if (is_object($stopwords) && is_a($stopwords, AbstractStopwordProvider::class)) {
             $this->initPatternFromProvider($stopwords);
             return;
         }
@@ -262,7 +262,7 @@ class RakePlus
         foreach ($phrases as $phrase) {
             $words = explode(' ', $phrase);
             foreach ($words as $word) {
-                // This may look weird to the casual observer
+                // This may look weird to the casual observer,
                 // but we do this since PHP will convert string
                 // array keys that look like integers to actual
                 // integers. This may cause problems further
@@ -350,7 +350,7 @@ class RakePlus
     {
         return preg_split(
             '/' . $this->sentence_regex . '/',
-            preg_replace('/' . $this->line_terminator . '/', ' ', $text),
+            preg_replace('/' . $this->line_terminator . '/', ' ', $text)
         );
     }
 
@@ -365,7 +365,7 @@ class RakePlus
     {
         return mb_split(
             $this->sentence_regex,
-            mb_ereg_replace($this->line_terminator, ' ', $text),
+            mb_ereg_replace($this->line_terminator, ' ', $text)
         );
     }
 

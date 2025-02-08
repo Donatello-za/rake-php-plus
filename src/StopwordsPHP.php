@@ -8,9 +8,9 @@ class StopwordsPHP extends AbstractStopwordProvider
 {
     protected array $stopwords = [];
 
-    protected string $pattern = "";
+    protected string $pattern = '';
 
-    protected string $filename = "";
+    protected string $filename = '';
 
     /**
      * @param string $filename
