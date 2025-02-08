@@ -163,42 +163,57 @@ class RakePlus
         $this->validateStopwords($stopwords);
 
         if (is_array($stopwords)) {
-            $this->pattern = StopwordArray::create($stopwords)->pattern();
+            $this->initPatternFromArray($stopwords);
         }
 
         if (is_string($stopwords)) {
-            if (is_null($this->pattern) || ($this->language != $stopwords)) {
-                $extension = mb_strtolower(pathinfo($stopwords, PATHINFO_EXTENSION));
-                if (empty($extension)) {
-                    // First try the .pattern file
-                    $this->language_file = StopwordsPatternFile::languageFile($stopwords);
-                    if (file_exists($this->language_file)) {
-                        $this->pattern = StopwordsPatternFile::create($this->language_file)->pattern();
-                    } else {
-                        $this->language_file = StopwordsPHP::languageFile($stopwords);
-                        $this->pattern = StopwordsPHP::create($this->language_file)->pattern();
-                    }
-                    $this->language = $stopwords;
+            $this->initPatternFromString($stopwords);
+        }
+
+        if (is_a($stopwords, AbstractStopwordProvider::class, false)) {
+            $this->initPatternFromProvider($stopwords);
+        }
+    }
+
+    protected function initPatternFromArray($stopwords): void
+    {
+        $this->pattern = StopwordArray::create($stopwords)->pattern();
+    }
+
+    protected function initPatternFromString($stopwords): void
+    {
+        if (is_null($this->pattern) || ($this->language != $stopwords)) {
+            $extension = mb_strtolower(pathinfo($stopwords, PATHINFO_EXTENSION));
+            if (empty($extension)) {
+                // First try the .pattern file
+                $this->language_file = StopwordsPatternFile::languageFile($stopwords);
+                if (file_exists($this->language_file)) {
+                    $this->pattern = StopwordsPatternFile::create($this->language_file)->pattern();
                 } else {
-                    if ($extension == 'pattern') {
+                    $this->language_file = StopwordsPHP::languageFile($stopwords);
+                    $this->pattern = StopwordsPHP::create($this->language_file)->pattern();
+                }
+                $this->language = $stopwords;
+            } else {
+                if ($extension == 'pattern') {
+                    $this->language = $stopwords;
+                    $this->language_file = $stopwords;
+                    $this->pattern = StopwordsPatternFile::create($this->language_file)->pattern();
+                } else {
+                    if ($extension == 'php') {
+                        $language_file = $stopwords;
                         $this->language = $stopwords;
-                        $this->language_file = $stopwords;
-                        $this->pattern = StopwordsPatternFile::create($this->language_file)->pattern();
-                    } else {
-                        if ($extension == 'php') {
-                            $language_file = $stopwords;
-                            $this->language = $stopwords;
-                            $this->language_file = $language_file;
-                            $this->pattern = StopwordsPHP::create($this->language_file)->pattern();
-                        }
+                        $this->language_file = $language_file;
+                        $this->pattern = StopwordsPHP::create($this->language_file)->pattern();
                     }
                 }
             }
         }
+    }
 
-        if (is_a($stopwords, AbstractStopwordProvider::class, false)) {
-            $this->pattern = $stopwords->pattern();
-        }
+    protected function initPatternFromProvider($stopwords): void
+    {
+        $this->pattern = $stopwords->pattern();
     }
 
     protected function validateStopwords($stopwords): void
