@@ -374,7 +374,7 @@ class RakePlus
             $phrases = explode('|', $phrases_temp);
             foreach ($phrases as $phrase) {
                 $phrase = mb_strtolower(preg_replace('/^[\pZ\pC]+|[\pZ\pC]+$/u', '', $phrase));
-                if ($this->isAppropriatePhrase($phrase)) {
+                if ($this->isApplicablePhrase($phrase)) {
                     $results[] = $phrase;
                 }
             }
@@ -383,7 +383,7 @@ class RakePlus
         }, []);
     }
 
-    private function isAppropriatePhrase(string $phrase): bool
+    private function isApplicablePhrase(string $phrase): bool
     {
         if (empty($phrase)) {
             return false;
