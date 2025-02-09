@@ -497,6 +497,8 @@ class RakePlus
      */
     public function setMinLength(int $min_length): RakePlus
     {
+        // @note there is no need to throw an exception in runtime to me
+        // the exception can be caught and a default value used instead
         $this->initMinLength($min_length);
 
         return $this;
