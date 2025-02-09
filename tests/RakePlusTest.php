@@ -29,6 +29,14 @@ class RakePlusTest extends TestCase
         RakePlus::create("Hello World", "blah");
     }
 
+    public function testInvalidMinLength()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('length must be');
+
+        RakePlus::create("Hello World", 'en_US', -1);
+    }
+
     public function testNullLanguage()
     {
         $this->expectException(InvalidArgumentException::class);
