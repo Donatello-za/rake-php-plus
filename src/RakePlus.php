@@ -22,6 +22,8 @@ class RakePlus
 
     private string $line_terminator;
 
+    public ILangParseOptions $parseOptions;
+
     const ORDER_ASC = 'asc';
     const ORDER_DESC = 'desc';
 
@@ -505,7 +507,7 @@ class RakePlus
 
     /**
      * Sets whether numeric-only phrases/keywords should be filtered
-     * out or not.
+     * out or not. Alias to initFilterNumerics().
      *
      * @param bool $filter_numerics
      *
