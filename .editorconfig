@@ -12,5 +12,5 @@ trim_trailing_whitespace = true
 trim_trailing_whitespace = false
 insert_final_newline = false
 
-[*.{yml,yaml}]
+[*.{yml,yaml,json}]
 indent_size = 2

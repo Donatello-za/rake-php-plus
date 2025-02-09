@@ -6,13 +6,6 @@ use PHPUnit\Framework\TestCase;
 
 class lang_es_AR_Test extends TestCase
 {
-    public static bool $mb_support = true;
-
-    protected function setUp(): void
-    {
-        self::$mb_support = true;
-    }
-
     public function testPhrases()
     {
         $text = "Saritha está viendo una película de Bollywood con su novio Chris. " .

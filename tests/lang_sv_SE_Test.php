@@ -5,13 +5,6 @@ use PHPUnit\Framework\TestCase;
 
 class lang_sv_SE_Test extends TestCase
 {
-    public static bool $mb_support = true;
-
-    protected function setUp(): void
-    {
-        self::$mb_support = true;
-    }
-
     public function testFrenchShorthand()
     {
         $text = <<<LANG

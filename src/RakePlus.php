@@ -22,10 +22,6 @@ class RakePlus
 
     private string $line_terminator;
 
-    public bool $mb_support = false;
-
-    public ILangParseOptions $parseOptions;
-
     const ORDER_ASC = 'asc';
     const ORDER_DESC = 'desc';
 
@@ -59,23 +55,37 @@ class RakePlus
     public function __construct(?string $text = null, $stopwords = 'en_US', int $phrase_min_length = 0,
                                 bool $filter_numerics = true, ?ILangParseOptions $parseOptions = null)
     {
-        $this->mb_support = extension_loaded('mbstring');
-
-        $this->setMinLength($phrase_min_length);
-        $this->setFilterNumerics($filter_numerics);
-
-        if ($parseOptions === null) {
-            $this->parseOptions = LangParseOptions::create(is_string($stopwords) ? $stopwords : $this->language);
-        } else {
-            $this->parseOptions = $parseOptions;
-        }
-
-        $this->sentence_regex = $this->parseOptions->getSentenceRegex();
-        $this->line_terminator = $this->parseOptions->getLineTerminator();
+        $this->initMinLength($phrase_min_length);
+        $this->initFilterNumerics($filter_numerics);
+        $this->initParseOptions(
+            $parseOptions ?? LangParseOptions::create(is_string($stopwords) ? $stopwords : $this->language)
+        );
 
         if (!is_null($text)) {
             $this->extract($text, $stopwords);
         }
+    }
+
+    protected function initMinLength(int $min_length): void
+    {
+        if ($min_length < 0) {
+            throw new InvalidArgumentException('Minimum phrase length must be greater than or equal to 0.');
+        }
+
+        $this->min_length = $min_length;
+    }
+
+    protected function initFilterNumerics($filter_numerics): void
+    {
+        $this->filter_numerics = $filter_numerics;
+    }
+
+    protected function initParseOptions(ILangParseOptions $parseOptions): void
+    {
+        $this->parseOptions = $parseOptions;
+
+        $this->sentence_regex = $parseOptions->getSentenceRegex();
+        $this->line_terminator = $parseOptions->getLineTerminator();
     }
 
     /**
@@ -132,8 +142,8 @@ class RakePlus
      * If $stopwords is a derived instance of StopwordAbstract it will simply
      * retrieve the stopwords from the instance.
      *
-     * @param string                                $text
-     * @param AbstractStopwordProvider|string|array $stopwords
+     * @param string $text
+     * @param array|string|AbstractStopwordProvider $stopwords
      *
      * @return RakePlus
      */
@@ -145,13 +155,8 @@ class RakePlus
 
         $this->initPattern($stopwords);
 
-        if ($this->mb_support) {
-            $sentences = $this->splitSentencesMb($text);
-            $phrases = $this->getPhrasesMb($sentences, $this->pattern);
-        } else {
-            $sentences = $this->splitSentences($text);
-            $phrases = $this->getPhrases($sentences, $this->pattern);
-        }
+        $sentences = $this->splitSentences($text);
+        $phrases = $this->getPhrases($sentences);
 
         $word_scores = $this->calculateWordScores($phrases);
         $this->phrase_scores = $this->calculatePhraseScores($phrases, $word_scores);
@@ -290,7 +295,7 @@ class RakePlus
      */
     public function sortByScore(string $order = self::ORDER_ASC): RakePlus
     {
-        if ($order == self::ORDER_DESC) {
+        if ($order === self::ORDER_DESC) {
             arsort($this->phrase_scores);
         } else {
             asort($this->phrase_scores);
@@ -309,7 +314,7 @@ class RakePlus
      */
     public function sort(string $order = self::ORDER_ASC): RakePlus
     {
-        if ($order == self::ORDER_DESC) {
+        if ($order === self::ORDER_DESC) {
             krsort($this->phrase_scores);
         } else {
             ksort($this->phrase_scores);
@@ -348,21 +353,6 @@ class RakePlus
      */
     private function splitSentences(string $text): array
     {
-        return preg_split(
-            '/' . $this->sentence_regex . '/',
-            preg_replace('/' . $this->line_terminator . '/', ' ', $text)
-        );
-    }
-
-    /**
-     * Splits the text into an array of sentences. Uses mb_* functions.
-     *
-     * @param string $text
-     *
-     * @return array
-     */
-    private function splitSentencesMb(string $text): array
-    {
         return mb_split(
             $this->sentence_regex,
             mb_ereg_replace($this->line_terminator, ' ', $text)
@@ -372,62 +362,37 @@ class RakePlus
     /**
      * Split sentences into phrases by using the stopwords.
      *
-     * @param array  $sentences
-     * @param string $pattern
+     * @param array $sentences
      *
      * @return array
      */
-    private function getPhrases(array $sentences, string $pattern): array
+    private function getPhrases(array $sentences): array
     {
-        $results = [];
-
-        foreach ($sentences as $sentence) {
-            $phrases_temp = preg_replace($pattern, '|', $sentence);
-            $phrases = explode('|', $phrases_temp);
-            foreach ($phrases as $phrase) {
-                $phrase = strtolower(trim($phrase));
-                if (!empty($phrase)) {
-                    if (!$this->filter_numerics || !is_numeric($phrase)) {
-                        if ($this->min_length === 0 || strlen($phrase) >= $this->min_length) {
-                            $results[] = $phrase;
-                        }
-                    }
-                }
-            }
-        }
-
-        return $results;
-    }
-
-    /**
-     * Split sentences into phrases by using the stopwords. Makes use of
-     * PHP's mb_* functions.
-     *
-     * @param array  $sentences
-     * @param string $pattern
-     *
-     * @return array
-     */
-    private function getPhrasesMb(array $sentences, string $pattern): array
-    {
-        $results = [];
-
-        foreach ($sentences as $sentence) {
-            $phrases_temp = mb_eregi_replace($pattern, '|', $sentence);
+        return array_reduce($sentences, function ($results, $sentence) {
+            $phrases_temp = mb_eregi_replace($this->pattern, '|', $sentence);
             $phrases = explode('|', $phrases_temp);
             foreach ($phrases as $phrase) {
                 $phrase = mb_strtolower(preg_replace('/^[\pZ\pC]+|[\pZ\pC]+$/u', '', $phrase));
-                if (!empty($phrase)) {
-                    if (!$this->filter_numerics || !is_numeric($phrase)) {
-                        if ($this->min_length === 0 || mb_strlen($phrase) >= $this->min_length) {
-                            $results[] = $phrase;
-                        }
-                    }
+                if ($this->isApplicablePhrase($phrase)) {
+                    $results[] = $phrase;
                 }
             }
+
+            return $results;
+        }, []);
+    }
+
+    private function isApplicablePhrase(string $phrase): bool
+    {
+        if (empty($phrase)) {
+            return false;
         }
 
-        return $results;
+        if ($this->filter_numerics && is_numeric($phrase)) {
+            return false;
+        }
+
+        return mb_strlen($phrase) >= $this->min_length;
     }
 
     /**
@@ -448,9 +413,9 @@ class RakePlus
             $words_degree = $words_count - 1;
 
             foreach ($words as $w) {
-                $frequencies[$w] = (isset($frequencies[$w])) ? $frequencies[$w] : 0;
+                $frequencies[$w] = $frequencies[$w] ?? 0;
                 $frequencies[$w] += 1;
-                $degrees[$w] = (isset($degrees[$w])) ? $degrees[$w] : 0;
+                $degrees[$w] = $degrees[$w] ?? 0;
                 $degrees[$w] += $words_degree;
             }
         }
@@ -461,7 +426,7 @@ class RakePlus
 
         $scores = [];
         foreach ($frequencies as $word => $freq) {
-            $scores[$word] = (isset($scores[$word])) ? $scores[$word] : 0;
+            $scores[$word] = $scores[$word] ?? 0;
             $scores[$word] = $degrees[$word] / (float)$freq;
         }
 
@@ -481,7 +446,7 @@ class RakePlus
         $keywords = [];
 
         foreach ($phrases as $phrase) {
-            $keywords[$phrase] = (isset($keywords[$phrase])) ? $keywords[$phrase] : 0;
+            $keywords[$phrase] = $keywords[$phrase] ?? 0;
             $words = $this->splitPhraseIntoWords($phrase);
             $score = 0;
 
@@ -531,11 +496,10 @@ class RakePlus
      */
     public function setMinLength(int $min_length): RakePlus
     {
-        if ($min_length < 0) {
-            throw new InvalidArgumentException('Minimum phrase length must be greater than or equal to 0.');
-        }
+        // @note there is no need to throw an exception in runtime to me
+        // the exception can be caught and a default value used instead
+        $this->initMinLength($min_length);
 
-        $this->min_length = $min_length;
         return $this;
     }
 
@@ -549,7 +513,8 @@ class RakePlus
      */
     public function setFilterNumerics(bool $filter_numerics = true): RakePlus
     {
-        $this->filter_numerics = $filter_numerics;
+        $this->initFilterNumerics($filter_numerics);
+
         return $this;
     }
 

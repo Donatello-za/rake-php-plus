@@ -5,13 +5,6 @@ use PHPUnit\Framework\TestCase;
 
 class lang_ar_AE_Test extends TestCase
 {
-    public static bool $mb_support = true;
-
-    protected function setUp(): void
-    {
-        self::$mb_support = true;
-    }
-
     public function testCommaInArabicPhrase()
     {
         $text = "يا أمجد، افتح الباب.";

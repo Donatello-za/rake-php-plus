@@ -94,17 +94,13 @@ class StopwordsPatternFile extends AbstractStopwordProvider
             throw new RuntimeException("Could not find the RAKE stopwords file: $language_file");
         }
 
-        if (!extension_loaded('mbstring')) {
-            return file_get_contents($language_file);
-        }
-
         // Trim leading "/" character and trailing "/i" if it exists in the string
         $pattern = trim(file_get_contents($language_file));
 
-        if (mb_substr($pattern, 0, 1) == '/' && mb_substr($pattern, -2) == '/i') {
+        if (mb_substr($pattern, 0, 1) === '/' && mb_substr($pattern, -2) === '/i') {
             return mb_substr($pattern, 1, -2);
-        } else {
-            return $pattern;
         }
+
+        return $pattern;
     }
 }

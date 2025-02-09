@@ -5,13 +5,6 @@ use PHPUnit\Framework\TestCase;
 
 class lang_fr_FR_Test extends TestCase
 {
-    public static bool $mb_support = true;
-
-    protected function setUp(): void
-    {
-        self::$mb_support = true;
-    }
-
     public function testFrenchShorthand()
     {
         $text = "Pour l'Arabie saoudite, l'accueil du Dakar s'inscrit dans un plan visant à préparer l'après-pétrole.";
