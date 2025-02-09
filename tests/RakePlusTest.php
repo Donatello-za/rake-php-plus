@@ -153,8 +153,8 @@ class RakePlusTest extends TestCase
 
     public function testSetInvalidMinLength()
     {
-        $this->expectException(InvalidArgumentException::class);
-        RakePlus::create("Hello World")->setMinLength(-1);
+        $rake = RakePlus::create("Hello World")->setMinLength(-1);
+        $this->assertEquals(0, $rake->getMinLength());
     }
 
     public function testPhrasesExtract()
