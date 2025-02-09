@@ -355,7 +355,7 @@ class RakePlus
     {
         return mb_split(
             $this->sentence_regex,
-            mb_ereg_replace($this->line_terminator, ' ', $text),
+            mb_ereg_replace($this->line_terminator, ' ', $text)
         );
     }
 
