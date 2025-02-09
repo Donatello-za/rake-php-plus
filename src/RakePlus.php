@@ -507,7 +507,7 @@ class RakePlus
 
     /**
      * Sets whether numeric-only phrases/keywords should be filtered
-     * out or not. Alias to initFilterNumerics().
+     * out or not.
      *
      * @param bool $filter_numerics
      *
