@@ -345,7 +345,7 @@ class RakePlus
     }
 
     /**
-     * Splits the text into an array of sentences. Uses mb_* functions if available.
+     * Splits the text into an array of sentences.
      *
      * @param string $text
      *
@@ -360,7 +360,7 @@ class RakePlus
     }
 
     /**
-     * Split sentences into phrases by using the stopwords. Uses mb_* functions if available.
+     * Split sentences into phrases by using the stopwords.
      *
      * @param array $sentences
      *
