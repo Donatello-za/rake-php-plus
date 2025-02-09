@@ -414,9 +414,9 @@ class RakePlus
             $words_degree = $words_count - 1;
 
             foreach ($words as $w) {
-                $frequencies[$w] = (isset($frequencies[$w])) ? $frequencies[$w] : 0;
+                $frequencies[$w] = $frequencies[$w] ?? 0;
                 $frequencies[$w] += 1;
-                $degrees[$w] = (isset($degrees[$w])) ? $degrees[$w] : 0;
+                $degrees[$w] = $degrees[$w] ?? 0;
                 $degrees[$w] += $words_degree;
             }
         }
@@ -427,7 +427,7 @@ class RakePlus
 
         $scores = [];
         foreach ($frequencies as $word => $freq) {
-            $scores[$word] = (isset($scores[$word])) ? $scores[$word] : 0;
+            $scores[$word] = $scores[$word] ?? 0;
             $scores[$word] = $degrees[$word] / (float)$freq;
         }
 
