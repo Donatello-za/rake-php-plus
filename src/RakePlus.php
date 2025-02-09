@@ -296,7 +296,7 @@ class RakePlus
      */
     public function sortByScore(string $order = self::ORDER_ASC): RakePlus
     {
-        if ($order == self::ORDER_DESC) {
+        if ($order === self::ORDER_DESC) {
             arsort($this->phrase_scores);
         } else {
             asort($this->phrase_scores);
@@ -315,7 +315,7 @@ class RakePlus
      */
     public function sort(string $order = self::ORDER_ASC): RakePlus
     {
-        if ($order == self::ORDER_DESC) {
+        if ($order === self::ORDER_DESC) {
             krsort($this->phrase_scores);
         } else {
             ksort($this->phrase_scores);
