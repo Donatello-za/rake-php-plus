@@ -447,7 +447,7 @@ class RakePlus
         $keywords = [];
 
         foreach ($phrases as $phrase) {
-            $keywords[$phrase] = (isset($keywords[$phrase])) ? $keywords[$phrase] : 0;
+            $keywords[$phrase] = $keywords[$phrase] ?? 0;
             $words = $this->splitPhraseIntoWords($phrase);
             $score = 0;
 
