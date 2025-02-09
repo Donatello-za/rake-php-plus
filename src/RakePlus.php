@@ -276,11 +276,10 @@ class RakePlus
                 // down the line when a developer attempts to
                 // append arrays to one another and one of them
                 // have a mix of integer and string keys.
-                if (!$this->filter_numerics || !is_numeric($word)) {
-                    if ($this->min_length === 0 || mb_strlen($word) >= $this->min_length) {
-                        $keywords[$word] = $word;
-                    }
-                }
+                if ($this->filter_numerics && is_numeric($word)) continue; // Filter out numerics
+                if ($this->min_length !== 0 && mb_strlen($word) < $this->min_length) continue; // Filter by length
+
+                $keywords[$word] = $word;
             }
         }
 
