@@ -55,7 +55,6 @@ class RakePlus
     public function __construct(?string $text = null, $stopwords = 'en_US', int $phrase_min_length = 0,
                                 bool $filter_numerics = true, ?ILangParseOptions $parseOptions = null)
     {
-        $this->setMinLength($phrase_min_length);
         $this->initMinLength($phrase_min_length);
         $this->initFilterNumerics($filter_numerics);
         $this->initParseOptions(
