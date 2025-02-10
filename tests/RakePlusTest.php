@@ -604,11 +604,29 @@ class RakePlusTest extends TestCase
         $this->assertEquals(16, $scores['crest suite 413 lake carlietown']);
     }
 
-    public function testDonNotFilterNumerics()
+    public function testDoNotFilterNumerics()
     {
         $text = "6462 Little Crest Suite 413 Lake Carlietown, WA 12643";
         $scores = RakePlus::create($text, 'en_US', 0, true)->scores();
 
+        $this->assertCount(2, $scores);
+
+        $this->assertEquals(1, $scores['wa 12643']);
+        $this->assertEquals(16, $scores['crest suite 413 lake carlietown']);
+    }
+
+    public function testSetFilterNumerics()
+    {
+        $text = "6462 Little Crest Suite 413 Lake Carlietown, WA 12643";
+
+        $rake = RakePlus::create($text);
+        $rake->setFilterNumerics(false);
+        $this->assertFalse($rake->getFilterNumerics());
+
+        $rake->setFilterNumerics(true);
+        $this->assertTrue($rake->getFilterNumerics());
+
+        $scores = $rake->scores();
         $this->assertCount(2, $scores);
 
         $this->assertEquals(1, $scores['wa 12643']);
