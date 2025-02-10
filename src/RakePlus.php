@@ -70,7 +70,11 @@ class RakePlus
 
     protected function initMinLength(int $min_length): void
     {
-        $this->min_length = max($min_length, 0);
+        if ($min_length < 0) {
+            throw new InvalidArgumentException('Minimum phrase length must be greater than or equal to 0.');
+        }
+
+        $this->min_length = $min_length;
     }
 
     protected function initFilterNumerics($filter_numerics): void
@@ -493,9 +497,13 @@ class RakePlus
      */
     public function setMinLength(int $min_length): RakePlus
     {
-        // @note there is no need to throw an exception in runtime to me
-        // the exception can be caught and a default value used instead
-        $this->initMinLength($min_length);
+        $default_min_length = 0;
+
+        try {
+            $this->initMinLength($min_length);
+        } catch (InvalidArgumentException $e) {
+            $this->initMinLength($default_min_length);
+        }
 
         return $this;
     }
