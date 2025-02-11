@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use DonatelloZa\RakePlus\LangParseOptions;
 use DonatelloZa\RakePlus\RakePlus;
-use DonatelloZa\RakePlus\StopwordArray;
+use DonatelloZa\RakePlus\StopwordsArray;
 use DonatelloZa\RakePlus\StopwordsPatternFile;
 use DonatelloZa\RakePlus\StopwordsPHP;
 use PHPUnit\Framework\TestCase;
@@ -137,7 +137,7 @@ class RakePlusTest extends TestCase
             "for components of a minimal set of solutions and algorithms of construction " .
             "of minimal generating sets of solutions for all types of systems are given.";
 
-        $stopwords = StopwordArray::create(['of', 'a', 'and', 'set', 'are', 'for']);
+        $stopwords = StopwordsArray::create(['of', 'a', 'and', 'set', 'are', 'for']);
         $phrases = RakePlus::create($text, $stopwords)->get();
         $this->assertCount(17, $phrases);
     }
@@ -444,7 +444,7 @@ class RakePlusTest extends TestCase
             "for components of a minimal set of solutions and algorithms of construction " .
             "of minimal generating sets of solutions for all types of systems are given.";
 
-        $stopwords = StopwordArray::create(['of', 'a', 'and', 'set', 'are', 'for']);
+        $stopwords = StopwordsArray::create(['of', 'a', 'and', 'set', 'are', 'for']);
         $scores = RakePlus::create($text, $stopwords)->sortByScore()->scores();
 
         $this->assertEquals(1, $scores['criteria']);
@@ -495,14 +495,14 @@ class RakePlusTest extends TestCase
         $this->assertEquals(9, $scores['linear diophantine equations']);
     }
 
-    public function testStopWordArrayInstance()
+    public function testStopWordsArrayInstance()
     {
         $text = "Criteria of compatibility of a system of linear Diophantine equations, " .
             "strict inequations, and nonstrict inequations are considered. Upper bounds " .
             "for components of a minimal set of solutions and algorithms of construction " .
             "of minimal generating sets of solutions for all types of systems are given.";
 
-        $stopwords = StopwordArray::create(['of', 'a', 'and', 'set', 'are', 'for']);
+        $stopwords = StopwordsArray::create(['of', 'a', 'and', 'set', 'are', 'for']);
         $scores = RakePlus::create($text, $stopwords)->sortByScore()->scores();
 
         $this->assertEquals(1, $scores['criteria']);

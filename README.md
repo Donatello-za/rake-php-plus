@@ -122,7 +122,7 @@ use DonatelloZa\RakePlus\RakePlus;
 require 'path/to/AbstractStopwordProvider.php';
 require 'path/to/ILangParseOptions.php';
 require 'path/to/LangParseOptions.php';
-require 'path/to/StopwordArray.php';
+require 'path/to/StopwordsArray.php';
 require 'path/to/StopwordsPatternFile.php';
 require 'path/to/StopwordsPHP.php';
 require 'path/to/RakePlus.php';
@@ -374,7 +374,7 @@ $rake = RakePlus::create($text, '/path/to/my/stopwords.pattern');
 
 // 4: Create an instance of one of the stopword provider classes (or
 //    create your own) and pass that to RakePlus:
-$stopwords = StopwordArray::create(['a', 'able', 'about', 'above', ...]);
+$stopwords = StopwordsArray::create(['a', 'able', 'about', 'above', ...]);
 $rake = RakePlus::create($text, $stopwords);
 ```
 

@@ -191,7 +191,7 @@ class RakePlus
 
     protected function initPatternFromArray($stopwords): void
     {
-        $this->pattern = StopwordArray::create($stopwords)->pattern();
+        $this->pattern = StopwordsArray::create($stopwords)->pattern();
     }
 
     protected function initPatternFromString($stopwords): void

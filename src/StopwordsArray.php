@@ -4,7 +4,7 @@ namespace DonatelloZa\RakePlus;
 
 use RuntimeException;
 
-class StopwordArray extends AbstractStopwordProvider
+class StopwordsArray extends AbstractStopwordProvider
 {
     protected array $stopwords = [];
 
@@ -24,13 +24,13 @@ class StopwordArray extends AbstractStopwordProvider
     }
 
     /**
-     * Creates a new instance of the StopwordArray class.
+     * Creates a new instance of the StopwordsArray class.
      *
      * @param array $stopwords
      *
-     * @return StopwordArray
+     * @return StopwordsArray
      */
-    public static function create(array $stopwords): StopwordArray
+    public static function create(array $stopwords): StopwordsArray
     {
         return (new self($stopwords));
     }
