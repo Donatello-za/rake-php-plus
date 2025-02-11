@@ -364,8 +364,8 @@ use DonatelloZa\RakePlus\StopwordProviders\StopwordsArray;
 //    not found, it will look for ./lang/en_US.php.
 $rake = RakePlus::create($text, 'en_US');
 
-// 2: Pass an array containing stopwords
-$rake = RakePlus::create($text, ['a', 'able', 'about', 'above', ...]);
+// 2: Pass an array containing stopwords, note the stopwords are in reverse order
+$rake = RakePlus::create($text, ['zero', 'z', 'you\'ve', 'yourselves', ...]);
 
 // 3: Pass the name of a PHP or pattern file,
 //    see lang/en_US.php and lang/en_US.pattern for examples.
@@ -373,7 +373,7 @@ $rake = RakePlus::create($text, '/path/to/my/stopwords.pattern');
 
 // 4: Create an instance of one of the stopword provider classes (or
 //    create your own) and pass that to RakePlus:
-$stopwords = StopwordsArray::create(['a', 'able', 'about', 'above', ...]);
+$stopwords = StopwordsArray::create(['zero', 'z', 'you\'ve', 'yourselves', ...]);
 $rake = RakePlus::create($text, $stopwords);
 ```
 
