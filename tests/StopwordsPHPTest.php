@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use DonatelloZa\RakePlus\StopwordsPHP;
+use DonatelloZa\RakePlus\StopwordProviders\StopwordsPHP;
 use PHPUnit\Framework\TestCase;
 
 class StopwordsPHPTest extends TestCase

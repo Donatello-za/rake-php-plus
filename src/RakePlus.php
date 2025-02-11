@@ -2,6 +2,10 @@
 
 namespace DonatelloZa\RakePlus;
 
+use DonatelloZa\RakePlus\StopwordProviders\AbstractStopwordProvider;
+use DonatelloZa\RakePlus\StopwordProviders\StopwordsArray;
+use DonatelloZa\RakePlus\StopwordProviders\StopwordsPatternFile;
+use DonatelloZa\RakePlus\StopwordProviders\StopwordsPHP;
 use InvalidArgumentException;
 
 class RakePlus

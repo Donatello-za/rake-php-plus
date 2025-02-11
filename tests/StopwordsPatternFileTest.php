@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use DonatelloZa\RakePlus\StopwordsPatternFile;
+use DonatelloZa\RakePlus\StopwordProviders\StopwordsPatternFile;
 use PHPUnit\Framework\TestCase;
 
 class StopwordsPatternFileTest extends TestCase

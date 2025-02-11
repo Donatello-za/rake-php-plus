@@ -119,23 +119,21 @@ use DonatelloZa\RakePlus\RakePlus;
 ```php
 <?php
 
-require 'path/to/AbstractStopwordProvider.php';
 require 'path/to/ILangParseOptions.php';
 require 'path/to/LangParseOptions.php';
-require 'path/to/StopwordsArray.php';
-require 'path/to/StopwordsPatternFile.php';
-require 'path/to/StopwordsPHP.php';
+require 'path/to/StopwordProviders/AbstractStopwordProvider.php';
+require 'path/to/StopwordProviders/StopwordsArray.php';
+require 'path/to/StopwordProviders/StopwordsPatternFile.php';
+require 'path/to/StopwordProviders/StopwordsPHP.php';
 require 'path/to/RakePlus.php';
 
 use DonatelloZa\RakePlus\RakePlus;
-
 ```
 
 ## Example 1
 
 Creates a new instance of RakePlus, extract the phrases and return the results. Assumes that the specified
 text is English (US).
-
 
 ```php
 use DonatelloZa\RakePlus\RakePlus;
@@ -339,7 +337,7 @@ Array
 Creates a new instance of RakePlus without using the static RakePlus::create method.
 
 ```php
-use DonatelloZa\RakePlus;
+use DonatelloZa\RakePlus\RakePlus;
 
 $text = "Criteria of compatibility of a system of linear Diophantine equations, " .
     "strict inequations, and nonstrict inequations are considered. Upper bounds " .
@@ -359,6 +357,7 @@ You can provide custom stopwords in four different ways:
 
 ```php
 use DonatelloZa\RakePlus\RakePlus;
+use DonatelloZa\RakePlus\StopwordProviders\StopwordsArray;
 
 // 1: The standard way (provide a language code)
 //    RakePlus will first look for ./lang/en_US.pattern, if

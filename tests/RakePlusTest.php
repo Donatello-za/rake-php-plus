@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 use DonatelloZa\RakePlus\LangParseOptions;
 use DonatelloZa\RakePlus\RakePlus;
-use DonatelloZa\RakePlus\StopwordsArray;
-use DonatelloZa\RakePlus\StopwordsPatternFile;
-use DonatelloZa\RakePlus\StopwordsPHP;
+use DonatelloZa\RakePlus\StopwordProviders\StopwordsArray;
+use DonatelloZa\RakePlus\StopwordProviders\StopwordsPatternFile;
+use DonatelloZa\RakePlus\StopwordProviders\StopwordsPHP;
 use PHPUnit\Framework\TestCase;
 
 class RakePlusTest extends TestCase

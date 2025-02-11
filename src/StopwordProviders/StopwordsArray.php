@@ -1,6 +1,6 @@
 <?php
 
-namespace DonatelloZa\RakePlus;
+namespace DonatelloZa\RakePlus\StopwordProviders;
 
 use RuntimeException;
 
