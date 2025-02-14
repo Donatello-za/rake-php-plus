@@ -82,7 +82,7 @@ v2.0.0
 
 ## Installation
 
-### With Composer
+### Installing with Composer
 
 Although v1 of this library is compatible up to PHP 8.3 and will be
 maintained for the foreseeable future, it is recommended to install
@@ -113,6 +113,45 @@ require 'vendor/autoload.php';
 
 use DonatelloZa\RakePlus\RakePlus;
 ```
+
+### Installing older versions
+
+If you find that a release breaks backward compatibility you
+can install an older version of RakePlus using Composer's version
+constraints, for example, to install version 1.x of the library 
+that still supports PHP 5.4+, use:
+
+```bash
+$ composer require donatello-za/rake-php-plus:^1.0
+```
+
+### Migrating from v1.x to v2.x
+
+1. Version 2.x of the library requires PHP 7.4 and above.
+
+2. The `StopwordArray` class have been renamed to `StopwordsArray`.
+   If you use this class directly, you will have to update it in your 
+   own source code.
+
+3. If you use one of the `Stopwords*` provider classes directly, you
+   will have to provide the appropriate namespace for them as they have been 
+   moved to a sub-folder, see the example below:
+
+Previously you could use `StopwordsArray`, `StopwordsPatternFile` and
+`StopwordsPHP` without providing an additional namespace. Now you will
+have to include the namespaces, for example:
+
+```php
+use DonatelloZa\RakePlus\StopwordProviders\StopwordsArray;
+use DonatelloZa\RakePlus\StopwordProviders\StopwordsPatternFile;
+use DonatelloZa\RakePlus\StopwordProviders\StopwordsPHP;
+
+$stopwords = StopwordsArray::create(['zero', 'z', 'you\'ve', 'yourselves', ...]);
+$stopwords = StopwordsPatternFile::create('/path/to/my/stopwords.pattern');
+$stopwords = StopwordsPHP::create('/path/to/my/stopwords.php');
+````
+
+# Usage Examples
 
 ## Example 1
 
