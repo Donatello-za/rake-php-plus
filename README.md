@@ -114,22 +114,6 @@ require 'vendor/autoload.php';
 use DonatelloZa\RakePlus\RakePlus;
 ```
 
-### Without Composer
-
-```php
-<?php
-
-require 'path/to/ILangParseOptions.php';
-require 'path/to/LangParseOptions.php';
-require 'path/to/StopwordProviders/AbstractStopwordProvider.php';
-require 'path/to/StopwordProviders/StopwordsArray.php';
-require 'path/to/StopwordProviders/StopwordsPatternFile.php';
-require 'path/to/StopwordProviders/StopwordsPHP.php';
-require 'path/to/RakePlus.php';
-
-use DonatelloZa\RakePlus\RakePlus;
-```
-
 ## Example 1
 
 Creates a new instance of RakePlus, extract the phrases and return the results. Assumes that the specified
