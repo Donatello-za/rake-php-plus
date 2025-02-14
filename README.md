@@ -125,6 +125,8 @@ that still supports PHP 5.4+, use:
 $ composer require donatello-za/rake-php-plus:^1.0
 ```
 
+*Note: The latest release of the v1 branch is v1.0.20*
+
 ### Migrating from v1.x to v2.x
 
 1. Version 2.x of the library requires PHP 7.4 and above.
